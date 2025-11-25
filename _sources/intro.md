@@ -1,11 +1,9 @@
-# Welcome to your Jupyter Book
+# Crecimiento Logístico en la producción de Kéfir con PINNs: Modelación y Estimación de Parámetros
 
-This is a small sample book to give you a feel for how book content is
-structured.
-It shows off a few of the major file types, as well as some sample content.
-It does not go in-depth into any particular topic - check out [the Jupyter Book documentation](https://jupyterbook.org) for more information.
+El objetivo principal de la tésis viene siendo encontrar el mejor ajuste posible de curvas hacia datos de crecimiento de granos de kéfir bajo tratamiento de utlrasonido.
 
-Check out the content pages bundled with this sample book to see more.
+Para lograr esto, se tiene planteado utilizar redes neuronales informadas por modelos físicos (PINNs) como solución de este problema principal.
+
 
 ```{tableofcontents}
 ```
