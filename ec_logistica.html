@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Modelos Maltusiano y Veltusiano &#8212; Crecimiento logístico en la producción de kéfir con PINNs ; Modelación y estimación de parámetros</title>
+    <title>Modelos Maltusiano y Veltusiano &#8212; My Jupyter Book</title>
   
   
   
@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -62,7 +62,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'ec_logistica';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Notebooks with MyST Markdown" href="markdown-notebooks.html" />
+    <link rel="next" title="Physics Informed Neural Networks (PINNs)" href="pinns.html" />
+    <link rel="prev" title="Marco Teórico" href="marco_teorico.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -149,14 +150,8 @@
   
   
   
-    
-    
-      
-    
-    
-    <img src="_static/logo.png" class="logo__image only-light" alt="Crecimiento logístico en la producción de kéfir con PINNs ; Modelación y estimación de parámetros - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Crecimiento logístico en la producción de kéfir con PINNs ; Modelación y estimación de parámetros - Home"/>`);</script>
   
+    <p class="title logo__title">My Jupyter Book</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -176,16 +171,17 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="intro.html">
-                    Welcome to your Jupyter Book
+                    Crecimiento Logístico en la producción de Kéfir con PINNs: Modelación y Estimación de Parámetros
                 </a>
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="markdown.html">Markdown Files</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks.html">Content with notebooks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="markdown-notebooks.html">Notebooks with MyST Markdown</a></li>
+<li class="toctree-l1"><a class="reference internal" href="marco_teorico.html">Marco Teórico</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Modelos Maltusiano y Veltusiano</a></li>
 
+
+
+<li class="toctree-l1"><a class="reference internal" href="pinns.html">Physics Informed Neural Networks (PINNs)</a></li>
 </ul>
 
     </div>
@@ -227,53 +223,6 @@
         <div class="header-article-item">
 
 <div class="article-header-buttons">
-
-
-
-
-
-<div class="dropdown dropdown-source-buttons">
-  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
-    <i class="fab fa-github"></i>
-  </button>
-  <ul class="dropdown-menu">
-      
-      
-      
-      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
-   class="btn btn-sm btn-source-repository-button dropdown-item"
-   title="Source repository"
-   data-bs-placement="left" data-bs-toggle="tooltip"
->
-  
-
-<span class="btn__icon-container">
-  <i class="fab fa-github"></i>
-  </span>
-<span class="btn__text-container">Repository</span>
-</a>
-</li>
-      
-      
-      
-      
-      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fec_logistica.html&body=Your%20issue%20content%20here." target="_blank"
-   class="btn btn-sm btn-source-issues-button dropdown-item"
-   title="Open an issue"
-   data-bs-placement="left" data-bs-toggle="tooltip"
->
-  
-
-<span class="btn__icon-container">
-  <i class="fas fa-lightbulb"></i>
-  </span>
-<span class="btn__text-container">Open issue</span>
-</a>
-</li>
-      
-  </ul>
-</div>
-
 
 
 
@@ -383,6 +332,12 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Modelos Maltusiano y Veltusiano</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ecuacion-logistica">Ecuación Logística</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-de-gompertz">Modelo de Gompertz</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#calculando-parametros-biologicos">Calculando parámetros biológicos</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-logistico">Modelo Logístico</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-gompertz">Modelo Gompertz</a></li>
+</ul>
+</li>
 </ul>
 
             </nav>
@@ -410,24 +365,24 @@ document.write(`
 <p><span class="math notranslate nohighlight">\(\begin{equation}
     \frac{dP}{dt}=rP(t)
 \end{equation}\)</span></p>
-<p>Donde <span class="math notranslate nohighlight">\(r=\beta-\delta\)</span> es una constante real. El modelo Veltusiano también considera las mismas premisas y la forma de <span class="math notranslate nohighlight">\((2)\)</span>, solo cambian  <span class="math notranslate nohighlight">\(b(t)\)</span> y <span class="math notranslate nohighlight">\(d(t)\)</span>. Con este modelo se considera que el cociente <span class="math notranslate nohighlight">\(b(t)/P(t)\)</span> en vez de mantenerse constante, se considera que este cociente decrese linealmente con respecto a la población <span class="math notranslate nohighlight">\(b(t)/P(t)=\beta - k_\beta P(t)\)</span> . De manera similar con la taza de muerte. Como consecuencia, obtenemos:</p>
+<p>Donde <span class="math notranslate nohighlight">\(r=\beta-\delta\)</span> es una constante real. El modelo Veltusiano también considera las mismas premisas y la forma de <span class="math notranslate nohighlight">\((2)\)</span>, solo cambian  <span class="math notranslate nohighlight">\(b(t)\)</span> y <span class="math notranslate nohighlight">\(d(t)\)</span>. Con este modelo se considera que el cociente <span class="math notranslate nohighlight">\(b(t)/P(t)\)</span> en vez de mantenerse constante, se considera que este decrese linealmente con respecto a la población: <span class="math notranslate nohighlight">\(b(t)/P(t)=\beta - k_\beta P(t)\)</span> . De manera similar con la taza de muerte. Como consecuencia, obtenemos:</p>
 <p><span class="math notranslate nohighlight">\(\begin{equation}
     b(t)=(\beta - k_{\beta}P(t)) P(t) ,\hspace{5mm} d(t)=(\delta + k_{\delta}P(t)) P(t)
 \end{equation}\)</span></p>
 <p>Teniendo esto en mente, a partir de <span class="math notranslate nohighlight">\((2)\)</span> podemos
 $<span class="math notranslate nohighlight">\(
-\frac{dP}{dt}=(\beta - k_{\beta}P(t)) P(t)-(\delta + k_{\delta}P(t)) P(t)
+\frac{dP}{dt}=(\beta - k_{\beta}P) P-(\delta + k_{\delta}P) P
 \)</span>$</p>
 <div class="math notranslate nohighlight">
 \[
-=(\beta - k_{\beta}P(t)-\delta -k_{\delta}P(t)) P(t)
+=(\beta - k_{\beta}P-\delta -k_{\delta}P) P
 \]</div>
 <div class="math notranslate nohighlight">
 \[
-=(\beta -\delta -(k_{\beta}+k_{\delta})P(t)) P(t)
+=(\beta -\delta -(k_{\beta}+k_{\delta})P) P
 \]</div>
 <p><span class="math notranslate nohighlight">\(\begin{equation}
-=(\beta -\delta)\left(1 -\frac{k_{\beta}+k_{\delta}}{\beta -\delta}P(t)\right) P(t)
+=(\beta -\delta)\left(1 -\frac{k_{\beta}+k_{\delta}}{\beta -\delta}P\right) P
 \end{equation}\)</span></p>
 <p>Podemos renombrar los términos en forma compacta para por fin llegar a la ecuación logística:</p>
 <div class="math notranslate nohighlight">
@@ -445,22 +400,143 @@ $<span class="math notranslate nohighlight">\(
 <p>Se trata de una ecuación diferencial ordinaria separable.</p>
 <div class="math notranslate nohighlight">
 \[
-\int \frac{dP}{P(t)(1-\frac{P(t)}{m})}=\int rdt
+\int \frac{dP}{P(1-\frac{P}{m})}=\int rdt
 \]</div>
 <p>Por el método de fracciones parciales podemos reescribir el lado izquierdo de la ecuación de forma más sencilla :</p>
 <div class="math notranslate nohighlight">
 \[
-\frac{m}{P(t)(m-P(t))}= \frac{1}{m-P}+\frac{1}{P}
+\frac{m}{P(m-P)}= \frac{1}{m-P}+\frac{1}{P}
 \]</div>
 <p>Tal que</p>
 <div class="math notranslate nohighlight">
 \[
-\int \frac{dP}{P(t)(1-\frac{P(t)}{m})}=\int \frac{dP}{m-P}+\int\frac{dP}{P}
+\int \frac{dP}{P(1-\frac{P}{m})}=\int \frac{dP}{m-P}+\int\frac{dP}{P}
 \]</div>
 <div class="math notranslate nohighlight">
 \[
 \hspace{28mm}=-ln|m-P|+ln|P|
 \]</div>
+<div class="math notranslate nohighlight">
+\[
+\hspace{14mm}=ln(\frac{P}{m-P})
+\]</div>
+<p>Sustituyendo se obtiene</p>
+<div class="math notranslate nohighlight">
+\[
+ln(\frac{P}{m-P})=rt+C
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+P=(m-P)e^{rt+C}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+P(1+e^{rt+C})=me^{rt+C}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+P=\frac{m}{1+e^{-(rt+C)}}
+\]</div>
+<p>Finalmente, vemos que la curva de población se describe por:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+P(t)=\frac{m}{1+e^{-(rt-k)}}
+\end{equation}
+\]</div>
+<p>Donde <span class="math notranslate nohighlight">\(k&gt;0\)</span>, ya que <span class="math notranslate nohighlight">\(C=ln(\frac{P_0}{m-P_0})&lt;0\)</span></p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="modelo-de-gompertz">
+<h1>Modelo de Gompertz<a class="headerlink" href="#modelo-de-gompertz" title="Link to this heading">#</a></h1>
+<p>El modelo de Gompertz es una función exponencial que busca describir también el crecimiento poblacional que tiene la forma:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+P(t)=ae^{-e^{-(bt+c)}}
+\end{equation}
+\]</div>
+<p>Donde <span class="math notranslate nohighlight">\(a,b,c \)</span> son constantes reales. Pero esta forma no nos sirve mucho, nos vendría mejor expresarlo en forma de ecuación diferencial.</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{dP}{dt}=(ae^{-e^{-(bt+c)}})\frac{d}{dt}(-e^{-(bt+c)})
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\hspace{1mm}=P[be^{-(bt+c)}]
+\]</div>
+<p>Vemos que de la expresión (8) tenemos:
+$<span class="math notranslate nohighlight">\(
+lnP=ln(a)-e^{-(bt+c)}
+\)</span>$</p>
+<p>Por lo tanto,podemos escribir la ecuación diferencial de la siguiente forma.</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+\frac{dP}{dt}=rP\hspace{0.5mm}ln(\frac{m}{P})
+\end{equation}
+\]</div>
+<p>Donde</p>
+<div class="math notranslate nohighlight">
+\[
+r=b ,\hspace{5mm} ln(\frac{m}{P})=ln(a)-ln(P) \iff m=a 
+\]</div>
+<p>Si consideramos <span class="math notranslate nohighlight">\(P(0)=P_0 \)</span>, de (8) obtenemos:</p>
+<div class="math notranslate nohighlight">
+\[
+c=-ln(ln(\frac{m}{P_0}))
+\]</div>
+<p>Y como <span class="math notranslate nohighlight">\(ln(\frac{m}{P}) \geq 0\)</span>, sabemos que <span class="math notranslate nohighlight">\(c&lt;0\)</span>. Entonces, podemos reescribir (8) como:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+P(t)=me^{-e^{-(rt-k)}}\end{equation}\]</div>
+<p>Tener <span class="math notranslate nohighlight">\(P(t)\)</span> de esta forma nos convendrá para poder interpretar de forma más intuitiva el rol de cada paramétro en el crecimento de la población.</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="calculando-parametros-biologicos">
+<h1>Calculando parámetros biológicos<a class="headerlink" href="#calculando-parametros-biologicos" title="Link to this heading">#</a></h1>
+<p>A continuación, calcularemos los parametros biológicos <span class="math notranslate nohighlight">\(\mu\)</span> (rápidez de crecimiento máxima) y <span class="math notranslate nohighlight">\(\lambda\)</span> (retraso de crecimiento).</p>
+<section id="modelo-logistico">
+<h2>Modelo Logístico<a class="headerlink" href="#modelo-logistico" title="Link to this heading">#</a></h2>
+<p>Comenzamos calculando <span class="math notranslate nohighlight">\(\mu\)</span> primero, ya que lo necesitaremos para lograr calcular <span class="math notranslate nohighlight">\(\lambda\)</span> con la recta tangente <span class="math notranslate nohighlight">\(T(t)\)</span> que pasa por el punto de máxima rápidez. Con esto, tenemos las siguientes condiciones:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+\mu=max(\frac{dP}{dt}) ,\hspace{5mm} \lambda=T^{-1}(0)
+\end{equation}
+\]</div>
+<p>Entonces, calculamos la segunda y tercera derivada de <span class="math notranslate nohighlight">\(P(t)\)</span> para encontrar <span class="math notranslate nohighlight">\(\mu\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{dP^2}{dt^2}=r\frac{dP}{dt}(1-\frac{P}{m})+rP(-\frac{1}{m}\frac{dP}{dt})
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\hspace{-14mm}=r\frac{dP}{dt}(1-\frac{2P}{m})
+\]</div>
+<p>Ahora, denominaremos <span class="math notranslate nohighlight">\(t_c\)</span> como el instante en cuál la rápidez de crecimiento es máxima. Observamos que solo hay dos casos en cuál la segunda derivada es igual a cero. A nosotros nos interesa el caso no trivial (<span class="math notranslate nohighlight">\(\frac{dP}{dt}\neq0\)</span>):</p>
+<div class="math notranslate nohighlight">
+\[
+(1-\frac{2P_c}{m})=0\to P(t_c)=P_c=\frac{m}{2}
+\]</div>
+<p>Evaluando <span class="math notranslate nohighlight">\(\frac{dP}{dt}\)</span> en este instante conseguimos el valor de <span class="math notranslate nohighlight">\(\mu\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\mu=rP_c (1- \frac{P_c}{m})=r\frac{m}{4}
+\]</div>
+<p>Seguimos con <span class="math notranslate nohighlight">\(\lambda\)</span> teniendo en cuenta:</p>
+<div class="math notranslate nohighlight">
+\[
+T(t)=\mu t+ T_0 ,\hspace{5mm} T(t_c)=P_c
+\]</div>
+<p>Con esto</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{dP^3}{dt^3}=
+\]</div>
+</section>
+<section id="modelo-gompertz">
+<h2>Modelo Gompertz<a class="headerlink" href="#modelo-gompertz" title="Link to this heading">#</a></h2>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -494,13 +570,22 @@ $<span class="math notranslate nohighlight">\(
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="markdown-notebooks.html"
+       href="marco_teorico.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Notebooks with MyST Markdown</p>
+        <p class="prev-next-title">Marco Teórico</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="pinns.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Physics Informed Neural Networks (PINNs)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -520,6 +605,12 @@ $<span class="math notranslate nohighlight">\(
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Modelos Maltusiano y Veltusiano</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ecuacion-logistica">Ecuación Logística</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-de-gompertz">Modelo de Gompertz</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#calculando-parametros-biologicos">Calculando parámetros biológicos</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-logistico">Modelo Logístico</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-gompertz">Modelo Gompertz</a></li>
+</ul>
+</li>
 </ul>
 
   </nav></div>
@@ -535,7 +626,7 @@ $<span class="math notranslate nohighlight">\(
   <div class="footer-item">
     
 <p class="component-author">
-By Federico Miguel Cirett Torres
+By The Jupyter Book community
 </p>
 
   </div>
