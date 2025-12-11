@@ -6,9 +6,7 @@
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>Physics Informed Neural Networks (PINNs) &#8212; My Jupyter Book</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Search - My Jupyter Book</title>
   
   
   
@@ -57,12 +55,12 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'pinns';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'search';</script>
+  <script src="_static/searchtools.js"></script>
+  <script src="_static/language_data.js"></script>
+  <script src="searchindex.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Modelos Maltusiano y Veltusiano" href="ec_logistica.html" />
+    <link rel="search" title="Search" href="#" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -94,7 +92,7 @@
     <div class="search-button__overlay"></div>
     <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
-      action="search.html"
+      action="#"
       method="get">
   <i class="fa-solid fa-magnifying-glass"></i>
   <input type="search"
@@ -124,6 +122,8 @@
     <div class="bd-container__inner bd-page-width">
       
       
+      
+        
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -174,13 +174,13 @@
                 </a>
             </li>
         </ul>
-        <ul class="current nav bd-sidenav">
+        <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="marco_teorico.html">Marco Teórico</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ec_logistica.html">Modelos Maltusiano y Veltusiano</a></li>
 
 
 
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Physics Informed Neural Networks (PINNs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pinns.html">Physics Informed Neural Networks (PINNs)</a></li>
 </ul>
 
     </div>
@@ -225,54 +225,6 @@
 
 
 
-
-
-<div class="dropdown dropdown-download-buttons">
-  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
-    <i class="fas fa-download"></i>
-  </button>
-  <ul class="dropdown-menu">
-      
-      
-      
-      <li><a href="_sources/pinns.md" target="_blank"
-   class="btn btn-sm btn-download-source-button dropdown-item"
-   title="Download source file"
-   data-bs-placement="left" data-bs-toggle="tooltip"
->
-  
-
-<span class="btn__icon-container">
-  <i class="fas fa-file"></i>
-  </span>
-<span class="btn__text-container">.md</span>
-</a>
-</li>
-      
-      
-      
-      
-      <li>
-<button onclick="window.print()"
-  class="btn btn-sm btn-download-pdf-button dropdown-item"
-  title="Print to PDF"
-  data-bs-placement="left" data-bs-toggle="tooltip"
->
-  
-
-<span class="btn__icon-container">
-  <i class="fas fa-file-pdf"></i>
-  </span>
-<span class="btn__text-container">.pdf</span>
-</button>
-</li>
-      
-  </ul>
-</div>
-
-
-
-
 <button onclick="toggleFullScreen()"
   class="btn btn-sm btn-fullscreen-button"
   title="Fullscreen mode"
@@ -306,9 +258,7 @@ document.write(`
   </button>
 `);
 </script>
-<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</button>
+
 </div></div>
       
     </div>
@@ -317,99 +267,42 @@ document.write(`
 </div>
               
               
-
-<div id="jb-print-docs-body" class="onlyprint">
-    <h1>Physics Informed Neural Networks (PINNs)</h1>
-    <!-- Table of contents -->
-    <div id="print-main-content">
-        <div id="jb-print-toc">
-            
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#concepto">Concepto</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#funciones-de-perdida">Funciones de perdida</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problemas-inversos">Problemas inversos</a></li>
-</ul>
-            </nav>
-        </div>
-    </div>
-</div>
-
-              
-                
-<div id="searchbox"></div>
-                <article class="bd-article">
-                  
-  <section class="tex2jax_ignore mathjax_ignore" id="physics-informed-neural-networks-pinns">
-<h1>Physics Informed Neural Networks (PINNs)<a class="headerlink" href="#physics-informed-neural-networks-pinns" title="Link to this heading">#</a></h1>
-<section id="concepto">
-<h2>Concepto<a class="headerlink" href="#concepto" title="Link to this heading">#</a></h2>
-<p>Las Redes Neuronales informadas por modelos físicos (PINNs) constituyen una metodología de modelado computacional que integra explícitamente las leyes físicas en el proceso de entrenamiento de una red neuronal. A diferencia de los enfoques puramente centrados en datos, las PINNs incorporan ecuaciones diferenciales ordinarias (ODEs), parciales (PDEs) u otras restricciones físicas como parte del mecanismo de optimización. Esto permite que la red aprenda una solución que no solo se ajuste a los datos disponibles, sino que también satisfaga, en el sentido de residuos mínimos, las ecuaciones gobernantes del sistema.</p>
-<p>La motivación detrás de las PINNs es aprovechar la capacidad de aproximación universal de las redes neuronales mientras se restringe su espacio de soluciones mediante las leyes físicas conocidas. De esta manera, el modelo actúa como un solucionador continuo que puede operar incluso con datos escasos, incompletos o ruidosos, garantizando mayor estabilidad y generalización que los métodos puramente empíricos.</p>
-</section>
-<section id="funciones-de-perdida">
-<h2>Funciones de perdida<a class="headerlink" href="#funciones-de-perdida" title="Link to this heading">#</a></h2>
-<p>La idea central matemática de las PINNs se encuentra en la formulación de una función de pérdida compuesta, diseñada para equilibrar simultáneamente:</p>
-<ul class="simple">
-<li><p>El ajuste a datos observados, cuando estos existen.</p></li>
-<li><p>El cumplimiento de las ecuaciones diferenciales gobernantes, expresado como el residuo de la PDE.</p></li>
-<li><p>El respeto de condiciones iniciales y de frontera, necesarias para garantizar la unicidad y estabilidad de la solución.</p></li>
-</ul>
-<p>Una formulación típica de la pérdida es:</p>
-<div class="math notranslate nohighlight">
-\[ \mathcal{L}(\theta;T)=w_f\mathcal{L}_f(\theta;T_f)+w_b\mathcal{L}_b(\theta;T_b)\]</div>
-<p>donde:</p>
-<div class="math notranslate nohighlight">
-\[
-\mathcal{L}_f(\theta;T_f)=\frac{1}{|T_f|}\sum_{x\in T_f}||f(x;\partial_i\hat{u};\partial_{ij}^2\hat{u}),\lambda||^2_2
-\]</div>
-<div class="math notranslate nohighlight">
-\[
-\mathcal{L}_i(\theta;T_b)=\frac{1}{|T_b|}\sum_{x\in T_b}||\mathcal{B}(\hat{u},x)||^2_2
-\]</div>
-<p>La eficiencia de las PINNs se debe a que los residuos de las PDEs se calculan mediante diferenciación automática, lo que evita discretizaciones explícitas y facilita trabajar en dominios de alta dimensionalidad. No obstante, un desafío activo de investigación es la correcta ponderación de los términos de la pérdida, pues el entrenamiento puede volverse rígido o inestable si una de las componentes domina a las demás.</p>
-</section>
-<section id="problemas-inversos">
-<h2>Problemas inversos<a class="headerlink" href="#problemas-inversos" title="Link to this heading">#</a></h2>
-<p>Las PINNs han demostrado ser particularmente eficaces en la formulación de problemas inversos, donde el objetivo no es únicamente resolver por la variable de estado, sino estimar parámetros desconocidos dentro de la ecuación diferencial. En estos escenarios, parámetros físicos tales como coeficientes de difusión, viscosidades, términos de reacción o condiciones internas del dominio se tratan como variables adicionales a optimizar.</p>
-<p>El marco general consiste en parametrizar la solución y los parámetros desconocidos mediante la red neuronal,aplicar las ecuaciones gobernantes para que la pérdida física dependa de dichos parámetros y finalmente entrenar la red de forma que la solución reconstruida y la estructura física sean compatibles con los datos.</p>
-<p>Este enfoque resulta atractivo porque permite manejar datos escasos o incompletos sin requerir mallas finas o simulaciones tradicionales. También se pueden inferir parámetros difíciles de medir en experimentos (por ejemplo, permeabilidad, módulo elástico o coeficientes cinéticos). La diferencia entre resolviendo problemas directos a los inversos es la función de perdida:</p>
-<div class="math notranslate nohighlight">
-\[ \mathcal{L}(\theta,\lambda;T)=w_f\mathcal{L}_f(\theta,\lambda;T_f)+w_b\mathcal{L}_b(\theta,\lambda;T_b)+w_i\mathcal{L}_i(\theta,\lambda;T_i)\]</div>
-<p>Donde:</p>
-<div class="math notranslate nohighlight">
-\[
-\mathcal{L}_i(\theta,\lambda;T_i)=\frac{1}{|T_i|}\sum_{x\in T_i}||\mathcal{I}(\hat{u},x)||^2_2
-\]</div>
-<p>En resumen, las PINNs proporcionan un marco unificado para resolver simultáneamente problemas directos e inversos, integrando datos experimentales y conocimiento físico de manera coherente y eficiente. En nuestro caso, nos interesa resolver el problema inverso presentado.</p>
-</section>
-</section>
-
-    <script type="text/x-thebe-config">
-    {
-        requestKernel: true,
-        binderOptions: {
-            repo: "binder-examples/jupyter-stacks-datascience",
-            ref: "master",
-        },
-        codeMirrorConfig: {
-            theme: "abcdef",
-            mode: "python"
-        },
-        kernelOptions: {
-            name: "python3",
-            path: "./."
-        },
-        predefinedOutput: true
+  <div class="bd-search-container">
+    <h1>Search</h1>
+    <noscript>
+      <div class="admonition error">
+        <p class="admonition-title">Error</p>
+        <p>Please activate JavaScript to enable the search functionality.</p>
+      </div>
+    </noscript>
+    
+<form class="bd-search d-flex align-items-center"
+      action="#"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    <div id="search-results"></div>
+  </div>
+  <script>
+    // Activate the search field on page load
+    let searchInput = document.querySelector("form.bd-search input");
+    if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+        console.log("[PST]: Set focus on search field.");
     }
-    </script>
-    <script>kernelName = 'python3'</script>
-
-                </article>
-              
+  </script>
 
               
               
@@ -418,38 +311,12 @@ document.write(`
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
-    <a class="left-prev"
-       href="ec_logistica.html"
-       title="previous page">
-      <i class="fa-solid fa-angle-left"></i>
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Modelos Maltusiano y Veltusiano</p>
-      </div>
-    </a>
 </div>
                 </footer>
               
             </div>
             
             
-              
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item">
-  <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav class="bd-toc-nav page-toc">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#concepto">Concepto</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#funciones-de-perdida">Funciones de perdida</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problemas-inversos">Problemas inversos</a></li>
-</ul>
-  </nav></div>
-
-</div></div>
               
             
           </div>

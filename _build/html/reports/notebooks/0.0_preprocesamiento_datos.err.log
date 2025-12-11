@@ -1,0 +1,89 @@
+Traceback (most recent call last):
+  File "/opt/miniconda3/envs/kefir_ajuste/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/opt/miniconda3/envs/kefir_ajuste/lib/python3.12/site-packages/nbclient/client.py", line 1319, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/miniconda3/envs/kefir_ajuste/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/miniconda3/envs/kefir_ajuste/lib/python3.12/asyncio/base_events.py", line 685, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/opt/miniconda3/envs/kefir_ajuste/lib/python3.12/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/opt/miniconda3/envs/kefir_ajuste/lib/python3.12/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/opt/miniconda3/envs/kefir_ajuste/lib/python3.12/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+import pandas as pd
+import yaml
+
+with open("../config.yaml", "r") as f:
+    config = yaml.safe_load(f)
+
+data=pd.read_excel(f'../{config["raw_data_path"]}', skiprows=8)
+data.head()
+------------------
+
+
+[31m---------------------------------------------------------------------------[39m
+[31mFileNotFoundError[39m                         Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[1][39m[32m, line 7[39m
+[32m      4[39m [38;5;28;01mwith[39;00m [38;5;28mopen[39m([33m"[39m[33m../config.yaml[39m[33m"[39m, [33m"[39m[33mr[39m[33m"[39m) [38;5;28;01mas[39;00m f:
+[32m      5[39m     config = yaml.safe_load(f)
+[32m----> [39m[32m7[39m data=pd.read_excel([33mf[39m[33m'[39m[33m../[39m[38;5;132;01m{[39;00mconfig[[33m"[39m[33mraw_data_path[39m[33m"[39m][38;5;132;01m}[39;00m[33m'[39m, skiprows=[32m8[39m)
+[32m      8[39m data.head()
+
+[36mFile [39m[32m/opt/miniconda3/envs/kefir_ajuste/lib/python3.12/site-packages/pandas/io/excel/_base.py:495[39m, in [36mread_excel[39m[34m(io, sheet_name, header, names, index_col, usecols, dtype, engine, converters, true_values, false_values, skiprows, nrows, na_values, keep_default_na, na_filter, verbose, parse_dates, date_parser, date_format, thousands, decimal, comment, skipfooter, storage_options, dtype_backend, engine_kwargs)[39m
+[32m    493[39m [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m [38;5;28misinstance[39m(io, ExcelFile):
+[32m    494[39m     should_close = [38;5;28;01mTrue[39;00m
+[32m--> [39m[32m495[39m     io = ExcelFile(
+[32m    496[39m         io,
+[32m    497[39m         storage_options=storage_options,
+[32m    498[39m         engine=engine,
+[32m    499[39m         engine_kwargs=engine_kwargs,
+[32m    500[39m     )
+[32m    501[39m [38;5;28;01melif[39;00m engine [38;5;129;01mand[39;00m engine != io.engine:
+[32m    502[39m     [38;5;28;01mraise[39;00m [38;5;167;01mValueError[39;00m(
+[32m    503[39m         [33m"[39m[33mEngine should not be specified when passing [39m[33m"[39m
+[32m    504[39m         [33m"[39m[33man ExcelFile - ExcelFile already has the engine set[39m[33m"[39m
+[32m    505[39m     )
+
+[36mFile [39m[32m/opt/miniconda3/envs/kefir_ajuste/lib/python3.12/site-packages/pandas/io/excel/_base.py:1550[39m, in [36mExcelFile.__init__[39m[34m(self, path_or_buffer, engine, storage_options, engine_kwargs)[39m
+[32m   1548[39m     ext = [33m"[39m[33mxls[39m[33m"[39m
+[32m   1549[39m [38;5;28;01melse[39;00m:
+[32m-> [39m[32m1550[39m     ext = inspect_excel_format(
+[32m   1551[39m         content_or_path=path_or_buffer, storage_options=storage_options
+[32m   1552[39m     )
+[32m   1553[39m     [38;5;28;01mif[39;00m ext [38;5;129;01mis[39;00m [38;5;28;01mNone[39;00m:
+[32m   1554[39m         [38;5;28;01mraise[39;00m [38;5;167;01mValueError[39;00m(
+[32m   1555[39m             [33m"[39m[33mExcel file format cannot be determined, you must specify [39m[33m"[39m
+[32m   1556[39m             [33m"[39m[33man engine manually.[39m[33m"[39m
+[32m   1557[39m         )
+
+[36mFile [39m[32m/opt/miniconda3/envs/kefir_ajuste/lib/python3.12/site-packages/pandas/io/excel/_base.py:1402[39m, in [36minspect_excel_format[39m[34m(content_or_path, storage_options)[39m
+[32m   1399[39m [38;5;28;01mif[39;00m [38;5;28misinstance[39m(content_or_path, [38;5;28mbytes[39m):
+[32m   1400[39m     content_or_path = BytesIO(content_or_path)
+[32m-> [39m[32m1402[39m [38;5;28;01mwith[39;00m get_handle(
+[32m   1403[39m     content_or_path, [33m"[39m[33mrb[39m[33m"[39m, storage_options=storage_options, is_text=[38;5;28;01mFalse[39;00m
+[32m   1404[39m ) [38;5;28;01mas[39;00m handle:
+[32m   1405[39m     stream = handle.handle
+[32m   1406[39m     stream.seek([32m0[39m)
+
+[36mFile [39m[32m/opt/miniconda3/envs/kefir_ajuste/lib/python3.12/site-packages/pandas/io/common.py:882[39m, in [36mget_handle[39m[34m(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)[39m
+[32m    873[39m         handle = [38;5;28mopen[39m(
+[32m    874[39m             handle,
+[32m    875[39m             ioargs.mode,
+[32m   (...)[39m[32m    878[39m             newline=[33m"[39m[33m"[39m,
+[32m    879[39m         )
+[32m    880[39m     [38;5;28;01melse[39;00m:
+[32m    881[39m         [38;5;66;03m# Binary mode[39;00m
+[32m--> [39m[32m882[39m         handle = [38;5;28mopen[39m(handle, ioargs.mode)
+[32m    883[39m     handles.append(handle)
+[32m    885[39m [38;5;66;03m# Convert BytesIO or file objects passed with an encoding[39;00m
+
+[31mFileNotFoundError[39m: [Errno 2] No such file or directory: '../data/raw/fermentacionKefirdeAguaTestigo.xlsx'
+

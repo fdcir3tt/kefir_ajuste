@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Physics Informed Neural Networks (PINNs) &#8212; My Jupyter Book</title>
+    <title>Modelos Maltusiano y Veltusiano &#8212; My Jupyter Book</title>
   
   
   
@@ -59,10 +59,11 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'pinns';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ec_logistica';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Modelos Maltusiano y Veltusiano" href="ec_logistica.html" />
+    <link rel="next" title="Physics Informed Neural Networks (PINNs)" href="pinns.html" />
+    <link rel="prev" title="Marco Teórico" href="marco_teorico.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -176,11 +177,11 @@
         </ul>
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="marco_teorico.html">Marco Teórico</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ec_logistica.html">Modelos Maltusiano y Veltusiano</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Modelos Maltusiano y Veltusiano</a></li>
 
 
 
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Physics Informed Neural Networks (PINNs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pinns.html">Physics Informed Neural Networks (PINNs)</a></li>
 </ul>
 
     </div>
@@ -235,7 +236,7 @@
       
       
       
-      <li><a href="_sources/pinns.md" target="_blank"
+      <li><a href="_sources/ec_logistica.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -319,7 +320,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Physics Informed Neural Networks (PINNs)</h1>
+    <h1>Modelos Maltusiano y Veltusiano</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -329,10 +330,16 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#concepto">Concepto</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#funciones-de-perdida">Funciones de perdida</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problemas-inversos">Problemas inversos</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Modelos Maltusiano y Veltusiano</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ecuacion-logistica">Ecuación Logística</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-de-gompertz">Modelo de Gompertz</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#calculando-parametros-biologicos">Calculando parámetros biológicos</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-logistico">Modelo Logístico</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-gompertz">Modelo Gompertz</a></li>
 </ul>
+</li>
+</ul>
+
             </nav>
         </div>
     </div>
@@ -343,48 +350,192 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="physics-informed-neural-networks-pinns">
-<h1>Physics Informed Neural Networks (PINNs)<a class="headerlink" href="#physics-informed-neural-networks-pinns" title="Link to this heading">#</a></h1>
-<section id="concepto">
-<h2>Concepto<a class="headerlink" href="#concepto" title="Link to this heading">#</a></h2>
-<p>Las Redes Neuronales informadas por modelos físicos (PINNs) constituyen una metodología de modelado computacional que integra explícitamente las leyes físicas en el proceso de entrenamiento de una red neuronal. A diferencia de los enfoques puramente centrados en datos, las PINNs incorporan ecuaciones diferenciales ordinarias (ODEs), parciales (PDEs) u otras restricciones físicas como parte del mecanismo de optimización. Esto permite que la red aprenda una solución que no solo se ajuste a los datos disponibles, sino que también satisfaga, en el sentido de residuos mínimos, las ecuaciones gobernantes del sistema.</p>
-<p>La motivación detrás de las PINNs es aprovechar la capacidad de aproximación universal de las redes neuronales mientras se restringe su espacio de soluciones mediante las leyes físicas conocidas. De esta manera, el modelo actúa como un solucionador continuo que puede operar incluso con datos escasos, incompletos o ruidosos, garantizando mayor estabilidad y generalización que los métodos puramente empíricos.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="modelos-maltusiano-y-veltusiano">
+<h1>Modelos Maltusiano y Veltusiano<a class="headerlink" href="#modelos-maltusiano-y-veltusiano" title="Link to this heading">#</a></h1>
+<p>El modelo Maltusiano es un modelo matemático que tiene de objetivo describir el comportamiento de una cierta población cual denotaremos con <span class="math notranslate nohighlight">\(P(t)\)</span>.</p>
+<p>Parte de la premisa de que esta solo depende de las tazas de nacimiento <span class="math notranslate nohighlight">\(b(t)\)</span> y de muertes <span class="math notranslate nohighlight">\(d(t)\)</span> . Se propone que tanto <span class="math notranslate nohighlight">\(b(t)\)</span> como <span class="math notranslate nohighlight">\(d(t)\)</span> comparten una relación de proporcionalidad con el tamaño de población <span class="math notranslate nohighlight">\(P(t)\)</span> :</p>
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+    b(t)=\beta P(t) ,\hspace{5mm} d(t)=\delta P(t)
+\end{equation}\)</span></p>
+<p>De aquí, se plantea que la taza en la que cambia el tamaño de población se da por la diferencia entre las tazas de nacimiento y muerte:
+<span class="math notranslate nohighlight">\(\begin{equation}
+    \frac{dP}{dt}=b(t)-d(t)
+\end{equation}\)</span></p>
+<p>Teniendo en mente las expresiones de <span class="math notranslate nohighlight">\((1)\)</span> , obtenemos la ecuación</p>
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+    \frac{dP}{dt}=rP(t)
+\end{equation}\)</span></p>
+<p>Donde <span class="math notranslate nohighlight">\(r=\beta-\delta\)</span> es una constante real. El modelo Veltusiano también considera las mismas premisas y la forma de <span class="math notranslate nohighlight">\((2)\)</span>, solo cambian  <span class="math notranslate nohighlight">\(b(t)\)</span> y <span class="math notranslate nohighlight">\(d(t)\)</span>. Con este modelo se considera que el cociente <span class="math notranslate nohighlight">\(b(t)/P(t)\)</span> en vez de mantenerse constante, se considera que este decrese linealmente con respecto a la población: <span class="math notranslate nohighlight">\(b(t)/P(t)=\beta - k_\beta P(t)\)</span> . De manera similar con la taza de muerte. Como consecuencia, obtenemos:</p>
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+    b(t)=(\beta - k_{\beta}P(t)) P(t) ,\hspace{5mm} d(t)=(\delta + k_{\delta}P(t)) P(t)
+\end{equation}\)</span></p>
+<p>Teniendo esto en mente, a partir de <span class="math notranslate nohighlight">\((2)\)</span> podemos
+$<span class="math notranslate nohighlight">\(
+\frac{dP}{dt}=(\beta - k_{\beta}P) P-(\delta + k_{\delta}P) P
+\)</span>$</p>
+<div class="math notranslate nohighlight">
+\[
+=(\beta - k_{\beta}P-\delta -k_{\delta}P) P
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+=(\beta -\delta -(k_{\beta}+k_{\delta})P) P
+\]</div>
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+=(\beta -\delta)\left(1 -\frac{k_{\beta}+k_{\delta}}{\beta -\delta}P\right) P
+\end{equation}\)</span></p>
+<p>Podemos renombrar los términos en forma compacta para por fin llegar a la ecuación logística:</p>
+<div class="math notranslate nohighlight">
+\[
+    r=\beta -\delta,\hspace{5mm}m=\frac{\beta -\delta}{k_{\beta}+k_{\delta}}
+\]</div>
+<p>Donde <span class="math notranslate nohighlight">\(k_\beta\)</span> y <span class="math notranslate nohighlight">\(k_\delta\)</span> son constantes reales positivas.</p>
 </section>
-<section id="funciones-de-perdida">
-<h2>Funciones de perdida<a class="headerlink" href="#funciones-de-perdida" title="Link to this heading">#</a></h2>
-<p>La idea central matemática de las PINNs se encuentra en la formulación de una función de pérdida compuesta, diseñada para equilibrar simultáneamente:</p>
-<ul class="simple">
-<li><p>El ajuste a datos observados, cuando estos existen.</p></li>
-<li><p>El cumplimiento de las ecuaciones diferenciales gobernantes, expresado como el residuo de la PDE.</p></li>
-<li><p>El respeto de condiciones iniciales y de frontera, necesarias para garantizar la unicidad y estabilidad de la solución.</p></li>
-</ul>
-<p>Una formulación típica de la pérdida es:</p>
-<div class="math notranslate nohighlight">
-\[ \mathcal{L}(\theta;T)=w_f\mathcal{L}_f(\theta;T_f)+w_b\mathcal{L}_b(\theta;T_b)\]</div>
-<p>donde:</p>
+<section class="tex2jax_ignore mathjax_ignore" id="ecuacion-logistica">
+<h1>Ecuación Logística<a class="headerlink" href="#ecuacion-logistica" title="Link to this heading">#</a></h1>
+<p>De esta, obtenemos la ecuación logística:</p>
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+    \frac{dP}{dt}=rP(t)(1-\frac{P(t)}{m})
+\end{equation}\)</span></p>
+<p>Se trata de una ecuación diferencial ordinaria separable.</p>
 <div class="math notranslate nohighlight">
 \[
-\mathcal{L}_f(\theta;T_f)=\frac{1}{|T_f|}\sum_{x\in T_f}||f(x;\partial_i\hat{u};\partial_{ij}^2\hat{u}),\lambda||^2_2
+\int \frac{dP}{P(1-\frac{P}{m})}=\int rdt
+\]</div>
+<p>Por el método de fracciones parciales podemos reescribir el lado izquierdo de la ecuación de forma más sencilla :</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{m}{P(m-P)}= \frac{1}{m-P}+\frac{1}{P}
+\]</div>
+<p>Tal que</p>
+<div class="math notranslate nohighlight">
+\[
+\int \frac{dP}{P(1-\frac{P}{m})}=\int \frac{dP}{m-P}+\int\frac{dP}{P}
 \]</div>
 <div class="math notranslate nohighlight">
 \[
-\mathcal{L}_i(\theta;T_b)=\frac{1}{|T_b|}\sum_{x\in T_b}||\mathcal{B}(\hat{u},x)||^2_2
+\hspace{28mm}=-ln|m-P|+ln|P|
 \]</div>
-<p>La eficiencia de las PINNs se debe a que los residuos de las PDEs se calculan mediante diferenciación automática, lo que evita discretizaciones explícitas y facilita trabajar en dominios de alta dimensionalidad. No obstante, un desafío activo de investigación es la correcta ponderación de los términos de la pérdida, pues el entrenamiento puede volverse rígido o inestable si una de las componentes domina a las demás.</p>
+<div class="math notranslate nohighlight">
+\[
+\hspace{14mm}=ln(\frac{P}{m-P})
+\]</div>
+<p>Sustituyendo se obtiene</p>
+<div class="math notranslate nohighlight">
+\[
+ln(\frac{P}{m-P})=rt+C
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+P=(m-P)e^{rt+C}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+P(1+e^{rt+C})=me^{rt+C}
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+P=\frac{m}{1+e^{-(rt+C)}}
+\]</div>
+<p>Finalmente, vemos que la curva de población se describe por:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+P(t)=\frac{m}{1+e^{-(rt-k)}}
+\end{equation}
+\]</div>
+<p>Donde <span class="math notranslate nohighlight">\(k&gt;0\)</span>, ya que <span class="math notranslate nohighlight">\(C=ln(\frac{P_0}{m-P_0})&lt;0\)</span></p>
 </section>
-<section id="problemas-inversos">
-<h2>Problemas inversos<a class="headerlink" href="#problemas-inversos" title="Link to this heading">#</a></h2>
-<p>Las PINNs han demostrado ser particularmente eficaces en la formulación de problemas inversos, donde el objetivo no es únicamente resolver por la variable de estado, sino estimar parámetros desconocidos dentro de la ecuación diferencial. En estos escenarios, parámetros físicos tales como coeficientes de difusión, viscosidades, términos de reacción o condiciones internas del dominio se tratan como variables adicionales a optimizar.</p>
-<p>El marco general consiste en parametrizar la solución y los parámetros desconocidos mediante la red neuronal,aplicar las ecuaciones gobernantes para que la pérdida física dependa de dichos parámetros y finalmente entrenar la red de forma que la solución reconstruida y la estructura física sean compatibles con los datos.</p>
-<p>Este enfoque resulta atractivo porque permite manejar datos escasos o incompletos sin requerir mallas finas o simulaciones tradicionales. También se pueden inferir parámetros difíciles de medir en experimentos (por ejemplo, permeabilidad, módulo elástico o coeficientes cinéticos). La diferencia entre resolviendo problemas directos a los inversos es la función de perdida:</p>
-<div class="math notranslate nohighlight">
-\[ \mathcal{L}(\theta,\lambda;T)=w_f\mathcal{L}_f(\theta,\lambda;T_f)+w_b\mathcal{L}_b(\theta,\lambda;T_b)+w_i\mathcal{L}_i(\theta,\lambda;T_i)\]</div>
-<p>Donde:</p>
+<section class="tex2jax_ignore mathjax_ignore" id="modelo-de-gompertz">
+<h1>Modelo de Gompertz<a class="headerlink" href="#modelo-de-gompertz" title="Link to this heading">#</a></h1>
+<p>El modelo de Gompertz es una función exponencial que busca describir también el crecimiento poblacional que tiene la forma:</p>
 <div class="math notranslate nohighlight">
 \[
-\mathcal{L}_i(\theta,\lambda;T_i)=\frac{1}{|T_i|}\sum_{x\in T_i}||\mathcal{I}(\hat{u},x)||^2_2
+\begin{equation}
+P(t)=ae^{-e^{-(bt+c)}}
+\end{equation}
 \]</div>
-<p>En resumen, las PINNs proporcionan un marco unificado para resolver simultáneamente problemas directos e inversos, integrando datos experimentales y conocimiento físico de manera coherente y eficiente. En nuestro caso, nos interesa resolver el problema inverso presentado.</p>
+<p>Donde <span class="math notranslate nohighlight">\(a,b,c \)</span> son constantes reales. Pero esta forma no nos sirve mucho, nos vendría mejor expresarlo en forma de ecuación diferencial.</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{dP}{dt}=(ae^{-e^{-(bt+c)}})\frac{d}{dt}(-e^{-(bt+c)})
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\hspace{1mm}=P[be^{-(bt+c)}]
+\]</div>
+<p>Vemos que de la expresión (8) tenemos:
+$<span class="math notranslate nohighlight">\(
+lnP=ln(a)-e^{-(bt+c)}
+\)</span>$</p>
+<p>Por lo tanto,podemos escribir la ecuación diferencial de la siguiente forma.</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+\frac{dP}{dt}=rP\hspace{0.5mm}ln(\frac{m}{P})
+\end{equation}
+\]</div>
+<p>Donde</p>
+<div class="math notranslate nohighlight">
+\[
+r=b ,\hspace{5mm} ln(\frac{m}{P})=ln(a)-ln(P) \iff m=a 
+\]</div>
+<p>Si consideramos <span class="math notranslate nohighlight">\(P(0)=P_0 \)</span>, de (8) obtenemos:</p>
+<div class="math notranslate nohighlight">
+\[
+c=-ln(ln(\frac{m}{P_0}))
+\]</div>
+<p>Y como <span class="math notranslate nohighlight">\(ln(\frac{m}{P}) \geq 0\)</span>, sabemos que <span class="math notranslate nohighlight">\(c&lt;0\)</span>. Entonces, podemos reescribir (8) como:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+P(t)=me^{-e^{-(rt-k)}}\end{equation}\]</div>
+<p>Tener <span class="math notranslate nohighlight">\(P(t)\)</span> de esta forma nos convendrá para poder interpretar de forma más intuitiva el rol de cada paramétro en el crecimento de la población.</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="calculando-parametros-biologicos">
+<h1>Calculando parámetros biológicos<a class="headerlink" href="#calculando-parametros-biologicos" title="Link to this heading">#</a></h1>
+<p>A continuación, calcularemos los parametros biológicos <span class="math notranslate nohighlight">\(\mu\)</span> (rápidez de crecimiento máxima) y <span class="math notranslate nohighlight">\(\lambda\)</span> (retraso de crecimiento).</p>
+<section id="modelo-logistico">
+<h2>Modelo Logístico<a class="headerlink" href="#modelo-logistico" title="Link to this heading">#</a></h2>
+<p>Comenzamos calculando <span class="math notranslate nohighlight">\(\mu\)</span> primero, ya que lo necesitaremos para lograr calcular <span class="math notranslate nohighlight">\(\lambda\)</span> con la recta tangente <span class="math notranslate nohighlight">\(T(t)\)</span> que pasa por el punto de máxima rápidez. Con esto, tenemos las siguientes condiciones:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+\mu=max(\frac{dP}{dt}) ,\hspace{5mm} \lambda=T^{-1}(0)
+\end{equation}
+\]</div>
+<p>Entonces, calculamos la segunda y tercera derivada de <span class="math notranslate nohighlight">\(P(t)\)</span> para encontrar <span class="math notranslate nohighlight">\(\mu\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{dP^2}{dt^2}=r\frac{dP}{dt}(1-\frac{P}{m})+rP(-\frac{1}{m}\frac{dP}{dt})
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\hspace{-14mm}=r\frac{dP}{dt}(1-\frac{2P}{m})
+\]</div>
+<p>Ahora, denominaremos <span class="math notranslate nohighlight">\(t_c\)</span> como el instante en cuál la rápidez de crecimiento es máxima. Observamos que solo hay dos casos en cuál la segunda derivada es igual a cero. A nosotros nos interesa el caso no trivial (<span class="math notranslate nohighlight">\(\frac{dP}{dt}\neq0\)</span>):</p>
+<div class="math notranslate nohighlight">
+\[
+(1-\frac{2P_c}{m})=0\to P(t_c)=P_c=\frac{m}{2}
+\]</div>
+<p>Evaluando <span class="math notranslate nohighlight">\(\frac{dP}{dt}\)</span> en este instante conseguimos el valor de <span class="math notranslate nohighlight">\(\mu\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\mu=rP_c (1- \frac{P_c}{m})=r\frac{m}{4}
+\]</div>
+<p>Seguimos con <span class="math notranslate nohighlight">\(\lambda\)</span> teniendo en cuenta:</p>
+<div class="math notranslate nohighlight">
+\[
+T(t)=\mu t+ T_0 ,\hspace{5mm} T(t_c)=P_c
+\]</div>
+<p>Con esto</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{dP^3}{dt^3}=
+\]</div>
+</section>
+<section id="modelo-gompertz">
+<h2>Modelo Gompertz<a class="headerlink" href="#modelo-gompertz" title="Link to this heading">#</a></h2>
 </section>
 </section>
 
@@ -419,13 +570,22 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="ec_logistica.html"
+       href="marco_teorico.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Modelos Maltusiano y Veltusiano</p>
+        <p class="prev-next-title">Marco Teórico</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="pinns.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Physics Informed Neural Networks (PINNs)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -443,10 +603,16 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#concepto">Concepto</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#funciones-de-perdida">Funciones de perdida</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problemas-inversos">Problemas inversos</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Modelos Maltusiano y Veltusiano</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ecuacion-logistica">Ecuación Logística</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-de-gompertz">Modelo de Gompertz</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#calculando-parametros-biologicos">Calculando parámetros biológicos</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-logistico">Modelo Logístico</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modelo-gompertz">Modelo Gompertz</a></li>
 </ul>
+</li>
+</ul>
+
   </nav></div>
 
 </div></div>
