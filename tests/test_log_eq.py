@@ -1,4 +1,4 @@
-from src.log_eq import log_dif_eq,analytic_sol
+from src import log_dif_eq,analytic_sol
 import numpy as np
 
 def test_log_dif_eq_growth():

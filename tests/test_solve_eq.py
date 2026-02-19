@@ -1,4 +1,4 @@
-from src.solve_eq import runge_kutta
+from src import runge_kutta
 import numpy as np
 
 
