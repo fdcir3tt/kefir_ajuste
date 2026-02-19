@@ -50,12 +50,15 @@ def load( data_frame:pd.DataFrame,directory:Path ):
     
     treatments = data_frame['tratamiento'].unique()
     for t in treatments:
-        mask = data_frame['tratamiento']== t
-        df = data_frame[mask]
-
         file_name = TREATMENT_DICT[t] + '.csv'
         file_path = directory / 'processed' / file_name
-        df.to_csv(file_path)
+        mask = data_frame['tratamiento']== t
+        df = (data_frame[mask]
+              .rename(columns={'Tiempo de Fermentacón (h)':'tiempo(h)'})
+              .drop(columns='tratamiento')
+        )
+        
+        df.to_csv(file_path,index=False)
         print(f"Datos '{file_name}' cargados a '{directory}' correctamente!")
 
 # ============================================================================== #
