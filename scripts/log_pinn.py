@@ -11,8 +11,10 @@ from pathlib import Path
 
 os.environ["DDE_BACKEND"] = "pytorch"
 dde.backend.set_default_backend("pytorch")
-FILE_PATH = Path('data') / 'processed' / 'tratamiento_1.csv'
+TRATAMIENTO=2
+FILE_PATH = Path('data') / 'processed' / f'tratamiento_{TRATAMIENTO}.csv'
 ITERATIONS = 20000
+
 
 r = dde.Variable(0.04)
 k = dde.Variable(51.0)
@@ -57,6 +59,7 @@ t_test, y_test = t[split:], y[split:]
 # ============================================================================== #
 #                                  RED NEURONAL
 # ============================================================================== #
+os.makedirs('models/verhulst',exist_ok=True)
 
 geom = dde.geometry.TimeDomain(t0, tf)
 observe_y_bc = dde.icbc.PointSetBC(t_train, y_train)
@@ -93,7 +96,7 @@ early_stop = dde.callbacks.EarlyStopping(monitor="loss_train",
 variable = dde.callbacks.VariableValue(
                                         var_list=[r,k], 
                                         period=600, 
-                                        filename="parameters.dat"
+                                        filename=f'models/verhulst/parameters_{TRATAMIENTO}.dat'
                                     )
 callbacks = [
     early_stop,
@@ -110,16 +113,16 @@ callbacks = [
 
 
 print("Entrenando PINN...")
-os.makedirs('models/verhulst',exist_ok=True)
+
 losshistory, train_state = model.train(
                                         iterations=ITERATIONS,
                                         callbacks=callbacks,
-                                        model_save_path="models/verhulst/cp"
+                                        model_save_path=f"models/verhulst/T{TRATAMIENTO}"
                                     )
 
 dde.saveplot(losshistory, train_state, isplot=True, issave=False)
 
-with open(file='parameters.dat',mode='r') as f:
+with open(file=f'models/verhulst/parameters_{TRATAMIENTO}.dat',mode='r') as f:
     for line in f:
         pass
 last_line = line.strip()
@@ -141,13 +144,17 @@ print("k learned =", params[1])
 
 print("\nGraficando...")
 os.makedirs('figures',exist_ok=True)
+dde.utils.plot_loss_history(losshistory)
+
+plt.savefig(f"figures/loss_history_T{TRATAMIENTO}.png", dpi=300, bbox_inches="tight")
+plt.close()  
 
 T = np.linspace(t0, tf, 200).reshape(-1, 1)
 pred = model.predict(T)
 real = exact_solution(T, y0, params[0], params[1])
 
 plt.figure(figsize=(8, 5))
-plt.plot(T, real, label="Solución exacta (con parámetros aprendidos)", linewidth=4)
+plt.plot(T, real, label=f"Solución exacta (con parámetros aprendidos) T{TRATAMIENTO}", linewidth=4)
 plt.plot(T, pred, "--", label="Predicción PINN", linewidth=4)
 plt.scatter(t_train, y_train, color="black", label="Datos de entrenamiento")
 plt.scatter(t_test, y_test, color="red", label="Datos test")
@@ -156,5 +163,5 @@ plt.xlabel("Tiempo de Fermentación(h)")
 plt.ylabel("Concentración (g/cm³)")
 plt.legend()
 plt.grid()
-plt.savefig("figures/verhulst.pdf")
+plt.savefig(f"figures/verhulst_T{TRATAMIENTO}.pdf")
 plt.show()
