@@ -1,5 +1,4 @@
 [project]
-<<<<<<< HEAD
 name = "kefir-ajuste-book"
 version = "0.1.0"
 description = ""
@@ -10,21 +9,6 @@ readme = "README.md"
 requires-python = ">=3.12,<4.0"
 dependencies = [
     "jupyter-book (>=2.1.2,<3.0.0)"
-=======
-name = "kefir-ajuste"
-version = "0.1.0"
-description = "Ajuste de curvas de kéfir"
-authors = [
-    {name = "Federico Cirett",email = "fd.cirett@gmail.com"}
-]
-readme = "README.md"
-requires-python = ">=3.12,<3.15"
-dependencies = [
-    "pandas (>=3.0.1,<4.0.0)",
-    "openpyxl (>=3.1.5,<4.0.0)",
-    "torch (>=2.10.0,<3.0.0)",
-    "deepxde (>=1.15.0,<2.0.0)",
->>>>>>> bf8143772a54ff3ad060624a9ba9c52fa47335c6
 ]
 
 
