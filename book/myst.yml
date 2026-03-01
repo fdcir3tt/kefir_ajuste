@@ -7,6 +7,9 @@ project:
   # keywords: []
   # authors: []
   github: https://github.com/R3dMercenary/kefir_ajuste
+  bibliography:
+    - referencias.bib
+
   # To autogenerate a Table of Contents, run "jupyter book init --write-toc"
 site:
   template: book-theme

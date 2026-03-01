@@ -1,28 +1,26 @@
 format: jb-book
 root: docs/index
 
-part: Contexto
-chapters:
-    - file: docs/problema
-    - file: docs/objetivos
-    - file: docs/equipo
+parts:
+  - caption: Contexto
+    chapters:
+      - file: docs/problema
+      - file: docs/objetivos
+      - file: docs/equipo
 
-part: Marco Teórico
-chapters:
-    - file: docs/fuente_de_datos
-    - file: docs/modelos
-    - file: docs/pinns
-    - file: docs/problema_inverso
-    - file: docs/entrenamiento
+  - caption: Marco Teórico
+    chapters:
+      - file: docs/fuente_de_datos
+      - file: docs/modelos
+      - file: docs/pinns
+      - file: docs/problema_inverso
+      - file: docs/entrenamiento
 
-part: Resultados
-chapters:
-    - file: docs/problema_directo
-    - file: docs/metricas_evaluacion
+  - caption: Resultados
+    chapters:
+      - file: docs/problema_directo
+      - file: docs/metricas_evaluacion
 
-part: Referencias
-chapters:
-    file: docs/referencias
-
-
-
+  - caption: Referencias
+    chapters:
+      - file: docs/referencias
