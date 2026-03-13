@@ -1,18 +1,30 @@
-# See docs at: https://mystmd.org/guide/frontmatter
 version: 1
+
 project:
   id: 18a53874-6f82-4006-9984-643ade6133f8
-  # title:
-  # description:
-  # keywords: []
-  # authors: []
-  github: https://github.com/R3dMercenary/kefir_ajuste
+  title: PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido
+  language: es
+  github: https://github.com/fdcir3tt/kefir_ajuste
   bibliography:
     - referencias.bib
+  toc:
+    - file: docs/problema.md
+    - file: docs/fuente_de_datos.md
+    - file: docs/modelos.md
+    - file: docs/pinns.md
+    - file: docs/problema_inverso.md
+    - file: docs/entrenamiento.md
+    - file: docs/problema_directo.md
+    - file: docs/metricas_evaluacion.md
+    - file: docs/metricas.md
 
-  # To autogenerate a Table of Contents, run "jupyter book init --write-toc"
+
 site:
+  url: https://fdcir3tt.github.io/kefir_ajuste/
+  favicon: _static/mcd_logo.png
+  logo: _static/mcd_logo.png
   template: book-theme
-  # options:
-  #   favicon: favicon.ico
-  #   logo: site_logo.png
+  options:
+    folders: true
+    hide_footer_links: true
+ 

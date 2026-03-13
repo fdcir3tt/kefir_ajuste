@@ -35,15 +35,15 @@ La idea central de las PINNs se basa en la construcción de una función de pér
 donde $\theta$ representa los parámetros entrenables de la red,$\mathcal{L}_F$ mientras que $\mathcal{L}_F$ ,$\mathcal{L}_B$ las perdidas asociadas al fenómeno físico  , y los pesos $w$ controlan la contribución relativa de cada término. 
 
 El término asociado a las ecuaciones gobernantes se define como
-$$
+\begin{equation*}
 \mathcal{L}_F(\theta,\lambda)=\frac{1}{|T_F|}\sum_{t\in T_F}||\frac{d\hat{u}_\theta}{dt}-f(t,\hat{u};\lambda)||^2
-$$
+\end{equation*}
  
  donde $\hat{u}$ es la salida de la red neuronal y$\lambda$ corresponde a parámetros desconocidos que pueden ser inferidos durante el entrenamiento. Es decir, son variables que se estimaran junto con los parámetros de la red. De manera análoga, el término de condiciones iniciales y de frontera se expresa como
 
-$$
+\begin{equation*}
 \mathcal{L}_B(\theta)=\frac{1}{|T_B|}\sum_{t_i\in T_B}||\mathcal{B}(\hat{u}_\theta,t_i)-g(t_i)||^2
-$$
+\end{equation*}
 
 asegurando que la solución aprendida sea consistente con las condiciones experimentales del sistema, como la biomasa inicial de los gránulos de kéfir. Finalmente, se agrega el término asociado a que tan bien se ajusta la red a los datos observados y la clave de la resolución del problema inverso :
 
