@@ -1,0 +1,12 @@
+format: jb-book
+root: docs/problema
+
+chapters:
+  - file: docs/fuente_de_datos
+  - file: docs/modelos
+  - file: docs/pinns
+  - file: docs/problema_inverso
+  - file: docs/entrenamiento
+  - file: docs/problema_directo
+  - file: docs/metricas_evaluacion
+  - file: docs/metricas

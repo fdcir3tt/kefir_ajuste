@@ -1,0 +1,22 @@
+title: "PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido"
+language: es
+logo: _static/mcd_logo.png
+
+repository:
+  url: https://github.com/fdcir3tt/kefir_ajuste
+  branch: main
+  path_to_book: book
+
+execute:
+  execute_notebooks: "off"
+
+
+html:
+  favicon: _static/mcd_logo.png
+  use_repository_button: true
+  hide_footer_links: true
+  folders: true
+
+# Bibliografía
+bibliography:
+  - referencias.bib
