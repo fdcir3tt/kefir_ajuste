@@ -64,3 +64,4 @@ $$
 donde $x_i$ es el dato observado en el instante $t_i$.
 
 Este enfoque permite utilizar modelos poblacionales clásicos como guías físicas, mientras se exploran y cuantifican los efectos del pretratamiento de ultrasonido sobre la dinámica de crecimiento microbiano del kéfir de agua.
+

@@ -10,7 +10,6 @@ repository:
 execute:
   execute_notebooks: "off"
 
-
 html:
   favicon: _static/mcd_logo.png
   use_repository_button: true
@@ -18,8 +17,15 @@ html:
   folders: true
 
 # Bibliografía
-bibliography:
+bibtex_bibfiles:
   - referencias.bib
   
 latex:
+  extra_metadata:
+      citation-style: apa
+      pandoc-citeproc: true
   mathjax: true
+
+sphinx:
+  extra_extensions:
+    - sphinxcontrib.bibtex

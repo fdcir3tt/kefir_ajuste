@@ -36,6 +36,7 @@ $$
 Teniendo esto en mente, obtenemos
 
 ```{math}
+:label: proc-logistic
 \begin{align}
 \frac{dP}{dt} &= (\beta - k_{\beta}P) P - (\delta + k_{\delta}P) P \\
 &= (\beta - \delta - (k_{\beta}+k_{\delta})P) P \\
@@ -77,3 +78,4 @@ Si bien este modelo puede aproximar fases iniciales de crecimiento microbiano, r
 Es por eso que, las redes neuronales informadas por modelos físicos (Physics-Informed Neural Networks, PINNs) representan una alternativa robusta para el análisis del crecimiento microbiano. PINNs permiten integrar ecuaciones diferenciales poblacionales —como las del modelo logístico o de Gompertz directamente en el proceso de entrenamiento de la red, al mismo tiempo que aprenden dinámicas no observables a partir de datos experimentales {cite}`Cuomo2022,Pappu2025`. De esta forma, es posible identificar parámetros efectivos dependientes del pretratamiento, modelar dinámicas ocultas y capturar desviaciones respecto a los modelos clásicos, incluso en escenarios con datos escasos, como las series de tiempo disponibles para el crecimiento de gránulos de kéfir de agua.
 
 Este enfoque híbrido combina la interpretabilidad de los modelos tradicionales con la flexibilidad de las técnicas de aprendizaje profundo, ofreciendo una herramienta adecuada para caracterizar y comparar el efecto del ultrasonido sobre el crecimiento microbiano del kéfir.
+

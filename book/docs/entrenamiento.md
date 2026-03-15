@@ -49,3 +49,4 @@ matemático como red ) se comparan utilizando métricas de desempeño, lo que no
 seleccionar el modelo más adecuado para describir la dinámica de crecimiento microbiano 
 en función del tratamiento experimental.
 
+

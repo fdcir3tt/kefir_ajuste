@@ -13,5 +13,3 @@ Para lograr encontrar esta dinámica oculta, primero tenemos que partir de la ya
 ```
 
 
-
-
