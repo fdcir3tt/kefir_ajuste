@@ -4,14 +4,14 @@ En este trabajo se logró **corroborar la validez de los parámetros del modelo 
 
 Los resultados obtenidos mediante RK4 mostraron una **alta concordancia entre la solución numérica y los datos experimentales de crecimiento testigo** de nuestra fuente de datos, lo que confirma que los parámetros estimados del modelo de Gompertz representan adecuadamente la dinámica del sistema biológico estudiado. Esta corroboración respalda el uso del modelo como una herramienta confiable para describir el comportamiento temporal del crecimiento de los gránulos. 
 
-```{figure}/_static/resultados/best_adj.png
+```{figure} /_static/resultados/best_adj.png
 :width: 72%
 ```
 
 ## Ajuste de PINN
 Adicionalmente, se logró **ajustar una Red Neuronal Informada por la Física (Physics-Informed Neural Network, PINN)** a los mismos datos experimentales de crecimiento, utilizando igualmente el **modelo de Gompertz como restricción física**.
 
-```{figure}/_static/resultados/ajuste_PINN_Gompertz.png
+```{figure} /_static/resultados/ajuste_PINN_Gompertz.png
 :width: 72%
 ```
 

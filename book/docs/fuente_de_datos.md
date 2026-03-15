@@ -8,7 +8,7 @@ Los efectos que tiene el ultrasonido en el crecimiento de gránulos de kéfir es
 
 Para lograr encontrar esta dinámica oculta, primero tenemos que partir de la ya conocida. Por ello, describiremos brevemente la formulación básica detrás de los modelos poblacionales que se utilizan para describir el crecimiento microbiano.  
 
-```{figure}/_static/marco_teorico/raw_data_plot.png
+```{figure} /_static/marco_teorico/raw_data_plot.png
 :width: 72%
 ```
 

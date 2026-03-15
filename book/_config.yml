@@ -20,3 +20,6 @@ html:
 # Bibliografía
 bibliography:
   - referencias.bib
+  
+latex:
+  mathjax: true

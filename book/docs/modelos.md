@@ -12,9 +12,11 @@ b(t)=\beta P(t), \quad d(t)=\delta P(t)
 
 De aquí, se plantea que la taza en la que cambia el tamaño de población se da por la diferencia entre las tazas de nacimiento y muerte:
 
+$$
 \begin{equation*}
 \frac{dP}{dt}=b(t)-d(t)
 \end{equation*}
+$$
 
 Teniendo en mente las expresiones de {eq}`rates` , obtenemos la ecuación 
 
@@ -25,14 +27,15 @@ Teniendo en mente las expresiones de {eq}`rates` , obtenemos la ecuación
 
 Donde $r=\beta-\delta$ es una constante real. El modelo Veltusiano también considera las mismas premisas y la forma de {eq}`exponential`, solo cambian  $b(t)$ y $d(t)$. Con este modelo se considera que el cociente $b(t)/P(t)$ en vez de mantenerse constante, se considera que este decrese linealmente con respecto a la población: $b(t)/P(t)=\beta - k_\beta P(t)$ . De manera similar con la taza de muerte. Como consecuencia, obtenemos:
 
+$$
 \begin{equation*}
 b(t)=(\beta - k_{\beta}P) P ,\hspace{5mm} d(t)=(\delta + k_{\delta}P) P
 \end{equation*}
+$$
 
 Teniendo esto en mente, obtenemos
 
 ```{math}
-:label: proc-logistic
 \begin{align}
 \frac{dP}{dt} &= (\beta - k_{\beta}P) P - (\delta + k_{\delta}P) P \\
 &= (\beta - \delta - (k_{\beta}+k_{\delta})P) P \\
@@ -43,14 +46,17 @@ Teniendo esto en mente, obtenemos
 
 Para incorporar estas restricciones, el modelo logístico introduce una capacidad de carga $m$, asociada a la disponibilidad de recursos y al entorno físico-químico del medio de cultivo.Podemos renombrar los términos de {eq}`proc-logistic` en forma compacta para por fin llegar a la ecuación logística:
 
+$$
 \begin{equation*}
 \frac{dP}{dt}=rP(1-\frac{P}{m})
 \end{equation*}
+$$
 
+$$
 \begin{equation*}
     r=\beta -\delta,\hspace{5mm}m=\frac{\beta -\delta}{k_{\beta}+k_{\delta}}
 \end{equation*}
-
+$$
 
 
 
