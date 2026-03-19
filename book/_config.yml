@@ -4,7 +4,7 @@ logo: _static/mcd_logo.png
 
 repository:
   url: https://github.com/fdcir3tt/kefir_ajuste
-  branch: main
+  branch: gh-pages
   path_to_book: book
 
 execute:
