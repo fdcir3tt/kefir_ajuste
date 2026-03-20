@@ -20,6 +20,10 @@ def get_learned_parameters(model:str,treatment:int,n:int|None =None,m:int|None =
         param_dict = {'r':params[0],
                       'k':params[1],
                       'w_coef':params[1:n],'T_coef':params[n:m]}
+    if model=='verhulst_multi_polynomial':
+        param_dict = {'r':params[0],
+                      'k':params[1],
+                      'p_coef':params[1:]}
     return param_dict
 
 
