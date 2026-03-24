@@ -1,6 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
+
 from pathlib import Path
 
 def get_learned_parameters(model:str,treatment:int,n:int|None =None,m:int|None =None):
@@ -20,10 +22,11 @@ def get_learned_parameters(model:str,treatment:int,n:int|None =None,m:int|None =
         param_dict = {'r':params[0],
                       'k':params[1],
                       'w_coef':params[1:n],'T_coef':params[n:m]}
+        
     if model=='verhulst_multi_polynomial':
         param_dict = {'r':params[0],
                       'k':params[1],
-                      'p_coef':params[1:]}
+                      'p_coef':torch.tensor(params[2:]).reshape(n + 1, n + 1)}
     return param_dict
 
 

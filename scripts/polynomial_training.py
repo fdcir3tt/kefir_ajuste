@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 from mlflow.tracking import MlflowClient
 from kefir_ajuste.utils import plot_solution
-from kefir_ajuste.trainers import train_verhulst, train_polynomial
+from kefir_ajuste.trainers import train_multi_polynomial
 # ==============================================================================
 #                               Global config
 # ==============================================================================
@@ -20,7 +20,7 @@ mlflow.set_tracking_uri("file:./mlruns")
 
 
 treatments = [2]
-grades = [2,3]
+grades = [2]
 n_iterations = [1000,2000]
 
 def compute_regression_metrics(y_true, y_pred, n_params):
@@ -150,7 +150,7 @@ for treatment in treatments:
                 mlflow.log_param("grade", grade)
                 mlflow.log_param("epochs", epochs)
 
-                model, loss_history,learned_parameters, y_true, y_pred = train_polynomial(
+                model, loss_history,learned_parameters, y_true, y_pred = train_multi_polynomial(
                     treatment=treatment,
                     grade=grade,
                     epochs=epochs,
