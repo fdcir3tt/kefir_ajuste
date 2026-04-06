@@ -230,6 +230,9 @@ def train_multi_polynomial(
     grade: int,
     epochs: int,
     lr: float = 0.001,
+    random_collocation:bool=False,
+    random_size:int=None,
+
 ):
 
 # ============================================================
@@ -251,8 +254,8 @@ def train_multi_polynomial(
                 index = i * (grade + 1) + j  # Calculate index for flattened 2D array
                 p_coef[index] = dde.Variable(torch.tensor(0.0))  # Set value to 0
 
-    r = dde.Variable(0.04)
-    k = dde.Variable(51.0)
+    r = 0.046 #dde.Variable(0.04)
+    k = 47.81 #dde.Variable(51.0)
 
     intensity_dict = {
             2: {"frequency": 20.0, "period": 15.0},
@@ -265,7 +268,7 @@ def train_multi_polynomial(
     w = intensity_dict[treatment]["frequency"]
     T_period = intensity_dict[treatment]["period"]  
 
-    trainable_variables = [r, k]+p_coef
+    trainable_variables = p_coef
     def multi_polynomial(x: float, y: float, coef: list[torch.Tensor], grade: int):
         # Rebuild the 2D coefficient matrix from the flattened vector
         coef_tensor = torch.stack([v for v in coef]).view(grade+1, grade+1)  # Flatten and reshape
@@ -299,9 +302,18 @@ def train_multi_polynomial(
             lambda t: y0,
             lambda _, on_initial: on_initial,
         )
+    if random_collocation:
+        idx = np.random.choice(len(t_train), size=random_size, replace=False)
 
-    observe_y = dde.icbc.PointSetBC(t_train, y_train)
+        t_sub = t_train[idx]
+        y_sub = y_train[idx]
 
+        observe_y = dde.icbc.PointSetBC(t_sub, y_sub)
+        variables_path=Path('verhulst_multi_polynomial_random_collocation_'+str(treatment)+'.dat')
+        suffix = "_random_collocation"
+    else:
+        observe_y = dde.icbc.PointSetBC(t_train, y_train)
+        suffix = ""
     data_pinn = dde.data.PDE(
             geometry=geom,
             pde=ode,
@@ -335,7 +347,7 @@ def train_multi_polynomial(
     loss_history, _ = model.train(iterations=epochs,
                                  callbacks=callbacks)
     
-    learned_params = get_learned_parameters(model='verhulst_multi_polynomial',
+    learned_params = get_learned_parameters(model=f'verhulst_multi_polynomial{suffix}',
                                             treatment=treatment,
                                             n=grade)
     os.remove(variables_path)

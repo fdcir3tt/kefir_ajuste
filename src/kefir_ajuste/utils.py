@@ -27,6 +27,9 @@ def get_learned_parameters(model:str,treatment:int,n:int|None =None,m:int|None =
         param_dict = {'r':params[0],
                       'k':params[1],
                       'p_coef':torch.tensor(params[2:]).reshape(n + 1, n + 1)}
+    if model=='verhulst_multi_polynomial_random_collocation':
+        param_dict = {
+                      'p_coef':torch.tensor(params).reshape(n + 1, n + 1)}    
     return param_dict
 
 

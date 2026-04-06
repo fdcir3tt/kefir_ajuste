@@ -14,14 +14,14 @@ from kefir_ajuste.trainers import train_multi_polynomial
 
 mlflow.set_tracking_uri("file:./mlruns")
 
-#treatments = range(2,6)
-#grades = range(5,7)
-#n_iterations = [15000, 20000, 30000,50000]
+treatments = range(2,6)
+grades = range(1,4)
+n_iterations = [100000]
 
 
-treatments = [2]
-grades = [2]
-n_iterations = [1000,2000]
+#treatments = [2]
+#grades = [2]
+#n_iterations = [1000,2000]
 
 def compute_regression_metrics(y_true, y_pred, n_params):
     y_true = np.array(y_true)
@@ -128,17 +128,16 @@ def log_training_run(treatment,
 # ==============================================================================
 #                         Polynomial Experiments
 # ==============================================================================
-
-ensure_experiment_active("verhulst_multi_polynomial")
-mlflow.set_experiment("verhulst_multi_polynomial")
+experiment_name = "verhulst_multi_polynomial_random_collocation_discovery"
+ensure_experiment_active(experiment_name)
+mlflow.set_experiment(experiment_name)
 
 for treatment in treatments:
 
     if treatment <= 1:
         continue
 
-    with mlflow.start_run(run_name=f"T{treatment}"):
-        mlflow.log_param("family", "verhulst_multi_polynomial")
+    with mlflow.start_run(run_name=experiment_name):
         for grade, epochs in itertools.product(grades, n_iterations):
 
             with mlflow.start_run(
@@ -154,6 +153,7 @@ for treatment in treatments:
                     treatment=treatment,
                     grade=grade,
                     epochs=epochs,
+                    random_collocation=True,random_size=5
                 )
 
                 log_training_run(treatment=treatment,
