@@ -231,7 +231,10 @@ def train_multi_polynomial(
     epochs: int,
     lr: float = 0.001,
     random_collocation:bool=False,
+    equal_collocation:bool = False,
+    collocation_skip:int = 2,
     random_size:int=None,
+    seed:int = None
 
 ):
 
@@ -254,8 +257,8 @@ def train_multi_polynomial(
                 index = i * (grade + 1) + j  # Calculate index for flattened 2D array
                 p_coef[index] = dde.Variable(torch.tensor(0.0))  # Set value to 0
 
-    r = 0.046 #dde.Variable(0.04)
-    k = 47.81 #dde.Variable(51.0)
+    r = 0.046 
+    k = 47.81 
 
     intensity_dict = {
             2: {"frequency": 20.0, "period": 15.0},
@@ -303,6 +306,8 @@ def train_multi_polynomial(
             lambda _, on_initial: on_initial,
         )
     if random_collocation:
+        if seed:
+            np.random.seed(seed)
         idx = np.random.choice(len(t_train), size=random_size, replace=False)
 
         t_sub = t_train[idx]
@@ -311,9 +316,19 @@ def train_multi_polynomial(
         observe_y = dde.icbc.PointSetBC(t_sub, y_sub)
         variables_path=Path('verhulst_multi_polynomial_random_collocation_'+str(treatment)+'.dat')
         suffix = "_random_collocation"
+    elif equal_collocation:
+        idx = np.arange(1, len(t_train), collocation_skip)
+
+        t_sub = t_train[idx]
+        y_sub = y_train[idx]
+
+        observe_y = dde.icbc.PointSetBC(t_sub, y_sub)
+        variables_path=Path('verhulst_multi_polynomial_equal_collocation_'+str(treatment)+'.dat')
+        suffix = "_equal_collocation"
     else:
         observe_y = dde.icbc.PointSetBC(t_train, y_train)
         suffix = ""
+
     data_pinn = dde.data.PDE(
             geometry=geom,
             pde=ode,

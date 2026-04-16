@@ -14,10 +14,15 @@ from kefir_ajuste.trainers import train_multi_polynomial
 
 mlflow.set_tracking_uri("file:./mlruns")
 
+experiment_name = "verhulst_multi_polynomial_equal_collocation_discovery"
 treatments = range(2,6)
-grades = range(1,4)
-n_iterations = [100000]
-
+grades =[1]
+n_iterations = [10000,15000]
+seed = 42
+random_collocation= False
+equal_collocation = True 
+collocation_skip = 4
+collocation_size=5
 
 #treatments = [2]
 #grades = [2]
@@ -122,13 +127,19 @@ def log_training_run(treatment,
     print("Logging learned parameters...")
     # Log parametros aprendidos
     mlflow.log_params(params=learned_params)
+    if random_collocation:
+        mlflow.log_params(params={"seed":seed,
+                                "random_collocation":random_collocation,
+                                "collocation_size":collocation_size})
+    if equal_collocation:
+        mlflow.log_param("collocation_skip",collocation_skip)
     
     
 
 # ==============================================================================
 #                         Polynomial Experiments
 # ==============================================================================
-experiment_name = "verhulst_multi_polynomial_random_collocation_discovery"
+
 ensure_experiment_active(experiment_name)
 mlflow.set_experiment(experiment_name)
 
@@ -153,7 +164,7 @@ for treatment in treatments:
                     treatment=treatment,
                     grade=grade,
                     epochs=epochs,
-                    random_collocation=True,random_size=5
+                    equal_collocation= equal_collocation
                 )
 
                 log_training_run(treatment=treatment,
