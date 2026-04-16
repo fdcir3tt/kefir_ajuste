@@ -16,7 +16,7 @@ def get_learned_parameters(model:str,treatment:int,n:int|None =None,m:int|None =
     
 
     params = [float(x) for x in values_str.strip("[]").split(",")]
-    if model=='verhulst' or model=='verhulst_equal_collocation' :
+    if model=='verhulst' or model=='verhulst_equal_collocation' or model=='verhulst_all_data' :
         param_dict = {'r':params[0],'k':params[1]}
 
     if model=='verhulst_polynomial':
@@ -52,7 +52,7 @@ def load_time_domain(treatment:int)->tuple[float,float]:
     tf = data["tiempo(h)"].iloc[-1]
     return t0,tf
 
-def load_train_data(treatment:int)->tuple:
+def load_train_data(treatment:int)->tuple[np.ndarray]:
     data = load_data(treatment)
     t = data["tiempo(h)"].to_numpy().reshape(-1, 1)
     y = data["concentracion(g/cm3)"].to_numpy().reshape(-1, 1)

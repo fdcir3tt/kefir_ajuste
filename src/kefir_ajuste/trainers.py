@@ -17,6 +17,7 @@ def train_verhulst(
     treatment: int,
     epochs: int = 15000,
     lr: float = 0.001,
+    all_data:bool=False,
     equal_collocation:bool=False,
     collocation_skip:int=2
 ):
@@ -60,10 +61,17 @@ def train_verhulst(
         observe_y = dde.icbc.PointSetBC(t_sub, y_sub)
         variables_path=Path('verhulst_equal_collocation_'+str(treatment)+'.dat')
         suffix = "_equal_collocation"
-    else:
+    elif all_data:
         observe_y = dde.icbc.PointSetBC(t_train, y_train)
+        variables_path=Path('verhulst_all_data_'+str(treatment)+'.dat')
+        suffix = "_all_data"
+    else:
+        y = np.concatenate([y_train,y_test])
+        t = np.concatenate([t_train,t_test])
+        observe_y = dde.icbc.PointSetBC(t, y)
         suffix = ""
 
+    
 
     data_pinn = dde.data.PDE(
         geometry=geom,

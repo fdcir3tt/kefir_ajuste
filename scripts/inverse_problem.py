@@ -18,7 +18,8 @@ EXPERIMENT_NAME = "verhulst_parameter_estimation"
 EPOCHS = 1000
 LEARNING_RATE = 0.01
 
-EQUAL_COLLOCATION = True 
+ALL_DATA_POINTS = True
+EQUAL_COLLOCATION = False
 COLLOCATION_SIZE = 0
 INIT_SEED = None
 RANDOM_COLLOCATION = False
@@ -148,7 +149,7 @@ with mlflow.start_run(run_name=EXPERIMENT_NAME):
     mlflow.log_param("epochs", EPOCHS)
     mlflow.log_param("learning_rate", LEARNING_RATE)
 
-    model, loss_history,learned_parameters, y_true, y_pred = train_verhulst(treatment=1,epochs=EPOCHS,lr=LEARNING_RATE,equal_collocation= EQUAL_COLLOCATION)
+    model, loss_history,learned_parameters, y_true, y_pred = train_verhulst(treatment=1,epochs=EPOCHS,lr=LEARNING_RATE,equal_collocation= EQUAL_COLLOCATION,all_data=ALL_DATA_POINTS,collocation_skip=COLLOCATION_SIZE)
 
     log_training_run(treatment=1,
                      model=model,
