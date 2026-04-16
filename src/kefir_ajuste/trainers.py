@@ -58,17 +58,24 @@ def train_verhulst(
         t_sub = t_train[idx]
         y_sub = y_train[idx]
 
+        anchor_t = t_sub
         observe_y = dde.icbc.PointSetBC(t_sub, y_sub)
         variables_path=Path('verhulst_equal_collocation_'+str(treatment)+'.dat')
         suffix = "_equal_collocation"
-    elif all_data:
-        observe_y = dde.icbc.PointSetBC(t_train, y_train)
+    
+    if all_data:
+        y = np.concatenate([y_train,y_test])
+        t = np.concatenate([t_train,t_test])
+
+        anchor_t = t
+        observe_y = dde.icbc.PointSetBC(t, y)
         variables_path=Path('verhulst_all_data_'+str(treatment)+'.dat')
         suffix = "_all_data"
     else:
-        y = np.concatenate([y_train,y_test])
-        t = np.concatenate([t_train,t_test])
-        observe_y = dde.icbc.PointSetBC(t, y)
+        
+
+        anchor_t = t_train
+        observe_y = dde.icbc.PointSetBC(t_train, y_train)
         suffix = ""
 
     
@@ -80,7 +87,7 @@ def train_verhulst(
         num_domain=200,
         num_boundary=2,
         num_test=100,
-        anchors=t_train,
+        anchors=anchor_t,
     )
 
 # ============================================================

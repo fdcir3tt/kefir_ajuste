@@ -15,7 +15,7 @@ from kefir_ajuste.trainers import train_verhulst
 mlflow.set_tracking_uri("file:./mlruns")
 
 EXPERIMENT_NAME = "verhulst_parameter_estimation"
-EPOCHS = 1000
+EPOCHS = 10000
 LEARNING_RATE = 0.01
 
 ALL_DATA_POINTS = True
