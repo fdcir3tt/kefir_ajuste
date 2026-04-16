@@ -16,8 +16,9 @@ def get_learned_parameters(model:str,treatment:int,n:int|None =None,m:int|None =
     
 
     params = [float(x) for x in values_str.strip("[]").split(",")]
-    if model=='verhulst':
+    if model=='verhulst' or model=='verhulst_equal_collocation' :
         param_dict = {'r':params[0],'k':params[1]}
+
     if model=='verhulst_polynomial':
         param_dict = {'r':params[0],
                       'k':params[1],
@@ -61,7 +62,7 @@ def load_train_data(treatment:int)->tuple:
     t_test, y_test = t[split:], y[split:]
     return t_train,y_train,t_test,y_test
 
-def plot_solution(model,treatment):
+def plot_solution(model,treatment:int):
     domain=load_time_domain(treatment)
     
     T = np.linspace(domain[0], domain[1], 200).reshape(-1, 1)

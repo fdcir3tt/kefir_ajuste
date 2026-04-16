@@ -17,25 +17,11 @@ def train_verhulst(
     treatment: int,
     epochs: int = 15000,
     lr: float = 0.001,
+    equal_collocation:bool=False,
+    collocation_skip:int=2
 ):
     """
-    Train a PINN model using the Verhulst (logistic) ODE.
-
-    Parameters
-    ----------
-    treatment : int
-        Treatment number (used to load dataset).
-    epochs : int
-        Training iterations.
-    lr : float
-        Learning rate.
-    data_dir : Path | str
-        Directory where tratamiento_X.csv files are stored.
-
-    Returns
-    -------
-    model : dde.Model
-    loss_history : list[float]
+    
     """
 
 
@@ -65,8 +51,19 @@ def train_verhulst(
         lambda t: y0,
         lambda _, on_initial: on_initial,
     )
+    if equal_collocation:
+        idx = np.arange(1, len(t_train), collocation_skip)
 
-    observe_y = dde.icbc.PointSetBC(t_train, y_train)
+        t_sub = t_train[idx]
+        y_sub = y_train[idx]
+
+        observe_y = dde.icbc.PointSetBC(t_sub, y_sub)
+        variables_path=Path('verhulst_equal_collocation_'+str(treatment)+'.dat')
+        suffix = "_equal_collocation"
+    else:
+        observe_y = dde.icbc.PointSetBC(t_train, y_train)
+        suffix = ""
+
 
     data_pinn = dde.data.PDE(
         geometry=geom,
@@ -113,7 +110,7 @@ def train_verhulst(
                                  callbacks=callbacks)
     
 
-    learned_params = get_learned_parameters(model='verhulst',treatment=treatment)
+    learned_params = get_learned_parameters(model='verhulst'+suffix,treatment=treatment)
     os.remove(variables_path)
     y_true = y_test
     y_pred = model.predict(t_test)
