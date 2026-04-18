@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-from src import runge_kutta
+from kefir_ajuste.ode_solvers import runge_kutta
 
 os.makedirs("plots",exist_ok=True)
 
