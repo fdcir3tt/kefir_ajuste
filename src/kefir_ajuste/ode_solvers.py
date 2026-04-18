@@ -1,4 +1,4 @@
-import os
+
 
 
 def runge_kutta(f,y0:float,interval:tuple,n:int=10)->list:
@@ -71,45 +71,6 @@ def runge_kutta(f,y0:float,interval:tuple,n:int=10)->list:
         x+=h
     return curve
 
-def build_dataset(t,y):
-    t = t.reshape(-1, 1)
-    y = y.reshape(-1, 1)
 
-    split_idx = int(0.8 * len(t))
-    t_train, y_train = t[:split_idx], y[:split_idx]
-    t_test, y_test = t[split_idx:], y[split_idx:]
 
-    dataset = dde.data.DataSet(
-        X_train=t_train,
-        y_train=y_train,
-        X_test=t_test,
-        y_test=y_test
-    )
-
-    return dataset
-
-def pinn(a,b,y0,t0,tf,dataset):
-    neurons = [50] + [50] + [50]
-    layer_size = [1] + neurons + [1]
-    activation = "tanh"
-    initializer = "Glorot uniform"
-    optimizer = "adam"
-    learning_rate = 0.0001
-
-    net = dde.nn.FNN(layer_size, activation, initializer)
-    model = dde.Model(dataset, net)
-
-    # resampler = dde.callbacks.PDEPointResampler(period=100)
-    early_stop = dde.callbacks.EarlyStopping(
-        monitor="loss_test",
-        min_delta=1e-6,
-        patience=5000,
-    )
-
-    model.compile(optimizer, lr=learning_rate, metrics=["l2 relative error"])
-    os.makedirs('../../models', exist_ok=True)
-    losshistory, train_state = model.train(iterations=20000, callbacks=[early_stop],
-                                           model_save_path="../models/verhulst-2.1")
-
-    dde.saveplot(losshistory, train_state, isplot=True, issave=False)
 
