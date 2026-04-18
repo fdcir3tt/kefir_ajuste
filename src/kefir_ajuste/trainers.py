@@ -5,8 +5,10 @@ import deepxde as dde
 import random
 import torch 
 
+from typing import Callable
 from kefir_ajuste.utils import get_learned_parameters,load_train_data,load_initial_conditions,load_time_domain
 from pathlib import Path
+from deepxde.icbc.boundary_conditions import PointSetBC
 
 
 
@@ -239,12 +241,9 @@ def train_multi_polynomial(
     treatment: int,
     grade: int,
     epochs: int,
+    collocation_method:Callable = lambda x,y:PointSetBC(x,y),
     lr: float = 0.001,
-    random_collocation:bool=False,
-    equal_collocation:bool = False,
-    collocation_skip:int = 2,
-    random_size:int=None,
-    seed:int = None
+    **kwargs
 
 ):
 
@@ -315,29 +314,10 @@ def train_multi_polynomial(
             lambda t: y0,
             lambda _, on_initial: on_initial,
         )
-    if random_collocation:
-        if seed:
-            np.random.seed(seed)
-        idx = np.random.choice(len(t_train), size=random_size, replace=False)
+    
+    # Colocación de puntos de entrenamiento 
 
-        t_sub = t_train[idx]
-        y_sub = y_train[idx]
-
-        observe_y = dde.icbc.PointSetBC(t_sub, y_sub)
-        variables_path=Path('verhulst_multi_polynomial_random_collocation_'+str(treatment)+'.dat')
-        suffix = "_random_collocation"
-    elif equal_collocation:
-        idx = np.arange(1, len(t_train), collocation_skip)
-
-        t_sub = t_train[idx]
-        y_sub = y_train[idx]
-
-        observe_y = dde.icbc.PointSetBC(t_sub, y_sub)
-        variables_path=Path('verhulst_multi_polynomial_equal_collocation_'+str(treatment)+'.dat')
-        suffix = "_equal_collocation"
-    else:
-        observe_y = dde.icbc.PointSetBC(t_train, y_train)
-        suffix = ""
+    observe_y = collocation_method(t_train,y_train,**kwargs)
 
     data_pinn = dde.data.PDE(
             geometry=geom,
@@ -372,9 +352,10 @@ def train_multi_polynomial(
     loss_history, _ = model.train(iterations=epochs,
                                  callbacks=callbacks)
     
-    learned_params = get_learned_parameters(model=f'verhulst_multi_polynomial{suffix}',
+    learned_params = get_learned_parameters(model=f'verhulst_multi_polynomial',
                                             treatment=treatment,
                                             n=grade)
+    learned_params ["learning_rate"] = lr
     os.remove(variables_path)
     y_true = y_test
     y_pred = model.predict(t_test)

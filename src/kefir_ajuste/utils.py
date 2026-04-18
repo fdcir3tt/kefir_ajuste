@@ -4,6 +4,7 @@ import numpy as np
 import torch
 
 from pathlib import Path
+from deepxde.icbc.boundary_conditions import PointSetBC
 
 def get_learned_parameters(model:str,treatment:int,n:int|None =None,m:int|None =None):
     with open(file=f'{model}_{str(treatment)}.dat',mode='r') as f:
@@ -13,7 +14,6 @@ def get_learned_parameters(model:str,treatment:int,n:int|None =None,m:int|None =
 
 
     epoch_str, values_str = last_line.split(" ", 1)
-    
 
     params = [float(x) for x in values_str.strip("[]").split(",")]
     if model=='verhulst' or model=='verhulst_equal_collocation' or model=='verhulst_all_data' :
@@ -24,11 +24,7 @@ def get_learned_parameters(model:str,treatment:int,n:int|None =None,m:int|None =
                       'k':params[1],
                       'w_coef':params[1:n],'T_coef':params[n:m]}
         
-    if model=='verhulst_multi_polynomial':
-        param_dict = {'r':params[0],
-                      'k':params[1],
-                      'p_coef':torch.tensor(params[2:]).reshape(n + 1, n + 1)}
-    if model=='verhulst_multi_polynomial_random_collocation' or model=='verhulst_multi_polynomial_equal_collocation':
+    if 'verhulst_multi_polynomial' in model:
         param_dict = {
                       'p_coef':torch.tensor(params).reshape(n + 1, n + 1)}    
     return param_dict
@@ -78,3 +74,21 @@ def plot_solution(model,treatment:int):
     plt.ylabel("Concentración (g/cm³)")
     plt.legend()
     plt.grid()
+
+def random_collocation(t_train:np.ndarray,y_train:np.ndarray,collocation_size:int,seed:int)->PointSetBC:
+    if seed:
+        np.random.seed(seed)
+    idx = np.random.choice(len(t_train), size=collocation_size, replace=False)
+
+    t_sub = t_train[idx]
+    y_sub = y_train[idx]
+
+    return PointSetBC(t_sub, y_sub)
+
+def equal_collocation(t_train:np.ndarray,y_train:np.ndarray,collocation_skip:int)->PointSetBC:
+    idx = np.arange(1, len(t_train), collocation_skip)
+
+    t_sub = t_train[idx]
+    y_sub = y_train[idx]
+
+    return PointSetBC(t_sub, y_sub)
