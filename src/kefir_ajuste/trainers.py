@@ -6,7 +6,8 @@ import random
 import torch 
 
 from typing import Callable
-from kefir_ajuste.utils import get_learned_parameters,load_train_data,load_initial_conditions,load_time_domain
+from kefir_ajuste.utils import get_learned_parameters,identity_collocation,\
+                               load_train_data,load_initial_conditions,load_time_domain
 from pathlib import Path
 from deepxde.icbc.boundary_conditions import PointSetBC
 
@@ -15,13 +16,12 @@ from deepxde.icbc.boundary_conditions import PointSetBC
 os.environ["DDE_BACKEND"] = "pytorch"
 dde.backend.set_default_backend("pytorch")
 
-def train_verhulst(
+def verhulst(
     treatment: int,
     epochs: int = 15000,
     lr: float = 0.001,
-    all_data:bool=False,
-    equal_collocation:bool=False,
-    collocation_skip:int=2
+    collocation_method: Callable= identity_collocation,
+    **kwargs
 ):
     """
     
@@ -54,31 +54,14 @@ def train_verhulst(
         lambda t: y0,
         lambda _, on_initial: on_initial,
     )
-    if equal_collocation:
-        idx = np.arange(1, len(t_train), collocation_skip)
-
-        t_sub = t_train[idx]
-        y_sub = y_train[idx]
-
-        anchor_t = t_sub
-        observe_y = dde.icbc.PointSetBC(t_sub, y_sub)
-        variables_path=Path('verhulst_equal_collocation_'+str(treatment)+'.dat')
-        suffix = "_equal_collocation"
-    
-    elif all_data :
+    if collocation_method.__name__ == "all_data_collocation":
         y = np.concatenate([y_train,y_test])
         t = np.concatenate([t_train,t_test])
-
-        anchor_t = t
-        observe_y = dde.icbc.PointSetBC(t, y)
-        variables_path=Path('verhulst_all_data_'+str(treatment)+'.dat')
-        suffix = "_all_data"
-    else:
-        anchor_t = t_train
-        observe_y = dde.icbc.PointSetBC(t_train, y_train)
-        suffix = ""
-
+        anchor_t,observe_y = collocation_method(t,y,**kwargs)
+    else:   
+        anchor_t,observe_y = collocation_method(t_train,y_train,**kwargs)
     
+
 
     data_pinn = dde.data.PDE(
         geometry=geom,
@@ -125,7 +108,7 @@ def train_verhulst(
                                  callbacks=callbacks)
     
 
-    learned_params = get_learned_parameters(model='verhulst'+suffix,treatment=treatment)
+    learned_params = get_learned_parameters(model='verhulst',treatment=treatment)
     os.remove(variables_path)
     y_true = y_test
     y_pred = model.predict(t_test)
@@ -237,7 +220,7 @@ def train_polynomial(
         
     return model, loss_history, learned_params, y_true, y_pred
         
-def train_multi_polynomial(
+def multi_polynomial_model(
     treatment: int,
     grade: int,
     epochs: int,
@@ -317,7 +300,12 @@ def train_multi_polynomial(
     
     # Colocación de puntos de entrenamiento 
 
-    observe_y = collocation_method(t_train,y_train,**kwargs)
+    if collocation_method.__name__ == "all_data_collocation":
+        y = np.concatenate([y_train,y_test])
+        t = np.concatenate([t_train,t_test])
+        anchor_t,observe_y = collocation_method(t,y,**kwargs)
+    else:   
+        anchor_t,observe_y = collocation_method(t_train,y_train,**kwargs)
 
     data_pinn = dde.data.PDE(
             geometry=geom,
@@ -326,7 +314,7 @@ def train_multi_polynomial(
             num_domain=200,
             num_boundary=2,
             num_test=100,
-            anchors=t_train,
+            anchors=anchor_t,
         )
 
     net = dde.nn.FNN([1, 50, 50, 50, 1], "tanh", "Glorot uniform")
