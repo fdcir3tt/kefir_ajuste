@@ -63,7 +63,7 @@ def train_verhulst(
         variables_path=Path('verhulst_equal_collocation_'+str(treatment)+'.dat')
         suffix = "_equal_collocation"
     
-    if all_data:
+    elif all_data :
         y = np.concatenate([y_train,y_test])
         t = np.concatenate([t_train,t_test])
 
@@ -72,8 +72,6 @@ def train_verhulst(
         variables_path=Path('verhulst_all_data_'+str(treatment)+'.dat')
         suffix = "_all_data"
     else:
-        
-
         anchor_t = t_train
         observe_y = dde.icbc.PointSetBC(t_train, y_train)
         suffix = ""
