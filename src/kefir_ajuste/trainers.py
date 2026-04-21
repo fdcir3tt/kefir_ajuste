@@ -11,7 +11,7 @@ from kefir_ajuste.utils import get_learned_parameters,identity_collocation,\
 from pathlib import Path
 from deepxde.icbc.boundary_conditions import PointSetBC
 
-
+VARIABLES_PATH = Path("learned_parameters.dat")
 
 os.environ["DDE_BACKEND"] = "pytorch"
 dde.backend.set_default_backend("pytorch")
@@ -39,7 +39,7 @@ def verhulst(
 # ============================================================
 #               CONFIGURACION ENTRENAMIENTO
 # ============================================================
-    variables_path=Path('verhulst_'+str(treatment)+'.dat')
+    
     r = dde.Variable(0.04)
     k = dde.Variable(51.0)
 
@@ -96,7 +96,7 @@ def verhulst(
     variable = dde.callbacks.VariableValue(
                                         var_list=[r,k], 
                                         period=600, 
-                                        filename=variables_path
+                                        filename=VARIABLES_PATH
                                     )
     callbacks = [
         variable
@@ -109,7 +109,7 @@ def verhulst(
     
 
     learned_params = get_learned_parameters(model='verhulst',treatment=treatment)
-    os.remove(variables_path)
+    os.remove(VARIABLES_PATH)
     y_true = y_test
     y_pred = model.predict(t_test)
     return model, loss_history, learned_params, y_true, y_pred
@@ -140,7 +140,7 @@ def train_polynomial(
             4: {"frequency": 34.0, "period": 15.0},
             5: {"frequency": 34.0, "period": 60.0},
         }
-    variables_path=Path('verhulst_polynomial_'+str(treatment)+'.dat')
+    
     w = intensity_dict[treatment]["frequency"]
     T_period = intensity_dict[treatment]["period"]
 
@@ -197,7 +197,7 @@ def train_polynomial(
     variable = dde.callbacks.VariableValue(
                                         var_list=[r,k]+ w_coef + T_coef, 
                                         period=600, 
-                                        filename=variables_path
+                                        filename=VARIABLES_PATH
                                     )
     callbacks = [
         variable
@@ -213,7 +213,7 @@ def train_polynomial(
                                             treatment=treatment,
                                             n=grade+1,
                                             m=2*grade+1)
-    os.remove(variables_path)
+    os.remove(VARIABLES_PATH)
     y_true = y_test
     y_pred = model.predict(t_test)
         
@@ -258,11 +258,11 @@ def multi_polynomial_model(
             4: {"frequency": 34.0, "period": 15.0},
             5: {"frequency": 34.0, "period": 60.0},
         }
-    variables_path=Path('verhulst_multi_polynomial_'+str(treatment)+'.dat')
+    
     
     w = intensity_dict[treatment]["frequency"]
     T_period = intensity_dict[treatment]["period"]  
-
+    variable_path=Path('learned_parameters.dat')
     trainable_variables = p_coef
     def multi_polynomial(x: float, y: float, coef: list[torch.Tensor], grade: int):
         # Rebuild the 2D coefficient matrix from the flattened vector
@@ -328,7 +328,7 @@ def multi_polynomial_model(
     variable = dde.callbacks.VariableValue(
                                         var_list=trainable_variables, 
                                         period=600, 
-                                        filename=variables_path
+                                        filename=variable_path
                                     )
     callbacks = [
         variable
@@ -341,10 +341,9 @@ def multi_polynomial_model(
                                  callbacks=callbacks)
     
     learned_params = get_learned_parameters(model=f'verhulst_multi_polynomial',
-                                            treatment=treatment,
                                             n=grade)
     learned_params ["learning_rate"] = lr
-    os.remove(variables_path)
+    os.remove(variable_path)
     y_true = y_test
     y_pred = model.predict(t_test)
         

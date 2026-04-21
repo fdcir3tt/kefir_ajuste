@@ -11,8 +11,8 @@ from pathlib import Path
 from mlflow.tracking import MlflowClient
 from deepxde.icbc.boundary_conditions import PointSetBC
 
-def get_learned_parameters(model:str,treatment:int,n:int|None =None,m:int|None =None):
-    with open(file=f'{model}_{str(treatment)}.dat',mode='r') as f:
+def get_learned_parameters(model:str,n:int|None =None,m:int|None =None):
+    with open(file=f'learned_parameters.dat',mode='r') as f:
         for line in f:
             pass
     last_line = line.strip()
