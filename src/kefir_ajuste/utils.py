@@ -11,7 +11,7 @@ from pathlib import Path
 from mlflow.tracking import MlflowClient
 from deepxde.icbc.boundary_conditions import PointSetBC
 
-def get_learned_parameters(model:str,n:int|None =None,m:int|None =None):
+def get_learned_parameters(model:str,n:int|None =None,):
     with open(file=f'learned_parameters.dat',mode='r') as f:
         for line in f:
             pass
@@ -23,11 +23,6 @@ def get_learned_parameters(model:str,n:int|None =None,m:int|None =None):
     params = [float(x) for x in values_str.strip("[]").split(",")]
     if model=='verhulst' or model=='verhulst_equal_collocation' or model=='verhulst_all_data' :
         param_dict = {'r':params[0],'k':params[1]}
-
-    if model=='verhulst_polynomial':
-        param_dict = {'r':params[0],
-                      'k':params[1],
-                      'w_coef':params[1:n],'T_coef':params[n:m]}
         
     if 'verhulst_multi_polynomial' in model:
         param_dict = {
@@ -35,26 +30,23 @@ def get_learned_parameters(model:str,n:int|None =None,m:int|None =None):
     return param_dict
 
 
-def load_data(treatment:int)->pd.DataFrame:
-    file_path = Path("data") / "processed" / f"tratamiento_{treatment}.csv"
+def load_data(file_name:str)->pd.DataFrame:
+    file_path = Path("data") / "processed" / file_name
     data = pd.read_csv(file_path)
     return data
 
-def load_initial_conditions(treatment:int)->tuple[float,float,float]:
-    data = load_data(treatment)
+def load_initial_conditions(data:pd.DataFrame)->tuple[float,float,float]:
     t0 = data["tiempo(h)"].iloc[0]
     y0 = data["concentracion(g/cm3)"].iloc[0]
 
     return t0,y0
 
-def load_time_domain(treatment:int)->tuple[float,float]:
-    data = load_data(treatment)
+def load_time_domain(data:pd.DataFrame)->tuple[float,float]:
     t0 = data["tiempo(h)"].iloc[0]
     tf = data["tiempo(h)"].iloc[-1]
     return t0,tf
 
-def load_train_data(treatment:int)->tuple[np.ndarray]:
-    data = load_data(treatment)
+def split_train_data(data:pd.DataFrame)->tuple[np.ndarray]:
     t = data["tiempo(h)"].to_numpy().reshape(-1, 1)
     y = data["concentracion(g/cm3)"].to_numpy().reshape(-1, 1)
 
@@ -63,13 +55,18 @@ def load_train_data(treatment:int)->tuple[np.ndarray]:
     t_test, y_test = t[split:], y[split:]
     return t_train,y_train,t_test,y_test
 
-def plot_solution(model,treatment:int):
-    domain=load_time_domain(treatment)
+def load_train_data(file_name:str)->tuple[np.ndarray]:
+    data = load_data(file_name)
+    return split_train_data(data)
+
+
+def plot_solution(model,data:pd.DataFrame):
+    domain=load_time_domain(data)
     
     T = np.linspace(domain[0], domain[1], 200).reshape(-1, 1)
     pred = model.predict(T)
     
-    t_train,y_train,t_test,y_test =load_train_data(treatment)
+    t_train,y_train,t_test,y_test =split_train_data(data)
     plt.figure(figsize=(8, 5))
     plt.plot(T, pred, "--", label="Predicción PINN", linewidth=4)
     plt.scatter(t_train, y_train, color="black", label="Datos de entrenamiento")
@@ -169,8 +166,7 @@ def ensure_experiment_active(experiment_name: str) -> str:
     
 
 
-def log_run(treatment:int,
-            model,
+def log_run(dataset:pd.DataFrame,model,
                      model_name:str,
                      collocation_method:Callable|None,
                      loss_history,
@@ -184,7 +180,7 @@ def log_run(treatment:int,
     plt.close() 
 
     plot_solution(model=model,
-                  treatment=treatment)
+                  data=dataset)
     mlflow.log_figure(plt.gcf(), "solution_plot.png")
     plt.close() 
 

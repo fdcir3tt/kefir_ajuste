@@ -14,6 +14,13 @@ TREATMENT_DICT = {'Testigo (T1) Kéfir sin ultrasonicar':'tratamiento_1',
                   '1 min. 20 W/cm2 (T3)':'tratamiento_3',
                   '15 seg. 34 W/cm2 (T4)':'tratamiento_4',
                   '1 min. 34 W/cm2 (T5)':'tratamiento_5'}
+INTENSITY_DICT = {
+            'tratamiento_1': {"intensity": 0.0, "period": 0.0},
+            'tratamiento_2': {"intensity": 20.0, "period": 15.0},
+            'tratamiento_3': {"intensity": 20.0, "period": 60.0},
+            'tratamiento_4': {"intensity": 34.0, "period": 15.0},
+            'tratamiento_5': {"intensity": 34.0, "period": 60.0},
+        }
 
 # ============================================================================== #
 #                               CARGA DE DATOS
@@ -38,6 +45,8 @@ def transform( data_frame:pd.DataFrame )->pd.DataFrame:
                                           value_name= 'concentracion(g/cm3)'
                                         ) 
                         )
+    transformed_data["intensidad(W/cm^2)"] = transformed_data["tratamiento"].apply(lambda x:INTENSITY_DICT[TREATMENT_DICT[x]]["intensity"])
+    transformed_data["periodo de exposición(s)"] = transformed_data["tratamiento"].apply(lambda x:INTENSITY_DICT[TREATMENT_DICT[x]]["period"])
     print(f"Datos transformados correctamente!")
 
     return transformed_data
@@ -49,6 +58,7 @@ def load( data_frame:pd.DataFrame,directory:Path ):
                 exist_ok = True )
     
     treatments = data_frame['tratamiento'].unique()
+    
     for t in treatments:
         file_name = TREATMENT_DICT[t] + '.csv'
         file_path = directory / 'processed' / file_name
@@ -60,7 +70,8 @@ def load( data_frame:pd.DataFrame,directory:Path ):
         
         df.to_csv(file_path,index=False)
         print(f"Datos '{file_name}' cargados a '{directory}' correctamente!")
-
+    df = data_frame.rename(columns={'Tiempo de Fermentacón (h)':'tiempo(h)'})
+    df.to_csv("data/processed/control_dataset.csv")
 # ============================================================================== #
 #                               FLUJO PRINCIPAL
 # ============================================================================== #
