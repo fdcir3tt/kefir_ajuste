@@ -2,7 +2,6 @@ import os
 import numpy as np
 import pandas as pd
 import deepxde as dde
-import random
 import torch 
 
 from typing import Callable
@@ -33,7 +32,7 @@ def verhulst(
 #                         CARGAR DATOS
 # ============================================================
     
-    t_train, y_train, t_test, y_test = load_train_data(dataset)
+    t_train, y_train, t_test, y_test = split_train_data(dataset)
     t0,y0 = load_initial_conditions(dataset)
     t0,tf = load_time_domain(dataset)
 
@@ -115,12 +114,28 @@ def verhulst(
     y_pred = model.predict(t_test)
     return model, loss_history, learned_params, y_true, y_pred
 
+def multi_polynomial(I, T, coef, grade):
+        coef_tensor = torch.stack([v for v in coef]).view(grade+1, grade+1)
 
+        batch_size = I.shape[0]
+
+        I = I.view(batch_size, 1)
+        T = T.view(batch_size, 1)
         
-def multi_polynomial_model(
+        result = 0.0
+        #print(I)
+
+        for i in range(grade+1):
+            for j in range(grade+1):
+                if i + j <= grade:
+                    result += coef_tensor[i, j] * (I[:, 0] ** i) * (T[:, 0] ** j)
+
+        return result.view(-1, 1)
+        
+def physics_discovery(
     dataset:pd.DataFrame,
-    grade: int,
     epochs: int,
+    correction_function:Callable,
     collocation_method:Callable = lambda x,y:PointSetBC(x,y),
     lr: float = 0.001,
     **kwargs
@@ -131,84 +146,86 @@ def multi_polynomial_model(
 #                         CARGAR DATOS
 # ============================================================
 
-    t_train, y_train, t_test, y_test = split_train_data(dataset)
+    
     t0,y0 = load_initial_conditions(dataset)
     t0,tf = load_time_domain(dataset)
 
+    X_train, y_train, X_test,y_test = split_train_data(dataset)
 # ============================================================
 #                 CONFIGURACION ENTRENAMIENTO
 # ============================================================
     
-    p_coef = [dde.Variable(float(torch.rand(1))) for _ in range((grade+1) * (grade+1))]
-    for i in range(grade+1):
-        for j in range(grade+1):
-            if i + j > grade:
-                index = i * (grade + 1) + j  # Calculate index for flattened 2D array
-                p_coef[index] = dde.Variable(torch.tensor(0.0))  # Set value to 0
+    if correction_function.__name__=="multi_polynomial":
+        grade = kwargs.get("grade")
+        c_coef = [dde.Variable(float(torch.rand(1))) for _ in range((grade+1) * (grade+1))]
+        for i in range(grade+1):
+            for j in range(grade+1):
+                if i + j > grade:
+                    index = i * (grade + 1) + j  # Calculate index for flattened 2D array
+                    c_coef[index] = dde.Variable(torch.tensor(0.0))  # Set value to 0
 
     kappa = 0.046 
     L = 47.81 
-    
-    w = dataset["intensidad(W/cm^2)"].iloc[0]
-    T_period = dataset["periodo de exposición(s)"].iloc[0]
     variable_path=Path('learned_parameters.dat')
-    trainable_variables = p_coef
-    def multi_polynomial(x: float, y: float, coef: list[torch.Tensor], grade: int):
-        # Rebuild the 2D coefficient matrix from the flattened vector
-        coef_tensor = torch.stack([v for v in coef]).view(grade+1, grade+1)  # Flatten and reshape
+    trainable_variables = c_coef
 
-        rows, cols = coef_tensor.shape
+    
 
-        i = torch.arange(rows).view(-1, 1)
-        j = torch.arange(cols).view(1, -1)
-        mask = (i + j) <= grade
+    def ode(x, y):
+        I_t = x[:, 0:1]
+        T_t = x[:, 1:2]
+        t = x[:, 2:3]
 
-        return torch.sum(coef_tensor * (x ** i) * (y ** j) * mask)
+        dy_dt = dde.grad.jacobian(y, x, i=0, j=2)
 
-    def ode(t, y):
-        dy_dt = dde.grad.jacobian(y, t, i=0, j=0)
+        delta = correction_function(I_t, T_t, c_coef,**kwargs)
 
-        w_t = torch.tensor(w,dtype=torch.float32)
-        T_t = torch.tensor(T_period,dtype=torch.float32)
-
-        poly_term = multi_polynomial(w_t, T_t, p_coef,grade)
-
-        return dy_dt - kappa * y * (1 - y / L) - poly_term
+        return dy_dt - kappa * y * (1 - y / L) - delta
 
 # ============================================================
 #                         PINN SETUP
 # ============================================================
-
-    geom = dde.geometry.TimeDomain(t0, tf)
-
-    ic = dde.icbc.IC(
-            geom,
-            lambda t: y0,
-            lambda _, on_initial: on_initial,
-        )
+    
+    t_min, t_max = float(t0), float(tf)
+    I_min, I_max = X_train[:, 0].min(), X_train[:, 0].max()
+    T_min, T_max = X_train[:, 1].min(), X_train[:, 1].max()
+    
+    geom_space = dde.geometry.Rectangle(
+    [I_min, T_min],
+    [I_max, T_max]
+)
+    timedomain = dde.geometry.TimeDomain(t_min, t_max)
+    geom = dde.geometry.GeometryXTime(geom_space, timedomain)
     
     # Colocación de puntos de entrenamiento 
-
     if collocation_method.__name__ == "all_data_collocation":
         y = np.concatenate([y_train,y_test])
-        t = np.concatenate([t_train,t_test])
-        anchor_t,observe_y = collocation_method(t,y,**kwargs)
+        X = np.vstack((X_train, X_test))
+    
+        anchor_X, observe_y = collocation_method(X, y, **kwargs)
     else:   
-        anchor_t,observe_y = collocation_method(t_train,y_train,**kwargs)
-
+        anchor_X,observe_y = collocation_method(X_train,y_train,**kwargs)
+    
+    observe_bc = dde.icbc.PointSetBC(
+                                    anchor_X.astype(np.float32),
+                                    observe_y.astype(np.float32),
+                                    component=0,
+                                    shuffle=False
+                                )
     data_pinn = dde.data.PDE(
             geometry=geom,
             pde=ode,
-            bcs=[ic, observe_y],
-            num_domain=200,
-            num_boundary=2,
-            num_test=100,
-            anchors=anchor_t,
+            bcs=[observe_bc],
+            num_domain=200,       # however many PDE collocation points you want
+            num_boundary=0,
+            anchors=anchor_X.astype(np.float32),
         )
 
-    net = dde.nn.FNN([1, 50, 50, 50, 1], "tanh", "Glorot uniform")
+    net = dde.nn.FNN([3, 50, 50, 50, 1], "tanh", "Glorot uniform")
     model = dde.Model(data_pinn, net)
-
+    print("Train X shape:", data_pinn.train_x.shape)
+    print("Anchor count:", anchor_X.shape[0])
+    print("Observe y count:", observe_y.shape[0])
     model.compile(
             optimizer="adam",
             lr=lr,
@@ -229,14 +246,14 @@ def multi_polynomial_model(
     loss_history, _ = model.train(iterations=epochs,
                                  callbacks=callbacks)
     
-    learned_params = get_learned_parameters(model=f'verhulst_multi_polynomial',
+    learned_params = get_learned_parameters(model=correction_function.__name__,
                                             n=grade)
     learned_params ["learning_rate"] = lr
     learned_params ["initial_rate"] = kappa
     learned_params ["initial_saturation_concentration"] = L
     os.remove(variable_path)
     y_true = y_test
-    y_pred = model.predict(t_test)
+    y_pred = model.predict(X_test)
         
         
     return model, loss_history, learned_params, y_true, y_pred

@@ -21,10 +21,10 @@ def get_learned_parameters(model:str,n:int|None =None,):
     epoch_str, values_str = last_line.split(" ", 1)
 
     params = [float(x) for x in values_str.strip("[]").split(",")]
-    if model=='verhulst' or model=='verhulst_equal_collocation' or model=='verhulst_all_data' :
+    if 'verhulst' in model:
         param_dict = {'r':params[0],'k':params[1]}
         
-    if 'verhulst_multi_polynomial' in model:
+    if 'multi_polynomial' in model:
         param_dict = {
                       'p_coef':torch.tensor(params).reshape(n + 1, n + 1)}    
     return param_dict
@@ -42,64 +42,119 @@ def load_initial_conditions(data:pd.DataFrame)->tuple[float,float,float]:
     return t0,y0
 
 def load_time_domain(data:pd.DataFrame)->tuple[float,float]:
-    t0 = data["tiempo(h)"].iloc[0]
-    tf = data["tiempo(h)"].iloc[-1]
+    t0 = data["tiempo(h)"].min()
+    tf = data["tiempo(h)"].max()
     return t0,tf
 
 def split_train_data(data:pd.DataFrame)->tuple[np.ndarray]:
-    t = data["tiempo(h)"].to_numpy().reshape(-1, 1)
+    X = data[["intensidad(W/cm^2)","periodo de exposición(s)","tiempo(h)"]].to_numpy()
     y = data["concentracion(g/cm3)"].to_numpy().reshape(-1, 1)
 
-    split = int(0.8 * len(t))
-    t_train, y_train = t[:split], y[:split]
-    t_test, y_test = t[split:], y[split:]
-    return t_train,y_train,t_test,y_test
+    split = int(0.8 * len(X))
+    X_train, y_train = X[:split], y[:split]
+    X_test, y_test = X[split:], y[split:]
+    return X_train,y_train,X_test,y_test
 
 def load_train_data(file_name:str)->tuple[np.ndarray]:
     data = load_data(file_name)
     return split_train_data(data)
 
 
-def plot_solution(model,data:pd.DataFrame):
-    domain=load_time_domain(data)
-    
-    T = np.linspace(domain[0], domain[1], 200).reshape(-1, 1)
-    pred = model.predict(T)
-    
-    t_train,y_train,t_test,y_test =split_train_data(data)
-    plt.figure(figsize=(8, 5))
-    plt.plot(T, pred, "--", label="Predicción PINN", linewidth=4)
-    plt.scatter(t_train, y_train, color="black", label="Datos de entrenamiento")
-    plt.scatter(t_test, y_test, color="red", label="Datos test")
+def plot_solution(model, data: pd.DataFrame):
+    t_min, t_max = load_time_domain(data)
+    X_train, y_train, X_test, y_test = split_train_data(data)
 
-    plt.xlabel("Tiempo de Fermentación(h)")
-    plt.ylabel("Concentración (g/cm³)")
-    plt.legend()
-    plt.grid()
+    t_plot = np.linspace(t_min, t_max, 200)
+
+    # ── One figure per (I, T) treatment ──────────────────────────────────────
+    all_conditions = np.unique(
+        np.vstack([X_train[:, :2], X_test[:, :2]]), axis=0
+    )
+
+    figures = []
+    for I_val, T_val in all_conditions:
+
+        grid = np.column_stack([
+            np.full(200, I_val),
+            np.full(200, T_val),
+            t_plot
+        ]).astype(np.float32)
+        pred = model.predict(grid)
+
+        # Training points that belong to this condition
+        train_mask = (X_train[:, 0] == I_val) & (X_train[:, 1] == T_val)
+        test_mask  = (X_test[:, 0]  == I_val) & (X_test[:, 1]  == T_val)
+
+        fig, ax = plt.subplots(figsize=(8, 5))
+        ax.plot(t_plot, pred, "--", linewidth=2, label="Predicción PINN")
+        if train_mask.any():
+            ax.scatter(X_train[train_mask, 2], y_train[train_mask],
+                       color="black", label="Entrenamiento")
+        if test_mask.any():
+            ax.scatter(X_test[test_mask, 2], y_test[test_mask],
+                       color="red", label="Test")
+
+        ax.set_title(f"Tratamiento I={I_val:.2f} W/cm², T={T_val:.2f} °C")
+        ax.set_xlabel("Tiempo de Fermentación (h)")
+        ax.set_ylabel("Concentración (g/cm³)")
+        ax.legend()
+        ax.grid()
+        fig.tight_layout()
+        figures.append((fig, f"treatment_I{I_val:.2f}_T{T_val:.2f}"))
+
+    # ── Test-only figure ─────────────────────────────────────────────────────
+    fig_test, ax_test = plt.subplots(figsize=(8, 5))
+    for I_val, T_val in all_conditions:
+        test_mask = (X_test[:, 0] == I_val) & (X_test[:, 1] == T_val)
+        if not test_mask.any():
+            continue
+
+        grid = np.column_stack([
+            np.full(200, I_val),
+            np.full(200, T_val),
+            t_plot
+        ]).astype(np.float32)
+        pred = model.predict(grid)
+
+        ax_test.plot(t_plot, pred, "--", linewidth=2,
+                     label=f"PINN (I={I_val:.2f}, T={T_val:.2f})")
+        ax_test.scatter(X_test[test_mask, 2], y_test[test_mask],
+                        label=f"Test (I={I_val:.2f}, T={T_val:.2f})")
+
+    ax_test.set_title("Datos de Test — Todas las condiciones")
+    ax_test.set_xlabel("Tiempo de Fermentación (h)")
+    ax_test.set_ylabel("Concentración (g/cm³)")
+    ax_test.legend()
+    ax_test.grid()
+    fig_test.tight_layout()
+    figures.append((fig_test, "test_all_conditions"))
+
+    return figures
+
 
 def all_data_collocation(t,y)->PointSetBC:
     return t,PointSetBC(t,y)
 
-def identity_collocation(t_train:np.ndarray,y_train:np.ndarray)->tuple[np.ndarray,PointSetBC]:
-    return t_train,PointSetBC(t_train, y_train)
+def identity_collocation(X_train:np.ndarray,y_train:np.ndarray,**kwargs)->tuple[np.ndarray,PointSetBC]:
+    return X_train, y_train
 
-def random_collocation(t_train:np.ndarray,y_train:np.ndarray,collocation_size:int,seed:int)->PointSetBC:
-    if seed:
+def random_collocation(X_train:np.ndarray,y_train:np.ndarray,collocation_size:int,seed:int)->tuple[np.ndarray,PointSetBC]:
+    if seed is not None:
         np.random.seed(seed)
-    idx = np.random.choice(len(t_train), size=collocation_size, replace=False)
+    idx = np.random.choice(len(X_train), size=collocation_size, replace=False)
 
-    t_sub = t_train[idx]
+    X_sub = X_train[idx]
     y_sub = y_train[idx]
 
-    return t_sub,PointSetBC(t_sub, y_sub)
+    return X_sub,PointSetBC(X_sub, y_sub)
 
-def equal_collocation(t_train:np.ndarray,y_train:np.ndarray,collocation_skip:int)->PointSetBC:
-    idx = np.arange(1, len(t_train), collocation_skip)
+def equal_collocation(X_train:np.ndarray,y_train:np.ndarray,collocation_skip:int)->PointSetBC:
+    idx = np.arange(1, len(X_train), collocation_skip)
 
-    t_sub = t_train[idx]
+    X_sub = X_train[idx]
     y_sub = y_train[idx]
 
-    return t_sub,PointSetBC(t_sub, y_sub)
+    return X_sub,PointSetBC(X_sub, y_sub)
 
 def get_treatment_name(treatment_index:int)->str:
     return {1:"Testigo (T1) Kéfir sin ultrasonicar",
@@ -179,10 +234,11 @@ def log_run(dataset:pd.DataFrame,model,
     mlflow.log_figure(plt.gcf(), "loss_plot.png")
     plt.close() 
 
-    plot_solution(model=model,
-                  data=dataset)
-    mlflow.log_figure(plt.gcf(), "solution_plot.png")
-    plt.close() 
+    figures = plot_solution(model=model, data=dataset)
+    for fig, name in figures:
+        mlflow.log_figure(fig, f"{name}.png")
+        plt.close(fig)
+    
 
     
     n_params = len(learned_params)
