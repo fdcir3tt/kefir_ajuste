@@ -3,7 +3,7 @@ import mlflow
 from mlflow.data.pandas_dataset import PandasDataset
 from kefir_ajuste.utils import ensure_experiment_active,log_run,\
                                load_data,equal_collocation,identity_collocation
-from kefir_ajuste.trainers import physics_discovery,multi_polynomial
+from kefir_ajuste.trainers import physics_discovery,multi_polynomial,intensity_function
 
 # ==============================================================================
 #                               Global config
@@ -17,7 +17,7 @@ GRADE = 1
 EPOCHS = 1000
 LEARNING_RATE = 0.01
 COLLOCATION_METHOD = identity_collocation
-delta = multi_polynomial
+delta = intensity_function
 
 # ==============================================================================
 #                         Polynomial Experiments
@@ -42,7 +42,6 @@ with mlflow.start_run(run_name=run_name):
 
     model, loss_history,learned_parameters, y_true, y_pred = physics_discovery( dataset=dataset,
                                                                                 correction_function=delta,
-                                                                                grade=GRADE,
                                                                                 epochs=EPOCHS,
                                                                                 lr=LEARNING_RATE,
                                                                                 collocation_method=COLLOCATION_METHOD,

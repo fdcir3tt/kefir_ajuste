@@ -26,7 +26,11 @@ def get_learned_parameters(model:str,n:int|None =None,):
         
     if 'multi_polynomial' in model:
         param_dict = {
-                      'p_coef':torch.tensor(params).reshape(n + 1, n + 1)}    
+                      'p_coef':torch.tensor(params).reshape(n + 1, n + 1)}   
+        
+    if 'intensity_function' in model:
+        param_dict = {
+                      'intensity_coef':torch.tensor(params).reshape(2, 2)}   
     return param_dict
 
 
