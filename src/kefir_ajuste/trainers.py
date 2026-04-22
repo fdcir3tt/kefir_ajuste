@@ -32,7 +32,9 @@ def verhulst(
 #                         CARGAR DATOS
 # ============================================================
     
-    t_train, y_train, t_test, y_test = split_train_data(dataset)
+    X_train, y_train, X_test, y_test = split_train_data(dataset)
+    t_train =  X_train[:, 2].reshape(-1, 1)
+    t_test =  X_test[:, 2].reshape(-1, 1)
     t0,y0 = load_initial_conditions(dataset)
     t0,tf = load_time_domain(dataset)
 
@@ -60,13 +62,18 @@ def verhulst(
         anchor_t,observe_y = collocation_method(t,y,**kwargs)
     else:   
         anchor_t,observe_y = collocation_method(t_train,y_train,**kwargs)
-    
-
+    anchor_t = anchor_t.reshape(-1, 1)
+    observe_bc= dde.icbc.PointSetBC(
+                                    anchor_t.astype(np.float32),
+                                    observe_y.astype(np.float32),
+                                    component=0,
+                                    shuffle=False
+                                )
 
     data_pinn = dde.data.PDE(
         geometry=geom,
         pde=ode,
-        bcs=[ic, observe_y],
+        bcs=[ observe_bc],
         num_domain=200,
         num_boundary=2,
         num_test=100,

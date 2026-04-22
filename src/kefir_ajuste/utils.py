@@ -59,75 +59,94 @@ def load_train_data(file_name:str)->tuple[np.ndarray]:
     data = load_data(file_name)
     return split_train_data(data)
 
-
-def plot_solution(model, data: pd.DataFrame):
-    t_min, t_max = load_time_domain(data)
-    X_train, y_train, X_test, y_test = split_train_data(data)
-
-    t_plot = np.linspace(t_min, t_max, 200)
-
-    # ── One figure per (I, T) treatment ──────────────────────────────────────
-    all_conditions = np.unique(
-        np.vstack([X_train[:, :2], X_test[:, :2]]), axis=0
-    )
-
-    figures = []
-    for I_val, T_val in all_conditions:
-
-        grid = np.column_stack([
-            np.full(200, I_val),
-            np.full(200, T_val),
-            t_plot
-        ]).astype(np.float32)
-        pred = model.predict(grid)
-
-        # Training points that belong to this condition
-        train_mask = (X_train[:, 0] == I_val) & (X_train[:, 1] == T_val)
-        test_mask  = (X_test[:, 0]  == I_val) & (X_test[:, 1]  == T_val)
-
+def plot_solution(model, data: pd.DataFrame,experiment:str):
+    if experiment=="inverse_problem":
+        domain=load_time_domain(data)
+    
+        T = np.linspace(domain[0], domain[1], 200).reshape(-1, 1)
+        pred = model.predict(T)
+        
+        X_train,y_train,X_test,y_test =split_train_data(data)
+        t_train =  X_train[:, 2].reshape(-1, 1)
+        t_test =  X_test[:, 2].reshape(-1, 1)
         fig, ax = plt.subplots(figsize=(8, 5))
-        ax.plot(t_plot, pred, "--", linewidth=2, label="Predicción PINN")
-        if train_mask.any():
-            ax.scatter(X_train[train_mask, 2], y_train[train_mask],
-                       color="black", label="Entrenamiento")
-        if test_mask.any():
-            ax.scatter(X_test[test_mask, 2], y_test[test_mask],
-                       color="red", label="Test")
+        plt.plot(T, pred, "--", label="Predicción PINN", linewidth=4)
+        plt.scatter(t_train, y_train, color="black", label="Datos de entrenamiento")
+        plt.scatter(t_test, y_test, color="red", label="Datos test")
 
-        ax.set_title(f"Tratamiento I={I_val:.2f} W/cm², T={T_val:.2f} °C")
-        ax.set_xlabel("Tiempo de Fermentación (h)")
-        ax.set_ylabel("Concentración (g/cm³)")
-        ax.legend()
-        ax.grid()
-        fig.tight_layout()
-        figures.append((fig, f"treatment_I{I_val:.2f}_T{T_val:.2f}"))
+        plt.xlabel("Tiempo de Fermentación(h)")
+        plt.ylabel("Concentración (g/cm³)")
+        plt.legend()
+        plt.grid()
+        return [(fig,"data_plot")]
+    if experiment=="physics_discovery":
+        t_min, t_max = load_time_domain(data)
+        X_train, y_train, X_test, y_test = split_train_data(data)
+        
+        t_plot = np.linspace(t_min, t_max, 200)
 
-    # ── Test-only figure ─────────────────────────────────────────────────────
-    fig_test, ax_test = plt.subplots(figsize=(8, 5))
-    for I_val, T_val in all_conditions:
-        test_mask = (X_test[:, 0] == I_val) & (X_test[:, 1] == T_val)
-        if not test_mask.any():
-            continue
+        # ── One figure per (I, T) treatment ──────────────────────────────────────
+        all_conditions = np.unique(
+            np.vstack([X_train[:, :2], X_test[:, :2]]), axis=0
+        )
 
-        grid = np.column_stack([
-            np.full(200, I_val),
-            np.full(200, T_val),
-            t_plot
-        ]).astype(np.float32)
-        pred = model.predict(grid)
+        figures = []
+        for I_val, T_val in all_conditions:
 
-        ax_test.plot(t_plot, pred, "--", linewidth=2,
-                     label=f"PINN (I={I_val:.2f}, T={T_val:.2f})")
-        ax_test.scatter(X_test[test_mask, 2], y_test[test_mask],
-                        label=f"Test (I={I_val:.2f}, T={T_val:.2f})")
+            grid = np.column_stack([
+                np.full(200, I_val),
+                np.full(200, T_val),
+                t_plot
+            ]).astype(np.float32)
+            pred = model.predict(grid)
 
-    ax_test.set_title("Datos de Test — Todas las condiciones")
-    ax_test.set_xlabel("Tiempo de Fermentación (h)")
-    ax_test.set_ylabel("Concentración (g/cm³)")
-    ax_test.legend()
-    ax_test.grid()
-    fig_test.tight_layout()
-    figures.append((fig_test, "test_all_conditions"))
+            # Training points that belong to this condition
+            train_mask = (X_train[:, 0] == I_val) & (X_train[:, 1] == T_val)
+            test_mask  = (X_test[:, 0]  == I_val) & (X_test[:, 1]  == T_val)
+
+            fig, ax = plt.subplots(figsize=(8, 5))
+            ax.plot(t_plot, pred, "--", linewidth=2, label="Predicción PINN")
+            if train_mask.any():
+                ax.scatter(X_train[train_mask, 2], y_train[train_mask],
+                        color="black", label="Entrenamiento")
+            if test_mask.any():
+                ax.scatter(X_test[test_mask, 2], y_test[test_mask],
+                        color="red", label="Test")
+
+            ax.set_title(f"Tratamiento I={I_val:.2f} W/cm², T={T_val:.2f} °C")
+            ax.set_xlabel("Tiempo de Fermentación (h)")
+            ax.set_ylabel("Concentración (g/cm³)")
+            ax.legend()
+            ax.grid()
+            fig.tight_layout()
+            figures.append((fig, f"treatment_I{I_val:.2f}_T{T_val:.2f}"))
+
+        # ── Test-only figure ─────────────────────────────────────────────────────
+        fig_test, ax_test = plt.subplots(figsize=(8, 5))
+        for I_val, T_val in all_conditions:
+            test_mask = (X_test[:, 0] == I_val) & (X_test[:, 1] == T_val)
+            if not test_mask.any():
+                continue
+
+            grid = np.column_stack([
+                np.full(200, I_val),
+                np.full(200, T_val),
+                t_plot
+            ]).astype(np.float32)
+            pred = model.predict(grid)
+
+            ax_test.plot(t_plot, pred, "--", linewidth=2,
+                        label=f"PINN (I={I_val:.2f}, T={T_val:.2f})")
+            ax_test.scatter(X_test[test_mask, 2], y_test[test_mask],
+                            label=f"Test (I={I_val:.2f}, T={T_val:.2f})")
+
+        ax_test.set_title("Datos de Test — Todas las condiciones")
+        ax_test.set_xlabel("Tiempo de Fermentación (h)")
+        ax_test.set_ylabel("Concentración (g/cm³)")
+        ax_test.legend()
+        ax_test.grid()
+        fig_test.tight_layout()
+        figures.append((fig_test, "test_all_conditions"))
 
     return figures
 
@@ -221,7 +240,8 @@ def ensure_experiment_active(experiment_name: str) -> str:
     
 
 
-def log_run(dataset:pd.DataFrame,model,
+def log_run(experiment:str,
+            dataset:pd.DataFrame,model,
                      model_name:str,
                      collocation_method:Callable|None,
                      loss_history,
@@ -234,7 +254,7 @@ def log_run(dataset:pd.DataFrame,model,
     mlflow.log_figure(plt.gcf(), "loss_plot.png")
     plt.close() 
 
-    figures = plot_solution(model=model, data=dataset)
+    figures = plot_solution(model=model, data=dataset,experiment=experiment)
     for fig, name in figures:
         mlflow.log_figure(fig, f"{name}.png")
         plt.close(fig)

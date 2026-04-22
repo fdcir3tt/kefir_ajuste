@@ -11,7 +11,7 @@ from kefir_ajuste.trainers import verhulst
 mlflow.set_tracking_uri("file:./mlruns")
 DATA_FILE_NAME = "tratamiento_1.csv"
 EXPERIMENT_NAME = "Inverse Problem"
-EPOCHS = 10000
+EPOCHS = 1000
 LEARNING_RATE = 0.01
 model_equation = verhulst
 collocation_method = identity_collocation
@@ -28,7 +28,10 @@ mlflow.set_experiment(EXPERIMENT_NAME)
 
 dataset = load_data(DATA_FILE_NAME)
 dataset_source_url = f"data/processed/{DATA_FILE_NAME}"
-mlflow_dataset: PandasDataset = mlflow.data.from_pandas(dataset, source=dataset_source_url,targets="concentracion(g/cm3)",name=DATA_FILE_NAME)
+mlflow_dataset: PandasDataset = mlflow.data.from_pandas(dataset, 
+                                                        source=dataset_source_url,
+                                                        targets="concentracion(g/cm3)",
+                                                        name=DATA_FILE_NAME)
 
 
 run_name = f"{model_equation.__name__}_{LEARNING_RATE}_{EPOCHS}"
@@ -42,7 +45,8 @@ with mlflow.start_run(run_name=run_name):
                                                                             collocation_method=collocation_method
                                                                              )
 
-    log_run(dataset=dataset,
+    log_run(experiment="inverse_problem",
+            dataset=dataset,
                      model=model,
                      model_name=f"verhulst_IP_PINN",
                      loss_history=loss_history,

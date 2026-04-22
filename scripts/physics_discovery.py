@@ -48,7 +48,8 @@ with mlflow.start_run(run_name=run_name):
                                                                                 collocation_method=COLLOCATION_METHOD,
                                                                                 )
 
-    log_run(dataset=dataset,
+    log_run(experiment="physics_discovery",
+            dataset=dataset,
             model=model,
             model_name=f"multi_polynomial",
             collocation_method = COLLOCATION_METHOD,
