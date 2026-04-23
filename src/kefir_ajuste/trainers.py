@@ -154,6 +154,7 @@ def physics_discovery(
     dataset:pd.DataFrame,
     epochs: int,
     correction_function:Callable,
+    collocation_args:dict[str,int|None],
     collocation_method:Callable = lambda x,y:PointSetBC(x,y),
     lr: float = 0.001,
     **kwargs
@@ -189,7 +190,7 @@ def physics_discovery(
 
     kappa = 0.046 
     L = 47.81 
-    variable_path=Path('learned_parameters.dat')
+    variable_path= Path('learned_parameters.dat')
     trainable_variables = c_coef
 
     
@@ -200,7 +201,6 @@ def physics_discovery(
         t = x[:, 2:3]
 
         dy_dt = dde.grad.jacobian(y, x, i=0, j=2)
-
         delta = correction_function(t,I_t, T_t, c_coef,**kwargs)
 
         return dy_dt - kappa * y * (1 - y / L) - delta
@@ -225,9 +225,9 @@ def physics_discovery(
         y = np.concatenate([y_train,y_test])
         X = np.vstack((X_train, X_test))
     
-        anchor_X, observe_y = collocation_method(X, y, **kwargs)
+        anchor_X, observe_y = collocation_method(X, y, collocation_args)
     else:   
-        anchor_X,observe_y = collocation_method(X_train,y_train,**kwargs)
+        anchor_X,observe_y = collocation_method(X_train,y_train,collocation_args)
     
     observe_bc = dde.icbc.PointSetBC(
                                     anchor_X.astype(np.float32),
@@ -239,41 +239,33 @@ def physics_discovery(
             geometry=geom,
             pde=ode,
             bcs=[observe_bc],
-            num_domain=200,       # however many PDE collocation points you want
+            num_domain=200,       # PDE collocation
             num_boundary=0,
             anchors=anchor_X.astype(np.float32),
         )
 
     net = dde.nn.FNN([3, 50, 50, 50, 1], "tanh", "Glorot uniform")
     model = dde.Model(data_pinn, net)
-    print("Train X shape:", data_pinn.train_x.shape)
-    print("Anchor count:", anchor_X.shape[0])
-    print("Observe y count:", observe_y.shape[0])
-    model.compile(
-            optimizer="adam",
-            lr=lr,
-            external_trainable_variables=trainable_variables
-        )
-    variable = dde.callbacks.VariableValue(
-                                        var_list=trainable_variables, 
-                                        period=600, 
-                                        filename=variable_path
-                                    )
-    callbacks = [
-        variable
-    ]
+
+    model.compile(optimizer="adam",
+                  lr=lr,
+                  external_trainable_variables=trainable_variables)
+    variable = dde.callbacks.VariableValue(var_list=trainable_variables, 
+                                           period=600, 
+                                           filename=variable_path)
+    callbacks = [variable]
 
 # ============================================================
 #                        ENTRENAMIENTO
 # ============================================================
     loss_history, _ = model.train(iterations=epochs,
-                                 callbacks=callbacks)
+                                  callbacks=callbacks)
     if correction_function.__name__=="multi_polynomial":
         learned_params = get_learned_parameters(model=correction_function.__name__,
                                                 n=grade)
     else:
         learned_params = get_learned_parameters(model=correction_function.__name__)
-        
+
     learned_params ["learning_rate"] = lr
     learned_params ["initial_rate"] = kappa
     learned_params ["initial_saturation_concentration"] = L

@@ -16,7 +16,8 @@ DATA_FILE_NAME = "control_dataset.csv"
 GRADE = 6
 EPOCHS = 1000
 LEARNING_RATE = 0.01
-COLLOCATION_METHOD = identity_collocation
+COLLOCATION_METHOD = equal_collocation
+COLLOCATION_ARGS = {"collocation_skip":2}
 delta =  fourier_term
 
 # ==============================================================================
@@ -42,10 +43,11 @@ with mlflow.start_run(run_name=run_name):
 
     model, loss_history,learned_parameters, y_true, y_pred = physics_discovery( dataset=dataset,
                                                                                 correction_function=delta,
-
+                                                                        
                                                                                 epochs=EPOCHS,
                                                                                 lr=LEARNING_RATE,
-                                                                                collocation_method=COLLOCATION_METHOD,
+                                                                                collocation_method= COLLOCATION_METHOD,
+                                                                                collocation_args = COLLOCATION_ARGS
                                                                                 )
 
     log_run(experiment="physics_discovery",
