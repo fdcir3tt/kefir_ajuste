@@ -30,7 +30,10 @@ def get_learned_parameters(model:str,n:int|None =None,):
         
     if 'intensity_function' in model:
         param_dict = {
-                      'intensity_coef':torch.tensor(params).reshape(2, 2)}   
+                      'intensity_coef':torch.tensor(params).reshape(2, 2)} 
+    if 'fourier_term' in model:
+        param_dict = {
+                      'fourier_coef':torch.tensor(params).reshape(-1, 1)}   
     return param_dict
 
 

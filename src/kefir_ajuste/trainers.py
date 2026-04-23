@@ -121,12 +121,8 @@ def verhulst(
     y_pred = model.predict(t_test)
     return model, loss_history, learned_params, y_true, y_pred
 
-def intensity_function(I, T, coef,t):
-    intensity = (coef[0]+coef[1]*I+coef[2]*T+coef[3]*I*T)
-    sine_term = torch.sin(2 * torch.pi * t / 15)
-    return intensity*sine_term
 
-def multi_polynomial(I, T, coef, t,grade):
+def multi_polynomial(t,I,T, coef,grade):
         coef_tensor = torch.stack([v for v in coef]).view(grade+1, grade+1)
 
         batch_size = I.shape[0]
@@ -143,7 +139,17 @@ def multi_polynomial(I, T, coef, t,grade):
                     result += coef_tensor[i, j] * (I[:, 0] ** i) * (T[:, 0] ** j)
 
         return result.view(-1, 1)
-        
+
+def intensity_function(t,I,T, coef):
+    intensity = (coef[0]+coef[1]*I+coef[2]*T+coef[3]*I*T)
+    sine_term = torch.sin(2 * torch.pi * t / 15)
+    return intensity*sine_term
+
+def fourier_term(t,I,T, coef):
+    intensity = coef[0] * I * torch.sin(coef[1]* T)
+    sine_term = torch.sin(2 * torch.pi * t / 15)
+    return intensity*sine_term
+
 def physics_discovery(
     dataset:pd.DataFrame,
     epochs: int,
@@ -178,6 +184,8 @@ def physics_discovery(
 
     if correction_function.__name__=="intensity_function":
         c_coef = [dde.Variable(torch.rand(1)) for _ in range(4)]
+    if correction_function.__name__=="fourier_term":
+        c_coef = [dde.Variable(torch.rand(1)) for _ in range(2)]
 
     kappa = 0.046 
     L = 47.81 
@@ -193,7 +201,7 @@ def physics_discovery(
 
         dy_dt = dde.grad.jacobian(y, x, i=0, j=2)
 
-        delta = correction_function(I_t, T_t, c_coef,t,**kwargs)
+        delta = correction_function(t,I_t, T_t, c_coef,**kwargs)
 
         return dy_dt - kappa * y * (1 - y / L) - delta
 
@@ -263,8 +271,9 @@ def physics_discovery(
     if correction_function.__name__=="multi_polynomial":
         learned_params = get_learned_parameters(model=correction_function.__name__,
                                                 n=grade)
-    if correction_function.__name__=="intensity_function":
+    else:
         learned_params = get_learned_parameters(model=correction_function.__name__)
+        
     learned_params ["learning_rate"] = lr
     learned_params ["initial_rate"] = kappa
     learned_params ["initial_saturation_concentration"] = L
