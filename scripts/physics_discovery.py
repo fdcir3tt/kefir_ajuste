@@ -1,8 +1,9 @@
 import mlflow
 
 from mlflow.data.pandas_dataset import PandasDataset
-from kefir_ajuste.utils import ensure_experiment_active,log_run,\
-                               load_data,equal_collocation,identity_collocation
+from kefir_ajuste.utils import ensure_experiment_active,log_run,plot_physics_discovery_solution
+from kefir_ajuste.data import load_data
+from kefir_ajuste.collocation_methods import equal_collocation,identity_collocation
 from kefir_ajuste.trainers import physics_discovery,multi_polynomial,intensity_function,fourier_term
 
 # ==============================================================================
@@ -13,7 +14,6 @@ mlflow.set_tracking_uri("file:./mlruns")
 
 EXPERIMENT_NAME = "Physics Discovery"
 DATA_FILE_NAME = "control_dataset.csv"
-GRADE = 6
 EPOCHS = 1000
 LEARNING_RATE = 0.01
 COLLOCATION_METHOD = equal_collocation
@@ -50,12 +50,12 @@ with mlflow.start_run(run_name=run_name):
                                                                                 collocation_args = COLLOCATION_ARGS
                                                                                 )
 
-    log_run(experiment="physics_discovery",
-            dataset=dataset,
+    log_run(dataset=dataset,
             model=model,
             model_name=delta.__name__,
             collocation_method = COLLOCATION_METHOD,
             loss_history=loss_history,
             learned_params=learned_parameters,
+            plot_solution=plot_physics_discovery_solution,
             y_true=y_true,
             y_pred=y_pred)

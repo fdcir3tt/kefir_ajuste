@@ -5,9 +5,9 @@ import deepxde as dde
 import torch 
 
 from typing import Callable
-from kefir_ajuste.utils import get_learned_parameters,identity_collocation,\
-                               load_train_data,load_initial_conditions,load_time_domain,\
-                               split_train_data
+from kefir_ajuste.collocation_methods import identity_collocation
+from kefir_ajuste.utils import get_learned_parameters,split_train_data
+from kefir_ajuste.data import load_initial_conditions,load_time_domain
 from pathlib import Path
 from deepxde.icbc.boundary_conditions import PointSetBC
 
@@ -16,13 +16,11 @@ VARIABLES_PATH = Path("learned_parameters.dat")
 os.environ["DDE_BACKEND"] = "pytorch"
 dde.backend.set_default_backend("pytorch")
 
-def verhulst(
-    dataset:pd.DataFrame,
-    epochs: int = 15000,
-    lr: float = 0.001,
-    collocation_method: Callable= identity_collocation,
-    **kwargs
-):
+def verhulst(dataset:pd.DataFrame,
+            epochs: int = 15000,
+            lr: float = 0.001,
+            collocation_method: Callable= identity_collocation,
+            **kwargs):
     """
     
     """
@@ -150,16 +148,13 @@ def fourier_term(t,I,T, coef):
     sine_term = torch.sin(2 * torch.pi * t / 15)
     return intensity*sine_term
 
-def physics_discovery(
-    dataset:pd.DataFrame,
-    epochs: int,
-    correction_function:Callable,
-    collocation_args:dict[str,int|None],
-    collocation_method:Callable = lambda x,y:PointSetBC(x,y),
-    lr: float = 0.001,
-    **kwargs
-
-):
+def physics_discovery(dataset:pd.DataFrame,
+                      epochs: int,
+                      correction_function:Callable,
+                      collocation_args:dict[str,int|None],
+                      collocation_method:Callable = lambda x,y:PointSetBC(x,y),
+                      lr: float = 0.001,
+                      **kwargs):
 
 # ============================================================
 #                         CARGAR DATOS
@@ -229,20 +224,16 @@ def physics_discovery(
     else:   
         anchor_X,observe_y = collocation_method(X_train,y_train,collocation_args)
     
-    observe_bc = dde.icbc.PointSetBC(
-                                    anchor_X.astype(np.float32),
+    observe_bc = dde.icbc.PointSetBC(anchor_X.astype(np.float32),
                                     observe_y.astype(np.float32),
                                     component=0,
-                                    shuffle=False
-                                )
-    data_pinn = dde.data.PDE(
-            geometry=geom,
-            pde=ode,
-            bcs=[observe_bc],
-            num_domain=200,       # PDE collocation
-            num_boundary=0,
-            anchors=anchor_X.astype(np.float32),
-        )
+                                    shuffle=False)
+    data_pinn = dde.data.PDE(geometry=geom,
+                             pde=ode,
+                             bcs=[observe_bc],
+                             num_domain=200,       # PDE collocation
+                             num_boundary=0,
+                             anchors=anchor_X.astype(np.float32))
 
     net = dde.nn.FNN([3, 50, 50, 50, 1], "tanh", "Glorot uniform")
     model = dde.Model(data_pinn, net)
@@ -269,6 +260,7 @@ def physics_discovery(
     learned_params ["learning_rate"] = lr
     learned_params ["initial_rate"] = kappa
     learned_params ["initial_saturation_concentration"] = L
+
     os.remove(variable_path)
     y_true = y_test
     y_pred = model.predict(X_test)

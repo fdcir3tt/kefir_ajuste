@@ -1,7 +1,9 @@
 import mlflow
 
 from mlflow.data.pandas_dataset import PandasDataset
-from kefir_ajuste.utils import log_run,ensure_experiment_active,identity_collocation,load_data
+from kefir_ajuste.utils import log_run,ensure_experiment_active,plot_inverse_problem_solution
+from kefir_ajuste.collocation_methods import identity_collocation
+from kefir_ajuste.data import load_data
 from kefir_ajuste.trainers import verhulst
 
 # ==============================================================================
@@ -45,12 +47,12 @@ with mlflow.start_run(run_name=run_name):
                                                                             collocation_method=collocation_method
                                                                              )
 
-    log_run(experiment="inverse_problem",
-            dataset=dataset,
+    log_run(dataset=dataset,
                      model=model,
                      model_name=f"verhulst_IP_PINN",
                      loss_history=loss_history,
                      collocation_method=collocation_method,
                      learned_params=learned_parameters,
+                     plot_solution= plot_inverse_problem_solution,
                      y_true=y_true,
                      y_pred=y_pred)
