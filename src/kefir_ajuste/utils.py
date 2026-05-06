@@ -6,6 +6,7 @@ import mlflow
 import deepxde as dde
 import mlflow.pytorch
 
+from numpy.typing import NDArray
 from matplotlib.figure import Figure
 from typing import Callable,Any
 from mlflow.tracking import MlflowClient
@@ -35,7 +36,7 @@ def get_learned_parameters(model:str,n:int|None =None,)->dict[str,float]:
                       'fourier_coef':torch.tensor(params).reshape(-1, 1)}   
     return param_dict
 
-def split_train_data(data:pd.DataFrame)->tuple[np.ndarray[(int,1|3),float],np.ndarray[(int,1|3),float],np.ndarray[(int,1|3),float],np.ndarray[(int,1|3),float]]:
+def split_train_data(data:pd.DataFrame)->tuple[NDArray[np.float32],NDArray[np.float32],NDArray[np.float32],NDArray[np.float32]]:
     X = data[["intensidad(W/cm^2)","periodo de exposición(s)","tiempo(h)"]].to_numpy()
     y = data["concentracion(g/cm3)"].to_numpy().reshape(-1, 1)
 
