@@ -10,7 +10,7 @@ from matplotlib.figure import Figure
 from typing import Callable,Any
 from mlflow.tracking import MlflowClient
 
-def get_learned_parameters(model:str,n:int|None =None,):
+def get_learned_parameters(model:str,n:int|None =None,)->dict[str,float]:
     with open(file=f'learned_parameters.dat',mode='r') as f:
         for line in f:
             pass
@@ -35,7 +35,7 @@ def get_learned_parameters(model:str,n:int|None =None,):
                       'fourier_coef':torch.tensor(params).reshape(-1, 1)}   
     return param_dict
 
-def split_train_data(data:pd.DataFrame)->tuple[np.ndarray,np.ndarray,np.ndarray,np.ndarray]:
+def split_train_data(data:pd.DataFrame)->tuple[np.ndarray[(int,1|3),float],np.ndarray[(int,1|3),float],np.ndarray[(int,1|3),float],np.ndarray[(int,1|3),float]]:
     X = data[["intensidad(W/cm^2)","periodo de exposición(s)","tiempo(h)"]].to_numpy()
     y = data["concentracion(g/cm3)"].to_numpy().reshape(-1, 1)
 
@@ -105,7 +105,7 @@ def plot_physics_discovery_solution(model, data: pd.DataFrame)->list[tuple[Figur
             ax.scatter(X_test[test_mask, 2], y_test[test_mask],
                         color="red", label="Test")
 
-        ax.set_title(f"Tratamiento I={I_val:.2f} W/cm², T={T_val:.2f} °C")
+        ax.set_title(f"Tratamiento I={I_val:.2f} W/cm², T={T_val:.2f} s")
         ax.set_xlabel("Tiempo de Fermentación (h)")
         ax.set_ylabel("Concentración (g/cm³)")
         ax.legend()

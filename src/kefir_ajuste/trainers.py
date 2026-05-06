@@ -9,7 +9,6 @@ from kefir_ajuste.collocation_methods import identity_collocation
 from kefir_ajuste.utils import get_learned_parameters,split_train_data
 from kefir_ajuste.data import load_initial_conditions,load_time_domain
 from pathlib import Path
-from deepxde.icbc.boundary_conditions import PointSetBC
 
 VARIABLES_PATH = Path("learned_parameters.dat")
 
@@ -94,6 +93,7 @@ def verhulst(dataset:pd.DataFrame,
 
     model.compile(
         optimizer="adam",
+        loss='MSE',
         lr=lr,
         external_trainable_variables=[r, k],
     )
@@ -103,9 +103,7 @@ def verhulst(dataset:pd.DataFrame,
                                         period=600, 
                                         filename=VARIABLES_PATH
                                     )
-    callbacks = [
-        variable
-    ]
+    callbacks = [variable]
 # ============================================================
 #                        ENTRENAMIENTO
 # ============================================================
@@ -120,7 +118,7 @@ def verhulst(dataset:pd.DataFrame,
     return model, loss_history, learned_params, y_true, y_pred
 
 
-def multi_polynomial(t,I,T, coef,grade):
+def multi_polynomial(t:torch.Tensor,I:torch.Tensor,T:torch.Tensor, coef:list[dde.Variable],grade:int)->torch.Tensor:
         coef_tensor = torch.stack([v for v in coef]).view(grade+1, grade+1)
 
         batch_size = I.shape[0]
@@ -138,12 +136,12 @@ def multi_polynomial(t,I,T, coef,grade):
 
         return result.view(-1, 1)
 
-def intensity_function(t,I,T, coef):
+def intensity_function(t:torch.Tensor,I:torch.Tensor,T:torch.Tensor, coef:list[dde.Variable])->torch.Tensor:
     intensity = (coef[0]+coef[1]*I+coef[2]*T+coef[3]*I*T)
-    sine_term = torch.sin(2 * torch.pi * t / 15)
+    sine_term = torch.sin(2 * torch.pi * t / 12)
     return intensity*sine_term
 
-def fourier_term(t,I,T, coef):
+def fourier_term(t:torch.Tensor,I:torch.Tensor,T:torch.Tensor, coef:list[dde.Variable])->torch.Tensor:
     intensity = coef[0] * I * torch.sin(coef[1]* T)
     sine_term = torch.sin(2 * torch.pi * t / 15)
     return intensity*sine_term
@@ -152,7 +150,8 @@ def physics_discovery(dataset:pd.DataFrame,
                       epochs: int,
                       correction_function:Callable,
                       collocation_args:dict[str,int|None],
-                      collocation_method:Callable = lambda x,y:PointSetBC(x,y),
+                      n_phys_points:int=200,
+                      collocation_method:Callable = lambda x,y:(x,y),
                       lr: float = 0.001,
                       **kwargs):
 
@@ -175,8 +174,8 @@ def physics_discovery(dataset:pd.DataFrame,
         for i in range(grade+1):
             for j in range(grade+1):
                 if i + j > grade:
-                    index = i * (grade + 1) + j  # Calculate index for flattened 2D array
-                    c_coef[index] = dde.Variable(torch.tensor(0.0))  # Set value to 0
+                    index = i * (grade + 1) + j  
+                    c_coef[index] = dde.Variable(torch.tensor(0.0))  
 
     if correction_function.__name__=="intensity_function":
         c_coef = [dde.Variable(torch.rand(1)) for _ in range(4)]
@@ -190,7 +189,7 @@ def physics_discovery(dataset:pd.DataFrame,
 
     
 
-    def ode(x, y):
+    def ode(x:torch.Tensor, y:torch.Tensor)->torch.Tensor:
         I_t = x[:, 0:1]
         T_t = x[:, 1:2]
         t = x[:, 2:3]
@@ -231,7 +230,7 @@ def physics_discovery(dataset:pd.DataFrame,
     data_pinn = dde.data.PDE(geometry=geom,
                              pde=ode,
                              bcs=[observe_bc],
-                             num_domain=200,       # PDE collocation
+                             num_domain=n_phys_points,       # PDE collocation
                              num_boundary=0,
                              anchors=anchor_X.astype(np.float32))
 
@@ -239,9 +238,10 @@ def physics_discovery(dataset:pd.DataFrame,
     model = dde.Model(data_pinn, net)
 
     model.compile(optimizer="adam",
+                  loss='MSE',
                   lr=lr,
                   external_trainable_variables=trainable_variables)
-    variable = dde.callbacks.VariableValue(var_list=trainable_variables, 
+    variable  = dde.callbacks.VariableValue(var_list=trainable_variables, 
                                            period=600, 
                                            filename=variable_path)
     callbacks = [variable]
@@ -258,7 +258,8 @@ def physics_discovery(dataset:pd.DataFrame,
         learned_params = get_learned_parameters(model=correction_function.__name__)
 
     learned_params ["learning_rate"] = lr
-    learned_params ["initial_rate"] = kappa
+    learned_params ["initial_rate"]  = kappa
+    learned_params ["n_phys_points"] = n_phys_points
     learned_params ["initial_saturation_concentration"] = L
 
     os.remove(variable_path)

@@ -1,7 +1,7 @@
+from typing import Callable
 
 
-
-def runge_kutta(f,y0:float,interval:tuple,n:int=10)->list:
+def runge_kutta(f:Callable,y0:float,interval:tuple[float,float],n:int=10)->list[tuple[float,float]]:
     """
     Numerically solves an ordinary differential equation (ODE) using the classical
     4th-order Runge-Kutta method (RK4).

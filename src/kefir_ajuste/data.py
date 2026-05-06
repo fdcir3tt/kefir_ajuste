@@ -7,7 +7,7 @@ def load_data(file_name:str)->pd.DataFrame:
     data = pd.read_csv(file_path)
     return data
 
-def load_initial_conditions(data:pd.DataFrame)->tuple[float,float,float]:
+def load_initial_conditions(data:pd.DataFrame)->tuple[float,float]:
     t0 = data["tiempo(h)"].iloc[0]
     y0 = data["concentracion(g/cm3)"].iloc[0]
 

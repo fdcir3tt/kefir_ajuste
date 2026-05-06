@@ -1,12 +1,13 @@
 import numpy as np
+import torch
 
-def all_data_collocation(X:np.ndarray,y:np.ndarray)->tuple[np.ndarray,np.ndarray]:
+def all_data_collocation(X:torch.Tensor,y:torch.Tensor,args:dict[str,int])->tuple[torch.Tensor,torch.Tensor]:
     return X,y
 
-def identity_collocation(X_train:np.ndarray,y_train:np.ndarray,**kwargs)->tuple[np.ndarray,np.ndarray]:
+def identity_collocation(X_train:torch.Tensor,y_train:torch.Tensor,args:dict[str,int])->tuple[torch.Tensor,torch.Tensor]:
     return X_train, y_train
 
-def random_collocation(X_train:np.ndarray,y_train:np.ndarray,args:dict[str,int|None])->tuple[np.ndarray,np.ndarray]:
+def random_collocation(X_train:torch.Tensor,y_train:torch.Tensor,args:dict[str,int])->tuple[torch.Tensor,torch.Tensor]:
     collocation_size= args["collocation_size"]
     seed = args["seed"]
 
@@ -19,7 +20,7 @@ def random_collocation(X_train:np.ndarray,y_train:np.ndarray,args:dict[str,int|N
 
     return X_sub,y_sub
 
-def equal_collocation(X_train:np.ndarray,y_train:np.ndarray,args:dict[str,int])->tuple[np.ndarray,np.ndarray]:
+def equal_collocation(X_train:torch.Tensor,y_train:torch.Tensor,args:dict[str,int])->tuple[torch.Tensor,torch.Tensor]:
     collocation_skip=args["collocation_skip"]
     idx = np.arange(1, len(X_train), collocation_skip)
 
