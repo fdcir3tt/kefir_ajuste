@@ -27,7 +27,34 @@ INTENSITY_DICT = {
 # ============================================================================== #
 
 def extract( file_path:Path,skip_rows:int | None =None)->pd.DataFrame:
-    """ Recibe ubicación de archivo de datos, y los convierte en un DataFrame de pandas"""
+    """
+    Extract raw data from a file into a pandas DataFrame.
+
+    This function reads experimental data from an input file and converts it
+    into a structured pandas DataFrame. Only Excel files are currently supported.
+
+    Parameters
+    ----------
+    file_path : pathlib.Path
+        Path to the input data file.
+    skip_rows : int or None, optional
+        Number of rows to skip when reading the file. Passed directly to
+        ``pandas.read_excel``.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Extracted dataset.
+
+    Raises
+    ------
+    ValueError
+        If the file format is not supported.
+
+    Notes
+    -----
+    Currently only ``.xlsx`` files are supported.
+    """
     if file_path.suffix == ".xlsx":
         extracted_data = pd.read_excel(file_path, skiprows=skip_rows)
     else:
@@ -37,7 +64,30 @@ def extract( file_path:Path,skip_rows:int | None =None)->pd.DataFrame:
     return extracted_data
 
 def transform( data_frame:pd.DataFrame )->pd.DataFrame:
-    """ Limpia y reestructura el DataFrame """
+    """
+    Clean and restructure the raw dataset.
+
+    This function reshapes the dataset from wide to long format, removes
+    unnecessary columns, and adds experimental condition variables such as
+    intensity and exposure period.
+
+    Parameters
+    ----------
+    data_frame : pandas.DataFrame
+        Raw dataset containing treatment columns and fermentation time.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Transformed dataset in long format with additional features:
+        - ``intensidad(W/cm^2)``
+        - ``periodo de exposición(s)``
+
+    Notes
+    -----
+    This function relies on external dictionaries:
+    ``INTENSITY_DICT`` and ``TREATMENT_DICT``.
+    """
 
     transformed_data = ( data_frame.drop( columns= [f"Unnamed: {k}" for k in range(4)])
                                    .melt( id_vars= 'Tiempo de Fermentacón (h)',
@@ -53,7 +103,30 @@ def transform( data_frame:pd.DataFrame )->pd.DataFrame:
 
 
 def load( data_frame:pd.DataFrame,directory:Path ):
-    """ Guarda dataframe con el nombre específicado"""
+    """
+    Save transformed dataset into structured CSV files.
+
+    This function splits the dataset by treatment group and writes each
+    subset to a separate CSV file. It also generates a combined control
+    dataset.
+
+    Parameters
+    ----------
+    data_frame : pandas.DataFrame
+        Transformed dataset containing treatment information.
+    directory : pathlib.Path
+        Base directory where processed files will be stored.
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    - Files are saved under ``directory/processed``.
+    - File names are determined using ``TREATMENT_DICT``.
+    - A combined dataset is saved as ``control_dataset.csv``.
+    """
     os.makedirs(name = directory / 'processed',
                 exist_ok = True )
     

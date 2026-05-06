@@ -12,6 +12,40 @@ from typing import Callable,Any
 from mlflow.tracking import MlflowClient
 
 def get_learned_parameters(model:str,n:int|None =None,)->dict[str,float]:
+    """
+    Extract learned parameters from a file and format them by model type.
+
+    This function reads the last line of a parameter log file and parses
+    the stored values into a dictionary whose structure depends on the
+    specified model name.
+
+    Parameters
+    ----------
+    model : str
+        Name of the model used to determine how parameters are structured.
+        Supported patterns include ``"verhulst"``, ``"multi_polynomial"``,
+        ``"intensity_function"``, and ``"fourier_term"``.
+    n : int, optional
+        Polynomial degree used when ``model`` corresponds to a
+        ``"multi_polynomial"`` model. Required in that case.
+
+    Returns
+    -------
+    dict of str to float or torch.Tensor
+        Dictionary containing the learned parameters. The structure depends
+        on the model type.
+
+    Notes
+    -----
+    The function assumes that the file ``'learned_parameters.dat'`` exists
+    and that its last line contains parameter values in list format.
+
+    Examples
+    --------
+    >>> params = get_learned_parameters("verhulst")
+    >>> params["r"]
+    0.12
+    """
     with open(file=f'learned_parameters.dat',mode='r') as f:
         for line in f:
             pass
@@ -37,6 +71,34 @@ def get_learned_parameters(model:str,n:int|None =None,)->dict[str,float]:
     return param_dict
 
 def split_train_data(data:pd.DataFrame)->tuple[NDArray[np.float32],NDArray[np.float32],NDArray[np.float32],NDArray[np.float32]]:
+    """
+    Split a dataset into training and test sets.
+
+    The function extracts input features and target values from a DataFrame
+    and performs an 80/20 split without shuffling.
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        Input dataset containing the columns:
+        ``"intensidad(W/cm^2)"``, ``"periodo de exposición(s)"``,
+        ``"tiempo(h)"``, and ``"concentracion(g/cm3)"``.
+
+    Returns
+    -------
+    X_train : ndarray of shape (n_train, 3)
+        Training input features.
+    y_train : ndarray of shape (n_train, 1)
+        Training target values.
+    X_test : ndarray of shape (n_test, 3)
+        Test input features.
+    y_test : ndarray of shape (n_test, 1)
+        Test target values.
+
+    Notes
+    -----
+    The split is deterministic and does not shuffle the data.
+    """
     X = data[["intensidad(W/cm^2)","periodo de exposición(s)","tiempo(h)"]].to_numpy()
     y = data["concentracion(g/cm3)"].to_numpy().reshape(-1, 1)
 
@@ -45,8 +107,29 @@ def split_train_data(data:pd.DataFrame)->tuple[NDArray[np.float32],NDArray[np.fl
     X_test, y_test = X[split:], y[split:]
     return X_train,y_train,X_test,y_test
 
-def plot_inverse_problem_solution(model, data: pd.DataFrame)->list[tuple[Figure,str]]:
-    
+def plot_inverse_problem_solution(model:dde.Model, data: pd.DataFrame)->list[tuple[Figure,str]]:
+    """
+    Plot model predictions for the inverse problem.
+
+    This function generates a single plot comparing model predictions with
+    training and test data over time.
+
+    Parameters
+    ----------
+    model : deepxde.Model
+        Trained model with a ``predict`` method.
+    data : pandas.DataFrame
+        Dataset containing time and concentration values.
+
+    Returns
+    -------
+    list of tuple of (matplotlib.figure.Figure, str)
+        List containing a single figure and its associated name.
+
+    Notes
+    -----
+    The prediction is performed over a uniform grid of 200 time points.
+    """
     t0 = data["tiempo(h)"].min()
     tf = data["tiempo(h)"].max()
     domain = (t0,tf)
@@ -73,8 +156,31 @@ def plot_inverse_problem_solution(model, data: pd.DataFrame)->list[tuple[Figure,
     return [(fig,"data_plot")]
 
 
-def plot_physics_discovery_solution(model, data: pd.DataFrame)->list[tuple[Figure,str]]:
-    
+def plot_physics_discovery_solution(model:dde.Model, data: pd.DataFrame)->list[tuple[Figure,str]]:
+    """
+    Plot model predictions grouped by treatment conditions.
+
+    This function generates one figure per unique combination of intensity
+    and exposure time, along with an additional figure showing all test
+    data across conditions.
+
+    Parameters
+    ----------
+    model : object
+        Trained model with a ``predict`` method.
+    data : pandas.DataFrame
+        Dataset containing input features and target values.
+
+    Returns
+    -------
+    list of tuple of (matplotlib.figure.Figure, str)
+        List of generated figures and their corresponding names.
+
+    Notes
+    -----
+    Each condition is defined by unique values of intensity and exposure time.
+    Predictions are evaluated on a fixed time grid of 200 points.
+    """
     t_min = data["tiempo(h)"].min()
     t_max = data["tiempo(h)"].max()
     
@@ -144,6 +250,20 @@ def plot_physics_discovery_solution(model, data: pd.DataFrame)->list[tuple[Figur
     return figures
 
 def get_treatment_name(treatment_index:int)->str:
+    """
+    Map a treatment index to its descriptive name.
+
+    Parameters
+    ----------
+    treatment_index : int
+        Identifier of the treatment.
+
+    Returns
+    -------
+    str
+        Human-readable name of the treatment. Returns ``None`` if the index
+        is not recognized.
+    """
     return {1:"Testigo (T1) Kéfir sin ultrasonicar",
             2:"15 seg. 20 W/cm2 (T2)",
             3:"60 seg. 20 W/cm2 (T3)",
@@ -151,6 +271,27 @@ def get_treatment_name(treatment_index:int)->str:
             5:"60 seg. 34 W/cm2 (T5)"}.get(treatment_index)
 
 def compute_regression_metrics(y_true, y_pred, n_params)->dict[str,float]:
+    """
+    Compute regression and model selection metrics.
+
+    Parameters
+    ----------
+    y_true : array_like
+        Ground truth target values.
+    y_pred : array_like
+        Predicted values from the model.
+    n_params : int
+        Number of parameters in the model.
+
+    Returns
+    -------
+    dict of str to float
+        Dictionary containing RMSE, MAE, MAPE, R², AIC, and BIC metrics.
+
+    Notes
+    -----
+    MAPE ignores zero values in ``y_true`` to avoid division errors.
+    """
     y_true = np.array(y_true)
     y_pred = np.array(y_pred)
 
@@ -180,14 +321,27 @@ def compute_regression_metrics(y_true, y_pred, n_params)->dict[str,float]:
 
 def ensure_experiment_active(experiment_name: str) -> str:
     """
-    Ensures an MLflow experiment exists and is active.
-    
-    If the experiment exists but is deleted, it restores it.
-    If it doesn't exist, it creates it.
+    Ensure that an MLflow experiment exists and is active.
 
-    Returns:
-        experiment_id (str)
+    If the experiment exists but is marked as deleted, it is restored.
+    If it does not exist, it is created.
+
+    Parameters
+    ----------
+    experiment_name : str
+        Name of the MLflow experiment.
+
+    Returns
+    -------
+    str
+        Experiment ID.
+
+    Notes
+    -----
+    This function interacts with the MLflow tracking server and may modify
+    experiment state.
     """
+
     client = MlflowClient()
     experiments = client.search_experiments(view_type=mlflow.entities.ViewType.ALL)
 
@@ -210,7 +364,7 @@ def ensure_experiment_active(experiment_name: str) -> str:
 
 def log_run(
             dataset:pd.DataFrame,
-            model,
+            model:dde.Model,
             model_name:str,
             collocation_method:Callable|None,
             loss_history,
@@ -218,7 +372,41 @@ def log_run(
             plot_solution:Callable,
             y_true:np.ndarray,
             y_pred:np.ndarray)->None:
-    """Common logging logic shared by all models."""
+    """
+    Log training results, metrics, and artifacts to MLflow.
+
+    This function records loss history plots, prediction figures, regression
+    metrics, trained models, and learned parameters.
+
+    Parameters
+    ----------
+    dataset : pandas.DataFrame
+        Dataset used for training and evaluation.
+    model : deepxde.Model
+        Trained model containing a ``net`` attribute.
+    model_name : str
+        Name used to log the model in MLflow.
+    collocation_method : Callable or None
+        Collocation method used during training. Logged as a parameter.
+    loss_history : object
+        Training loss history returned by the model.
+    learned_params : dict of str to Any
+        Dictionary of learned parameters to log.
+    plot_solution : Callable
+        Function that generates plots from the model and dataset.
+    y_true : ndarray
+        Ground truth values.
+    y_pred : ndarray
+        Model predictions.
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    This function assumes an active MLflow run.
+    """
 
     dde.utils.plot_loss_history(loss_history)
     mlflow.log_figure(plt.gcf(), "loss_plot.png")

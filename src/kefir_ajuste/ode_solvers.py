@@ -8,7 +8,7 @@ def runge_kutta(f:Callable,y0:float,interval:tuple[float,float],n:int=10)->list[
 
     Parameters
     ----------
-    f : callable
+    f : Callable
         The derivative function of the ODE, with signature f(x, y).
         It must accept two arguments:
             x : float
