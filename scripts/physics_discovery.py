@@ -11,7 +11,8 @@ from mlflow.data.pandas_dataset import PandasDataset
 from kefir_ajuste.utils import ensure_experiment_active,log_run,plot_physics_discovery_solution,split_train_data,get_learned_parameters
 from kefir_ajuste.data import load_data,load_initial_conditions,load_time_domain
 from kefir_ajuste.collocation_methods import equal_collocation,identity_collocation
-from kefir_ajuste.trainers import multi_polynomial,intensity_function,fourier_term
+from kefir_ajuste.correction_funcs import multi_polynomial,intensity_function,fourier_term
+from kefir_ajuste.equations import verhulst
 
 # ==============================================================================
 #                               Global config
@@ -27,6 +28,10 @@ PHYSICAL_COLLOCATION_POINTS=200
 COLLOCATION_METHOD = identity_collocation
 COLLOCATION_ARGS = {"collocation_skip":2}
 delta =  intensity_function
+model_equation = verhulst
+kappa = 0.046 
+L = 47.81 
+model_parameters ={"kappa":kappa,"L":L}
 grade = 6
 kwargs = {"grade":grade}
 
@@ -347,8 +352,7 @@ with mlflow.start_run(run_name=run_name):
     # Definir coeficientes de corrección 
     
     c_coef = make_coeficient_list(correction_function,**kwargs)
-    kappa = 0.046 
-    L = 47.81 
+    
     variable_path= Path('learned_parameters.dat')
     trainable_variables = c_coef
 
@@ -363,7 +367,7 @@ with mlflow.start_run(run_name=run_name):
         else:
             delta = correction_function(t,I_t, T_t, c_coef)
 
-        return dy_dt - kappa * y * (1 - y / L) - delta
+        return model_equation(dy_dt,t,y,model_parameters) - delta
 
 # ============================================================
 #                         PINN SETUP

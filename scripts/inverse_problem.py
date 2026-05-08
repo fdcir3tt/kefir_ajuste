@@ -10,7 +10,7 @@ from mlflow.data.pandas_dataset import PandasDataset
 from kefir_ajuste.utils import get_learned_parameters,log_run,ensure_experiment_active,plot_inverse_problem_solution
 from kefir_ajuste.collocation_methods import identity_collocation
 from kefir_ajuste.data import load_data,split_train_data,load_initial_conditions,load_time_domain
-from kefir_ajuste.trainers import verhulst
+from kefir_ajuste.equations import verhulst
 
 # ==============================================================================
 #                               Global config
@@ -25,9 +25,10 @@ model_equation = verhulst
 collocation_method = identity_collocation
 variables_path = Path("learned_parameters.dat")
 
-r = dde.Variable(0.04)
-k = dde.Variable(51.0)
-trainable_variables = [r,k]
+kappa = dde.Variable(0.04)
+L = dde.Variable(51.0)
+trainable_variables = [kappa,L]
+model_parameters ={"kappa":kappa,"L":L}
 n_phys_points= 200
 collocation_args = {}
 
@@ -239,7 +240,7 @@ with mlflow.start_run(run_name=run_name):
     
     def ode(t, y):
         dy_dt = dde.grad.jacobian(y, t, i=0, j=0)
-        return dy_dt - r * y * (1 - y / k)
+        return model_equation(dy_dt,t,y,model_parameters)
 
     geom = make_time_domain(t0,tf)
 
