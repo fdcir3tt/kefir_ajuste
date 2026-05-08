@@ -10,6 +10,7 @@ from numpy.typing import NDArray
 from matplotlib.figure import Figure
 from typing import Callable,Any
 from mlflow.tracking import MlflowClient
+from kefir_ajuste.data import split_train_data
 
 def get_learned_parameters(model:str,n:int|None =None,)->dict[str,float]:
     """
@@ -70,42 +71,7 @@ def get_learned_parameters(model:str,n:int|None =None,)->dict[str,float]:
                       'fourier_coef':torch.tensor(params).reshape(-1, 1)}   
     return param_dict
 
-def split_train_data(data:pd.DataFrame)->tuple[NDArray[np.float32],NDArray[np.float32],NDArray[np.float32],NDArray[np.float32]]:
-    """
-    Split a dataset into training and test sets.
 
-    The function extracts input features and target values from a DataFrame
-    and performs an 80/20 split without shuffling.
-
-    Parameters
-    ----------
-    data : pandas.DataFrame
-        Input dataset containing the columns:
-        ``"intensidad(W/cm^2)"``, ``"periodo de exposición(s)"``,
-        ``"tiempo(h)"``, and ``"concentracion(g/cm3)"``.
-
-    Returns
-    -------
-    X_train : ndarray of shape (n_train, 3)
-        Training input features.
-    y_train : ndarray of shape (n_train, 1)
-        Training target values.
-    X_test : ndarray of shape (n_test, 3)
-        Test input features.
-    y_test : ndarray of shape (n_test, 1)
-        Test target values.
-
-    Notes
-    -----
-    The split is deterministic and does not shuffle the data.
-    """
-    X = data[["intensidad(W/cm^2)","periodo de exposición(s)","tiempo(h)"]].to_numpy()
-    y = data["concentracion(g/cm3)"].to_numpy().reshape(-1, 1)
-
-    split = int(0.8 * len(X))
-    X_train, y_train = X[:split], y[:split]
-    X_test, y_test = X[split:], y[split:]
-    return X_train,y_train,X_test,y_test
 
 def plot_inverse_problem_solution(model:dde.Model, data: pd.DataFrame)->list[tuple[Figure,str]]:
     """
@@ -133,9 +99,9 @@ def plot_inverse_problem_solution(model:dde.Model, data: pd.DataFrame)->list[tup
     t0 = data["tiempo(h)"].min()
     tf = data["tiempo(h)"].max()
     domain = (t0,tf)
-    X_train,y_train,X_test,y_test =split_train_data(data)
-    t_train =  X_train[:, 2].reshape(-1, 1)
-    t_test =  X_test[:, 2].reshape(-1, 1)
+    X_train,y_train,X_test,y_test =split_train_data(data,"concentracion(g/cm3)")
+    t_train =  X_train.reshape(-1, 1)
+    t_test =  X_test.reshape(-1, 1)
         
 
     
@@ -184,7 +150,7 @@ def plot_physics_discovery_solution(model:dde.Model, data: pd.DataFrame)->list[t
     t_min = data["tiempo(h)"].min()
     t_max = data["tiempo(h)"].max()
     
-    X_train, y_train, X_test, y_test = split_train_data(data)
+    X_train, y_train, X_test, y_test = split_train_data(data,"concentracion(g/cm3)")
         
     t_plot = np.linspace(t_min, t_max, 200)
 

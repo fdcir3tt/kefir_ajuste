@@ -308,6 +308,7 @@ def get_learned_coeficients(correction_function:Callable,learning_rate:float,num
     return learned_params 
 
 dataset = load_data(DATA_FILE_NAME)
+dataset = dataset.drop(columns=["tratamiento","Unnamed: 0"])
 dataset_source_url = f"data/processed/{DATA_FILE_NAME}"
 mlflow_dataset: PandasDataset = mlflow.data.from_pandas(dataset, 
                                                         source=dataset_source_url,
@@ -337,8 +338,9 @@ with mlflow.start_run(run_name=run_name):
     
     t0,y0 = load_initial_conditions(dataset)
     t0,tf = load_time_domain(dataset)
-
-    X_train, y_train, X_test,y_test = split_train_data(dataset)
+    print(dataset)
+    X_train, y_train, X_test,y_test = split_train_data(dataset,"concentracion(g/cm3)")
+    print(X_train)
 # ============================================================
 #                 CONFIGURACION ENTRENAMIENTO
 # ============================================================

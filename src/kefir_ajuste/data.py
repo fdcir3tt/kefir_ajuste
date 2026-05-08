@@ -1,6 +1,8 @@
+import numpy as np
 import pandas as pd
 
 from pathlib import Path
+from numpy.typing import NDArray
 
 def load_data(file_name:str)->pd.DataFrame:
     """
@@ -89,3 +91,39 @@ def load_time_domain(data:pd.DataFrame)->tuple[float,float]:
 
 
 
+def split_train_data(data:pd.DataFrame,target_column:str)->tuple[NDArray[np.float32],NDArray[np.float32],NDArray[np.float32],NDArray[np.float32]]:
+    """
+    Split a dataset into training and test sets.
+
+    The function extracts input features and target values from a DataFrame
+    and performs an 80/20 split without shuffling.
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        Input dataset.
+    target_column: str
+        Target column
+
+    Returns
+    -------
+    X_train : ndarray of shape (n_train, 3)
+        Training input features.
+    y_train : ndarray of shape (n_train, 1)
+        Training target values.
+    X_test : ndarray of shape (n_test, 3)
+        Test input features.
+    y_test : ndarray of shape (n_test, 1)
+        Test target values.
+
+    Notes
+    -----
+    The split is deterministic and does not shuffle the data.
+    """
+    X = data.drop(columns=[target_column]).to_numpy()
+    y = data[target_column].to_numpy().reshape(-1, 1)
+
+    split = int(0.8 * len(X))
+    X_train, y_train = X[:split], y[:split]
+    X_test, y_test = X[split:], y[split:]
+    return X_train,y_train,X_test,y_test
