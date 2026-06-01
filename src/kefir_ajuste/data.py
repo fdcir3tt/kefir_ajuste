@@ -8,7 +8,7 @@ def load_data(file_name:str)->pd.DataFrame:
     """
     Load a processed dataset from disk.
 
-    This function reads a CSV file from the ``data/processed`` directory and
+    Reads a CSV file from the ``data/processed`` directory and
     returns it as a pandas DataFrame.
 
     Parameters
@@ -23,8 +23,7 @@ def load_data(file_name:str)->pd.DataFrame:
 
     Notes
     -----
-    The file path is constructed as:
-    ``data/processed/<file_name>``.
+    The file path is constructed as ``data/processed/<file_name>``.
     """
     file_path = Path("data") / "processed" / file_name
     data = pd.read_csv(file_path)
@@ -34,15 +33,15 @@ def load_initial_conditions(data:pd.DataFrame)->tuple[float,float]:
     """
     Extract initial conditions from a dataset.
 
-    This function retrieves the first recorded time value and the first
-    concentration value from the dataset, assuming they represent the
-    initial state of the system.
+    Retrieves the first recorded time value and the first concentration
+    value from the dataset, assuming they represent the initial state
+    of the system.
 
     Parameters
     ----------
     data : pandas.DataFrame
-        Dataset containing at least the columns:
-        ``"tiempo(h)"`` and ``"concentracion(g/cm3)"``.
+        Dataset containing at least the columns ``"tiempo(h)"`` and
+        ``"concentracion(g/cm3)"``.
 
     Returns
     -------
@@ -53,8 +52,8 @@ def load_initial_conditions(data:pd.DataFrame)->tuple[float,float]:
 
     Notes
     -----
-    The function assumes that the first row of the dataset corresponds
-    to the initial condition.
+    Assumes the first row of the dataset corresponds to the initial
+    condition.
     """
     t0 = data["tiempo(h)"].iloc[0]
     y0 = data["concentracion(g/cm3)"].iloc[0]
@@ -63,10 +62,10 @@ def load_initial_conditions(data:pd.DataFrame)->tuple[float,float]:
 
 def load_time_domain(data:pd.DataFrame)->tuple[float,float]:
     """
-    Compute the time domain of a dataset.
+    Compute the time domain bounds of a dataset.
 
-    This function extracts the minimum and maximum time values from the
-    dataset, defining the temporal domain of the experiment.
+    Extracts the minimum and maximum time values from the dataset,
+    defining the temporal domain of the experiment.
 
     Parameters
     ----------
@@ -82,7 +81,8 @@ def load_time_domain(data:pd.DataFrame)->tuple[float,float]:
 
     Notes
     -----
-    This function does not assume sorted input data.
+    Does not assume sorted input; uses ``min()`` and ``max()``
+    directly on the time column.
     """
     t0 = data["tiempo(h)"].min()
     tf = data["tiempo(h)"].max()
@@ -95,30 +95,32 @@ def split_train_data(data:pd.DataFrame,target_column:str)->tuple[NDArray[np.floa
     """
     Split a dataset into training and test sets.
 
-    The function extracts input features and target values from a DataFrame
-    and performs an 80/20 split without shuffling.
+    Extracts input features and target values from a DataFrame and
+    performs an 80/20 split without shuffling.
 
     Parameters
     ----------
     data : pandas.DataFrame
         Input dataset.
-    target_column: str
-        Target column
+    target_column : str
+        Name of the column to use as the prediction target. All remaining
+        columns are used as input features.
 
     Returns
     -------
-    X_train : ndarray of shape (n_train, 3)
+    X_train : ndarray of shape (n_train, n_features)
         Training input features.
     y_train : ndarray of shape (n_train, 1)
         Training target values.
-    X_test : ndarray of shape (n_test, 3)
+    X_test : ndarray of shape (n_test, n_features)
         Test input features.
     y_test : ndarray of shape (n_test, 1)
         Test target values.
 
     Notes
     -----
-    The split is deterministic and does not shuffle the data.
+    The split is deterministic and preserves the original row order.
+    The cutoff index is computed as ``int(0.8 * len(data))``.
     """
     X = data.drop(columns=[target_column]).to_numpy()
     y = data[target_column].to_numpy().reshape(-1, 1)

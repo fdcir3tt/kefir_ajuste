@@ -35,9 +35,12 @@ def multi_polynomial(t:torch.Tensor,I:torch.Tensor,T:torch.Tensor, coef:list[dde
     -----
     The polynomial is evaluated as:
 
-        sum_{i,j} coef[i,j] * I^i * T^j
+    .. math::
 
-    subject to i + j <= grade.
+        \\sum_{i,j} c_{i,j} \\cdot I^i \\cdot T^j, \\quad i + j \\leq \\text{grade}
+
+    The coefficient list is reshaped into a (grade+1, grade+1) matrix where
+    entry [i, j] corresponds to the weight of the I^i * T^j term.
     """
     coef_tensor = torch.stack([v for v in coef]).view(grade+1, grade+1)
 
@@ -74,17 +77,24 @@ def intensity_function(t:torch.Tensor,I:torch.Tensor,T:torch.Tensor, coef:list[d
         Exposure/temperature tensor.
     coef : list of dde.Variable
         List of four trainable coefficients:
-        - coef[0]: bias term
-        - coef[1]: intensity scaling
-        - coef[2]: time scaling
-        - coef[3]: interaction term (I * T)
+
+        - ``coef[0]``: bias term.
+        - ``coef[1]``: intensity scaling.
+        - ``coef[2]``: exposure time scaling.
+        - ``coef[3]``: interaction term (I * T).
 
     Returns
     -------
     torch.Tensor
-        Tensor of shape (batch_size, 1) representing the corrected signal:
+        Tensor of shape (batch_size, 1) representing the corrected signal.
 
-        (c0 + c1*I + c2*T + c3*I*T) * sin(2πt / 12)
+    Notes
+    -----
+    The output is computed as:
+
+    .. math::
+
+        (c_0 + c_1 I + c_2 T + c_3 I T) \\cdot \\sin\\!\\left(\\frac{2\\pi t}{12}\\right)
     """
     intensity = (coef[0]+coef[1]*I+coef[2]*T+coef[3]*I*T)
     sine_term = torch.sin(2 * torch.pi * t / 12)
@@ -107,15 +117,22 @@ def fourier_term(t:torch.Tensor,I:torch.Tensor,T:torch.Tensor, coef:list[dde.Var
         Exposure/temperature tensor.
     coef : list of dde.Variable
         List of two trainable coefficients:
-        - coef[0]: amplitude scaling
-        - coef[1]: frequency scaling for T
+
+        - ``coef[0]``: amplitude scaling.
+        - ``coef[1]``: frequency scaling applied to T inside the sine.
 
     Returns
     -------
     torch.Tensor
-        Tensor of shape (batch_size, 1) representing:
+        Tensor of shape (batch_size, 1) representing the correction term.
 
-        coef[0] * I * sin(coef[1] * T) * sin(2πt / 15)
+    Notes
+    -----
+    The output is computed as:
+
+    .. math::
+
+        c_0 \\cdot I \\cdot \\sin(c_1 T) \\cdot \\sin\\!\\left(\\frac{2\\pi t}{15}\\right)
     """
     intensity = coef[0] * I * torch.sin(coef[1]* T)
     sine_term = torch.sin(2 * torch.pi * t / 15)

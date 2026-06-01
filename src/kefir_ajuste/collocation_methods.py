@@ -14,7 +14,7 @@ def all_data_collocation(X:torch.Tensor,y:torch.Tensor,args:dict[str,int])->tupl
         Input feature tensor.
     y : torch.Tensor
         Target tensor.
-    args : dict of str to int
+    args : dict[str, int]
         Additional configuration arguments (not used).
 
     Returns
@@ -39,7 +39,7 @@ def identity_collocation(X_train:torch.Tensor,y_train:torch.Tensor,args:dict[str
         Training input features.
     y_train : torch.Tensor
         Training target values.
-    args : dict of str to int
+    args : dict[str, int]
         Additional configuration arguments (not used).
 
     Returns
@@ -64,8 +64,9 @@ def random_collocation(X_train:torch.Tensor,y_train:torch.Tensor,args:dict[str,i
         Training input features.
     y_train : torch.Tensor
         Training target values.
-    args : dict of str to int
+    args : dict[str, int]
         Configuration dictionary containing:
+
         - ``collocation_size`` : int
             Number of samples to select.
         - ``seed`` : int or None
@@ -107,8 +108,9 @@ def equal_collocation(X_train:torch.Tensor,y_train:torch.Tensor,args:dict[str,in
         Training input features.
     y_train : torch.Tensor
         Training target values.
-    args : dict of str to int
+    args : dict[str, int]
         Configuration dictionary containing:
+
         - ``collocation_skip`` : int
             Step size for subsampling.
 
