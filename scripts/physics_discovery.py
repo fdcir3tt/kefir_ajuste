@@ -3,6 +3,7 @@ import mlflow
 import deepxde as dde
 import torch
 import numpy as np
+import random
 
 from pathlib import Path
 from numpy.typing import NDArray
@@ -41,6 +42,19 @@ kwargs = {"grade":grade}
 
 ensure_experiment_active(EXPERIMENT_NAME)
 mlflow.set_experiment(EXPERIMENT_NAME)
+
+def set_seed(seed: int | None = None) -> int:
+    """Fixes global seed and returns it """
+    if seed is None:
+        seed = random.randint(0, 2**32 - 1)
+
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)         
+    torch.cuda.manual_seed_all(seed) 
+    dde.config.set_random_seed(seed)
+
+    return seed
 
 def make_coeficient_list(correction_function:Callable,**kwargs)->list[dde.Variable]:
     """ 
@@ -326,7 +340,7 @@ with mlflow.start_run(run_name=run_name):
     mlflow.log_input(mlflow_dataset, context="discovery")
     mlflow.log_param("epochs", EPOCHS)
                                                                     
-                                                                                                                                      
+    seed = set_seed()                                                                                                                            
     epochs = EPOCHS
     lr = LEARNING_RATE
     correction_function = delta
@@ -393,7 +407,8 @@ with mlflow.start_run(run_name=run_name):
 # ============================================================
     
     learned_parameters = get_learned_coeficients(correction_function,lr,n_phys_points,kappa,L)
-
+    learned_parameters["seed"] = seed
+     
     os.remove(variable_path)
     
     data_dict = {
