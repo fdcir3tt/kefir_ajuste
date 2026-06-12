@@ -24,7 +24,7 @@ EXPERIMENT_NAME = "Physics Discovery"
 DATA_FILE_NAME = "control_dataset.csv"
 EPOCHS = 1000
 LEARNING_RATE = 0.01
-PHYSICAL_COLLOCATION_POINTS=200
+PHYSICAL_COLLOCATION_POINTS=500
 COLLOCATION_METHOD = identity_collocation
 COLLOCATION_ARGS = {"collocation_skip":2}
 delta =  intensity_function
@@ -103,9 +103,8 @@ def make_geometry(X_train: NDArray[np.float32],t0:float,tf:float)->dde.geometry.
     
     """
     t_min, t_max = float(t0), float(tf)
-    I_min, I_max = X_train[:, 0].min(), X_train[:, 0].max()
-    T_min, T_max = X_train[:, 1].min(), X_train[:, 1].max()
-    
+    I_min, I_max = X_train[:, 1].min(), X_train[:, 1].max()
+    T_min, T_max = X_train[:, 2].min(), X_train[:, 2].max()
     geom_space = dde.geometry.Rectangle(
     [I_min, T_min],
     [I_max, T_max]
@@ -343,9 +342,9 @@ with mlflow.start_run(run_name=run_name):
     
     t0,y0 = load_initial_conditions(dataset)
     t0,tf = load_time_domain(dataset)
-    print(dataset)
+    
     X_train, y_train, X_test,y_test = split_train_data(dataset,"concentracion(g/cm3)")
-    print(X_train)
+    
 # ============================================================
 #                 CONFIGURACION ENTRENAMIENTO
 # ============================================================
@@ -367,7 +366,7 @@ with mlflow.start_run(run_name=run_name):
         else:
             delta = correction_function(t,I_t, T_t, c_coef)
 
-        return model_equation(dy_dt,t,y,model_parameters) - delta
+        return model_equation(dy_dt,t,y,model_parameters) - delta*y
 
 # ============================================================
 #                         PINN SETUP
@@ -396,16 +395,20 @@ with mlflow.start_run(run_name=run_name):
     learned_parameters = get_learned_coeficients(correction_function,lr,n_phys_points,kappa,L)
 
     os.remove(variable_path)
-    y_true = y_test
-    y_pred = model.predict(X_test)
-       
+    
+    data_dict = {
+        "test_data" : (X_test,y_test),
+        "train_data": (X_train,y_train),
+        "y_true": y_test,
+        "y_pred": model.predict(X_test),
+        "t_min" :t0,
+        "t_max" :tf,
+    }
 
-    log_run(dataset=dataset,
-            model=model,
+    log_run(model=model,
             model_name=delta.__name__,
             collocation_method = COLLOCATION_METHOD,
-            loss_history=loss_history,
-            learned_params=learned_parameters,
-            plot_solution=plot_physics_discovery_solution,
-            y_true=y_true,
-            y_pred=y_pred)
+            loss_history = loss_history,
+            learned_params =learned_parameters,
+            plot_solution= plot_physics_discovery_solution,
+            data_dict = data_dict)

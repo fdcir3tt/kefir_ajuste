@@ -122,7 +122,7 @@ def plot_inverse_problem_solution(model:dde.Model, data: pd.DataFrame)->list[tup
     return [(fig,"data_plot")]
 
 
-def plot_physics_discovery_solution(model:dde.Model, data: pd.DataFrame)->list[tuple[Figure,str]]:
+def plot_physics_discovery_solution(model:dde.Model,data_dict:dict[str,Any])->list[tuple[Figure,str]]:
     """
     Plot model predictions grouped by treatment conditions.
 
@@ -147,36 +147,41 @@ def plot_physics_discovery_solution(model:dde.Model, data: pd.DataFrame)->list[t
     Each condition is defined by unique values of intensity and exposure time.
     Predictions are evaluated on a fixed time grid of 200 points.
     """
-    t_min = data["tiempo(h)"].min()
-    t_max = data["tiempo(h)"].max()
+    t_min = data_dict.get("t_min")
+    t_max = data_dict.get("t_max")
+
+    X_train,y_train = data_dict.get("train_data")
+    X_test ,y_test  = data_dict.get("test_data")
     
-    X_train, y_train, X_test, y_test = split_train_data(data,"concentracion(g/cm3)")
-        
+
     t_plot = np.linspace(t_min, t_max, 200)
+    
 
         # ── One figure per (I, T) treatment ──────────────────────────────────────
-    all_conditions = np.unique(np.vstack([X_train[:, :2], X_test[:, :2]]), axis=0)
-
+    all_conditions = np.unique(np.vstack([X_train[:, 1:3], X_test[:, 1:3]]), axis=0)
+    print(f"Treatments:{all_conditions}")
     figures = []
     for I_val, T_val in all_conditions:
 
-        grid = np.column_stack([np.full(200, I_val),
+        grid = np.column_stack([
+                                t_plot,
+                                np.full(200, I_val),
                                 np.full(200, T_val),
-                                t_plot ]).astype(np.float32)
+                               ]).astype(np.float32)
         pred = model.predict(grid)
 
-            # Training points that belong to this condition
-        train_mask = (X_train[:, 0] == I_val) & (X_train[:, 1] == T_val)
-        test_mask  = (X_test[:, 0]  == I_val) & (X_test[:, 1]  == T_val)
+        # Training points that belong to this condition
+        train_mask = (X_train[:, 1] == I_val) & (X_train[:, 2] == T_val)
+        test_mask  = (X_test[:, 1]  == I_val) & (X_test[:, 2]  == T_val)
 
         fig, ax = plt.subplots(figsize=(8, 5))
         ax.plot(t_plot, pred, "--", linewidth=2, label="Predicción PINN")
         if train_mask.any():
-            ax.scatter(X_train[train_mask, 2], y_train[train_mask],
-                        color="black", label="Entrenamiento")
+            ax.scatter(X_train[train_mask, 0], y_train[train_mask],  
+                    color="black", label="Entrenamiento")
         if test_mask.any():
-            ax.scatter(X_test[test_mask, 2], y_test[test_mask],
-                        color="red", label="Test")
+            ax.scatter(X_test[test_mask, 0], y_test[test_mask],      
+                    color="red", label="Test")
 
         ax.set_title(f"Tratamiento I={I_val:.2f} W/cm², T={T_val:.2f} s")
         ax.set_xlabel("Tiempo de Fermentación (h)")
@@ -189,7 +194,7 @@ def plot_physics_discovery_solution(model:dde.Model, data: pd.DataFrame)->list[t
         # ── Test-only figure ─────────────────────────────────────────────────────
     fig_test, ax_test = plt.subplots(figsize=(8, 5))
     for I_val, T_val in all_conditions:
-        test_mask = (X_test[:, 0] == I_val) & (X_test[:, 1] == T_val)
+        test_mask = (X_test[:, 1] == I_val) & (X_test[:, 2] == T_val)
         if not test_mask.any():
             continue
 
@@ -202,7 +207,7 @@ def plot_physics_discovery_solution(model:dde.Model, data: pd.DataFrame)->list[t
 
         ax_test.plot(t_plot, pred, "--", linewidth=2,
                         label=f"PINN (I={I_val:.2f}, T={T_val:.2f})")
-        ax_test.scatter(X_test[test_mask, 2], y_test[test_mask],
+        ax_test.scatter(X_test[test_mask, 0], y_test[test_mask],
                             label=f"Test (I={I_val:.2f}, T={T_val:.2f})")
 
     ax_test.set_title("Datos de Test — Todas las condiciones")
@@ -329,15 +334,13 @@ def ensure_experiment_active(experiment_name: str) -> str:
 
 
 def log_run(
-            dataset:pd.DataFrame,
             model:dde.Model,
             model_name:str,
             collocation_method:Callable|None,
             loss_history,
             learned_params:dict[str,Any],
             plot_solution:Callable,
-            y_true:np.ndarray,
-            y_pred:np.ndarray)->None:
+            data_dict:dict[str,Any])->None:
     """
     Log training results, metrics, and artifacts to MLflow.
 
@@ -373,12 +376,14 @@ def log_run(
     -----
     This function assumes an active MLflow run.
     """
+    y_true = data_dict.get("y_true")
+    y_pred = data_dict.get("y_pred")
 
     dde.utils.plot_loss_history(loss_history)
     mlflow.log_figure(plt.gcf(), "loss_plot.png")
     plt.close() 
 
-    figures = plot_solution(model=model, data=dataset)
+    figures = plot_solution(model=model, data_dict=data_dict)
     for fig, name in figures:
         mlflow.log_figure(fig, f"{name}.png")
         plt.close(fig)
