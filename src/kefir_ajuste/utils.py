@@ -339,6 +339,7 @@ def log_run(
             collocation_method:Callable|None,
             loss_history,
             learned_params:dict[str,Any],
+            log_params:dict[str,Any],
             plot_solution:Callable,
             data_dict:dict[str,Any])->None:
     """
@@ -390,7 +391,7 @@ def log_run(
     
 
     
-    n_params = len(learned_params)
+    n_params = len(learned_params) + model.net.num_trainable_parameters()
     metrics = compute_regression_metrics(
         y_true=y_true,
         y_pred=y_pred,
@@ -409,6 +410,7 @@ def log_run(
 
     print("Logging learned parameters...")
     # Log parametros aprendidos
+    mlflow.log_params(params=log_params)
     mlflow.log_params(params=learned_params)
     
     if collocation_method:

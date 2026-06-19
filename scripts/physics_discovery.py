@@ -24,16 +24,17 @@ mlflow.set_tracking_uri("file:./mlruns")
 EXPERIMENT_NAME = "Physics Discovery"
 DATA_FILE_NAME = "control_dataset.csv"
 EPOCHS = 1000
-LEARNING_RATE = 0.01
-PHYSICAL_COLLOCATION_POINTS=500
-COLLOCATION_METHOD = identity_collocation
+LEARNING_RATE = 0.0001
+PHYSICAL_COLLOCATION_POINTS=250
+COLLOCATION_METHOD = equal_collocation
 COLLOCATION_ARGS = {"collocation_skip":2}
+SEED = 2446006595
 delta =  intensity_function
 model_equation = verhulst
 kappa = 0.046 
 L = 47.81 
 model_parameters ={"kappa":kappa,"L":L}
-grade = 6
+grade = 3
 kwargs = {"grade":grade}
 
 # ==============================================================================
@@ -319,10 +320,7 @@ def get_learned_coeficients(correction_function:Callable,learning_rate:float,num
     else:
         learned_params = get_learned_parameters(model=correction_function.__name__)
 
-    learned_params ["learning_rate"] = learning_rate
-    learned_params ["initial_rate"]  = initial_growth_rate
-    learned_params ["n_phys_points"] = number_of_pde_collocation_points
-    learned_params ["initial_saturation_concentration"] = initial_saturation_concentration
+    
     return learned_params 
 
 dataset = load_data(DATA_FILE_NAME)
@@ -340,7 +338,7 @@ with mlflow.start_run(run_name=run_name):
     mlflow.log_input(mlflow_dataset, context="discovery")
     mlflow.log_param("epochs", EPOCHS)
                                                                     
-    seed = set_seed()                                                                                                                            
+    seed = set_seed(SEED)                                                                                                                            
     epochs = EPOCHS
     lr = LEARNING_RATE
     correction_function = delta
@@ -407,8 +405,15 @@ with mlflow.start_run(run_name=run_name):
 # ============================================================
     
     learned_parameters = get_learned_coeficients(correction_function,lr,n_phys_points,kappa,L)
-    learned_parameters["seed"] = seed
-     
+    
+    log_params = {"seed":seed,
+                  "learning_rate":lr,
+                  "initial_rate":kappa,
+                  "n_phys_points":n_phys_points,
+                  "initial_saturation_concentration":L
+
+                  }
+    
     os.remove(variable_path)
     
     data_dict = {
@@ -424,6 +429,7 @@ with mlflow.start_run(run_name=run_name):
             model_name=delta.__name__,
             collocation_method = COLLOCATION_METHOD,
             loss_history = loss_history,
+            log_params= log_params,
             learned_params =learned_parameters,
             plot_solution= plot_physics_discovery_solution,
             data_dict = data_dict)
