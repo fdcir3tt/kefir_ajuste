@@ -3,6 +3,7 @@ import mlflow
 import deepxde as dde
 import numpy as np
 import torch
+import random
 
 from pathlib import Path
 from typing import Callable
@@ -19,18 +20,31 @@ from kefir_ajuste.equations import verhulst
 mlflow.set_tracking_uri("file:./mlruns")
 DATA_FILE_NAME = "tratamiento_1.csv"
 EXPERIMENT_NAME = "Inverse Problem"
-epochs = 1000
-lr = 0.01
-model_equation = verhulst
-collocation_method = identity_collocation
-variables_path = Path("learned_parameters.dat")
+SEED = None
+EPOCHS = 1000
+LEARNING_RATE = 0.01
+COLLOCATION_METHOD = identity_collocation
+MODEL_EQUATION = verhulst
+PHYSICAL_COLLOCATION_POINTS=200
 
-kappa = dde.Variable(0.04)
-L = dde.Variable(51.0)
-trainable_variables = [kappa,L]
-model_parameters ={"kappa":kappa,"L":L}
-n_phys_points= 200
+
+r = dde.Variable(0.04)
+m = dde.Variable(51.0)
+
 collocation_args = {}
+
+def set_seed(seed: int | None = None) -> int:
+    """Fixes global seed and returns it """
+    if seed is None:
+        seed = random.randint(0, 2**32 - 1)
+
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)         
+    torch.cuda.manual_seed_all(seed) 
+    dde.config.set_random_seed(seed)
+
+    return seed
 
 def make_time_domain(t0:float,tf:float)->dde.geometry.GeometryXTime:
     """ 
@@ -212,6 +226,16 @@ def train_pinn(optimizer_method:str,loss_func:str,learning_rate:float,epochs:int
 ensure_experiment_active(EXPERIMENT_NAME)
 mlflow.set_experiment(EXPERIMENT_NAME)
 
+seed = set_seed(SEED) 
+epochs = EPOCHS
+lr = LEARNING_RATE
+model_equation = MODEL_EQUATION
+collocation_method = COLLOCATION_METHOD
+variables_path = Path("learned_parameters.dat")
+trainable_variables = [r,m]
+model_parameters ={"r":r,"m":m}
+n_phys_points= PHYSICAL_COLLOCATION_POINTS
+
 dataset = load_data(DATA_FILE_NAME)
 dataset = dataset[["tiempo(h)","concentracion(g/cm3)"]]
 dataset_source_url = f"data/processed/{DATA_FILE_NAME}"
@@ -221,7 +245,7 @@ mlflow_dataset: PandasDataset = mlflow.data.from_pandas(dataset,
                                                         name=DATA_FILE_NAME)
 
 
-run_name = f"{model_equation.__name__}_{lr}_{epochs}"
+run_name = f"{model_equation.__name__}"
 with mlflow.start_run(run_name=run_name):
     mlflow.log_param("epochs", epochs)
     mlflow.log_param("learning_rate", lr)
@@ -262,18 +286,36 @@ with mlflow.start_run(run_name=run_name):
 
     model = make_net([1, 50, 50, 50, 1],"tanh", "Glorot uniform",data_pinn)
     loss_history, model = train_pinn("adam","MSE",lr,epochs,trainable_variables,600,variables_path)
-    learned_parameters = get_learned_parameters(model='verhulst')
+    learned_parameters  = get_learned_parameters(model='verhulst')
     os.remove(variables_path)
     y_true = y_test
     y_pred = model.predict(t_test)
     
     
-    log_run(dataset=dataset,
-                     model=model,
-                     model_name=f"verhulst_IP_PINN",
-                     loss_history=loss_history,
-                     collocation_method=collocation_method,
-                     learned_params=learned_parameters,
-                     plot_solution= plot_inverse_problem_solution,
-                     y_true=y_true,
-                     y_pred=y_pred)
+    log_params = {"seed":seed,
+                  "learning_rate":lr,
+                  "initial_rate":r,
+                  "n_phys_points":n_phys_points,
+                  "initial_saturation_concentration":m
+
+                  }
+    
+    data_dict = {
+        "test_data" : (X_test,y_test),
+        "train_data": (X_train,y_train),
+        "y_true": y_test,
+        "y_pred": model.predict(X_test),
+        "t_min" :t0,
+        "t_max" :tf,
+        "equation_parameters":model_parameters,
+        "model_equation":model_equation.__name__
+    }
+    
+    log_run( model=model,
+             model_name=f"verhulst_IP_PINN",
+             loss_history=loss_history,
+             collocation_method=collocation_method,
+             log_params = log_params,
+             learned_params=learned_parameters,
+             plot_solution= plot_inverse_problem_solution,
+             data_dict=data_dict)

@@ -10,7 +10,8 @@ from numpy.typing import NDArray
 from matplotlib.figure import Figure
 from typing import Callable,Any
 from mlflow.tracking import MlflowClient
-from kefir_ajuste.data import split_train_data
+from kefir_ajuste.ode_solvers import runge_kutta
+from kefir_ajuste.equations import verhulst_eq
 
 def get_learned_parameters(model:str,n:int|None =None,)->dict[str,float]:
     """
@@ -73,7 +74,7 @@ def get_learned_parameters(model:str,n:int|None =None,)->dict[str,float]:
 
 
 
-def plot_inverse_problem_solution(model:dde.Model, data: pd.DataFrame)->list[tuple[Figure,str]]:
+def plot_inverse_problem_solution(model:dde.Model, data_dict: dict[str,Any])->list[tuple[Figure,str]]:
     """
     Plot model predictions for the inverse problem.
 
@@ -96,22 +97,41 @@ def plot_inverse_problem_solution(model:dde.Model, data: pd.DataFrame)->list[tup
     -----
     The prediction is performed over a uniform grid of 200 time points.
     """
-    t0 = data["tiempo(h)"].min()
-    tf = data["tiempo(h)"].max()
-    domain = (t0,tf)
-    X_train,y_train,X_test,y_test =split_train_data(data,"concentracion(g/cm3)")
+    equations_dict = {"verhulst":verhulst_eq}
+
+    t_min = data_dict.get("t_min")
+    t_max = data_dict.get("t_max")
+
+    X_train, y_train = data_dict.get("train_data")
+    X_test,  y_test  = data_dict.get("test_data")
+
+    equation_params = data_dict.get("equation_parameters")
+    model_equation  = data_dict.get("model_equation")
+    model_equation  = equations_dict.get(model_equation)
+
     t_train =  X_train.reshape(-1, 1)
-    t_test =  X_test.reshape(-1, 1)
-        
-
+    t_test  =  X_test.reshape(-1, 1)
+    y_0     =  y_train[0][0]
     
-    T = np.linspace(domain[0], domain[1], 200).reshape(-1, 1)
-    pred = model.predict(T)
-        
-        
+    for key,param in equation_params.items():
+        equation_params[key] = float(param)
 
+
+
+    numeric_solution = runge_kutta(f=model_equation,
+                                   parameters=equation_params,
+                                   y0=y_0,
+                                   interval=(t_min,t_max),
+                                   n=50)
+    
+    
+    t_rk, y_rk = zip(*numeric_solution) 
+
+    T = np.linspace(t_min, t_max, 200).reshape(-1, 1)
+    pred = model.predict(T)
     fig, ax = plt.subplots(figsize=(8, 5))
     plt.plot(T, pred, "--", label="Predicción PINN", linewidth=4)
+    ax.plot(t_rk, y_rk, "-",  color="tab:orange",  linewidth=2, label="Solución Numérica (RK)")
     plt.scatter(t_train, y_train, color="black", label="Datos de entrenamiento")
     plt.scatter(t_test, y_test, color="red", label="Datos test")
 
@@ -121,104 +141,88 @@ def plot_inverse_problem_solution(model:dde.Model, data: pd.DataFrame)->list[tup
     plt.grid()
     return [(fig,"data_plot")]
 
-
-def plot_physics_discovery_solution(model:dde.Model,data_dict:dict[str,Any])->list[tuple[Figure,str]]:
+def plot_physics_discovery_solution(model: dde.Model, data_dict: dict[str, Any]) -> list[tuple[Figure, str]]:
     """
-    Plot model predictions grouped by treatment conditions.
+    Plot model predictions for all treatment conditions in a single figure.
 
-    This function generates one figure per unique combination of intensity
-    and exposure time, along with an additional figure showing all test
-    data across conditions.
+    Each unique (intensity, exposure time) combination is assigned a distinct
+    color. Training points, test points, and PINN predictions share the same
+    color per treatment for easy visual grouping.
 
     Parameters
     ----------
     model : object
         Trained model with a ``predict`` method.
-    data : pandas.DataFrame
-        Dataset containing input features and target values.
+    data_dict : dict
+        Dictionary containing:
+        - "t_min" / "t_max"  : time axis bounds
+        - "train_data"       : (X_train, y_train) tuple
+        - "test_data"        : (X_test,  y_test)  tuple
 
     Returns
     -------
     list of tuple of (matplotlib.figure.Figure, str)
-        List of generated figures and their corresponding names.
-
-    Notes
-    -----
-    Each condition is defined by unique values of intensity and exposure time.
-    Predictions are evaluated on a fixed time grid of 200 points.
+        Single-element list with the combined figure and its name.
     """
     t_min = data_dict.get("t_min")
     t_max = data_dict.get("t_max")
 
-    X_train,y_train = data_dict.get("train_data")
-    X_test ,y_test  = data_dict.get("test_data")
-    
+    X_train, y_train = data_dict.get("train_data")
+    X_test,  y_test  = data_dict.get("test_data")
 
+    
+    
     t_plot = np.linspace(t_min, t_max, 200)
-    
+    all_conditions = np.unique(
+        np.vstack([X_train[:, 1:3], X_test[:, 1:3]]), axis=0
+    )
+    print(f"Treatments: {all_conditions}")
 
-        # ── One figure per (I, T) treatment ──────────────────────────────────────
-    all_conditions = np.unique(np.vstack([X_train[:, 1:3], X_test[:, 1:3]]), axis=0)
-    print(f"Treatments:{all_conditions}")
-    figures = []
-    for I_val, T_val in all_conditions:
+    # One color per treatment
+    cmap   = plt.get_cmap("tab10")
+    colors = [cmap(i % 10) for i in range(len(all_conditions))]
 
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    for idx, (I_val, T_val) in enumerate(all_conditions):
+        color = colors[idx]
+        label_base = f"I={I_val:.2f} W/cm², T={T_val:.2f} s"
+
+        # ── PINN prediction curve ────────────────────────────────────────────
         grid = np.column_stack([
-                                t_plot,
-                                np.full(200, I_val),
-                                np.full(200, T_val),
-                               ]).astype(np.float32)
+            t_plot,
+            np.full(200, I_val),
+            np.full(200, T_val),
+        ]).astype(np.float32)
         pred = model.predict(grid)
 
-        # Training points that belong to this condition
+        ax.plot(t_plot, pred, "--", color=color, linewidth=2,
+                label=f"PINN — {label_base}")
+
+        # ── Training scatter ─────────────────────────────────────────────────
         train_mask = (X_train[:, 1] == I_val) & (X_train[:, 2] == T_val)
-        test_mask  = (X_test[:, 1]  == I_val) & (X_test[:, 2]  == T_val)
-
-        fig, ax = plt.subplots(figsize=(8, 5))
-        ax.plot(t_plot, pred, "--", linewidth=2, label="Predicción PINN")
         if train_mask.any():
-            ax.scatter(X_train[train_mask, 0], y_train[train_mask],  
-                    color="black", label="Entrenamiento")
-        if test_mask.any():
-            ax.scatter(X_test[test_mask, 0], y_test[test_mask],      
-                    color="red", label="Test")
+            ax.scatter(X_train[train_mask, 0], y_train[train_mask],
+                       color=color, marker="o", edgecolors="black",
+                       linewidths=0.6, s=50,
+                       label=f"Entrenamiento — {label_base}")
 
-        ax.set_title(f"Tratamiento I={I_val:.2f} W/cm², T={T_val:.2f} s")
-        ax.set_xlabel("Tiempo de Fermentación (h)")
-        ax.set_ylabel("Concentración (g/cm³)")
-        ax.legend()
-        ax.grid()
-        fig.tight_layout()
-        figures.append((fig, f"treatment_I{I_val:.2f}_T{T_val:.2f}"))
-
-        # ── Test-only figure ─────────────────────────────────────────────────────
-    fig_test, ax_test = plt.subplots(figsize=(8, 5))
-    for I_val, T_val in all_conditions:
+        # ── Test scatter ─────────────────────────────────────────────────────
         test_mask = (X_test[:, 1] == I_val) & (X_test[:, 2] == T_val)
-        if not test_mask.any():
-            continue
+        if test_mask.any():
+            ax.scatter(X_test[test_mask, 0], y_test[test_mask],
+                       color=color, marker="^", edgecolors="black",
+                       linewidths=0.6, s=60,
+                       label=f"Test — {label_base}")
 
-        grid = np.column_stack([
-                np.full(200, I_val),
-                np.full(200, T_val),
-                t_plot
-            ]).astype(np.float32)
-        pred = model.predict(grid)
+    ax.set_title("Predicciones PINN — Todos los tratamientos")
+    ax.set_xlabel("Tiempo de Fermentación (h)")
+    ax.set_ylabel("Concentración (g/cm³)")
+    ax.legend(fontsize=8, ncols=2, loc="best")
+    ax.grid(True, linestyle=":", alpha=0.6)
+    fig.tight_layout()
 
-        ax_test.plot(t_plot, pred, "--", linewidth=2,
-                        label=f"PINN (I={I_val:.2f}, T={T_val:.2f})")
-        ax_test.scatter(X_test[test_mask, 0], y_test[test_mask],
-                            label=f"Test (I={I_val:.2f}, T={T_val:.2f})")
-
-    ax_test.set_title("Datos de Test — Todas las condiciones")
-    ax_test.set_xlabel("Tiempo de Fermentación (h)")
-    ax_test.set_ylabel("Concentración (g/cm³)")
-    ax_test.legend()
-    ax_test.grid()
-    fig_test.tight_layout()
-    figures.append((fig_test, "test_all_conditions"))
-
-    return figures
+    return [(fig, "all_treatments")]
 
 def get_treatment_name(treatment_index:int)->str:
     """

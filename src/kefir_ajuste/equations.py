@@ -1,4 +1,8 @@
 import torch
+def verhulst_eq(x:float,y:float,parameters:dict[str,float])->float:
+    r = parameters["r"]
+    m = parameters["m"]
+    return r * y * (1 - y / m)
 
 def verhulst(dy_dt:torch.Tensor,t:float,y:float,parameters:dict[str,float])->float:
     """
@@ -46,7 +50,6 @@ def verhulst(dy_dt:torch.Tensor,t:float,y:float,parameters:dict[str,float])->flo
 
         r = \\frac{dy}{dt} - \\kappa \\, y \\left(1 - \\frac{y}{L}\\right)
     """
-    kappa = parameters["kappa"]
-    L = parameters["L"]
-    return dy_dt - kappa * y * (1 - y / L)
-
+    r = parameters["r"]
+    m = parameters["m"]
+    return dy_dt - r * y * (1 - y / m)

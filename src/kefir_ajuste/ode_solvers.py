@@ -1,7 +1,8 @@
+from copy import copy
 from typing import Callable
 
 
-def runge_kutta(f:Callable,y0:float,interval:tuple[float,float],n:int=10)->list[tuple[float,float]]:
+def runge_kutta(f:Callable,parameters:dict[str,float],y0:float,interval:tuple[float,float],n:int=10)->list[tuple[float,float]]:
     """
     Numerically solves an ordinary differential equation (ODE) using the classical
     4th-order Runge-Kutta method (RK4).
@@ -53,15 +54,16 @@ def runge_kutta(f:Callable,y0:float,interval:tuple[float,float],n:int=10)->list[
     [(1.0, 1.0), (5.0, 1.452), ..., (200.0, 39.99)]
     """
 
-    x=interval[0]
-    h=(interval[1]-interval[0])/n
-    y_est=y0
-    curve=[]
+    x = interval[0]
+    h = (interval[1]-interval[0])/n
+    y_est = copy(y0)
+    curve =[]
+    
     for i in range(1,n+1):
-        k1=h*f(x=x,y=y_est)
-        k2=h*f(x=x+h/2,y=y_est+k1/2)
-        k3=h*f(x=x+h/2,y=y_est+k2/2)
-        k4=h*f(x=x+h,y=y_est+k3)
+        k1=h*f(parameters=parameters,x=x,y=y_est)
+        k2=h*f(parameters=parameters,x=x+h/2,y=y_est+k1/2)
+        k3=h*f(parameters=parameters,x=x+h/2,y=y_est+k2/2)
+        k4=h*f(parameters=parameters,x=x+h,y=y_est+k3)
 
         # Add point to curve
         curve.append( ( x, y_est) )
