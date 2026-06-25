@@ -9,8 +9,8 @@ from pathlib import Path
 from numpy.typing import NDArray
 from typing import Callable,Any
 from mlflow.data.pandas_dataset import PandasDataset
-from kefir_ajuste.utils import ensure_experiment_active,log_run,plot_physics_discovery_solution,split_train_data,get_learned_parameters
-from kefir_ajuste.data import load_data,load_initial_conditions,load_time_domain
+from kefir_ajuste.utils import ensure_experiment_active,log_run,plot_physics_discovery_solution,get_learned_parameters
+from kefir_ajuste.data import load_data,load_initial_conditions,load_time_domain,split_train_data
 from kefir_ajuste.collocation_methods import equal_collocation,identity_collocation
 from kefir_ajuste.correction_funcs import multi_polynomial,intensity_function,fourier_term
 from kefir_ajuste.equations import verhulst
@@ -23,17 +23,19 @@ mlflow.set_tracking_uri("file:./mlruns")
 
 EXPERIMENT_NAME = "Physics Discovery"
 DATA_FILE_NAME = "control_dataset.csv"
-EPOCHS = 1000
-LEARNING_RATE = 0.0001
-PHYSICAL_COLLOCATION_POINTS=250
+EPOCHS = 100000
+LEARNING_RATE = 0.001
+PHYSICAL_COLLOCATION_POINTS=200
 COLLOCATION_METHOD = equal_collocation
-COLLOCATION_ARGS = {"collocation_skip":2}
-SEED = 2446006595
-delta =  intensity_function
+COLLOCATION_ARGS = {"collocation_skip":1}
+SEED = 963840241
+INITIAL_SATURATION = 47.81
+INITIAL_RATE = 0.046 
+delta =  fourier_term
 model_equation = verhulst
-kappa = 0.046 
-L = 47.81 
-model_parameters ={"kappa":kappa,"L":L}
+r =  INITIAL_RATE
+m =  INITIAL_SATURATION
+model_parameters ={"r":r,"m":m}
 grade = 3
 kwargs = {"grade":grade}
 
@@ -368,9 +370,9 @@ with mlflow.start_run(run_name=run_name):
     trainable_variables = c_coef
 
     def ode(x:torch.Tensor, y:torch.Tensor)->torch.Tensor:
-        I_t = x[:, 0:1]
-        T_t = x[:, 1:2]
-        t = x[:, 2:3]
+        t   = x[:, 0:1]   
+        I_t = x[:, 1:2]   
+        T_t = x[:, 2:3] 
 
         dy_dt = dde.grad.jacobian(y, x, i=0, j=2)
         if correction_function.__name__ == "multi_polynomial":
@@ -404,13 +406,13 @@ with mlflow.start_run(run_name=run_name):
 #                        ENTRENAMIENTO
 # ============================================================
     
-    learned_parameters = get_learned_coeficients(correction_function,lr,n_phys_points,kappa,L)
+    learned_parameters = get_learned_coeficients(correction_function,lr,n_phys_points,r,m)
     
     log_params = {"seed":seed,
                   "learning_rate":lr,
-                  "initial_rate":kappa,
+                  "initial_rate":INITIAL_RATE,
                   "n_phys_points":n_phys_points,
-                  "initial_saturation_concentration":L
+                  "initial_saturation_concentration":INITIAL_SATURATION
 
                   }
     
