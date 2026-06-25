@@ -217,11 +217,7 @@ t0,tf = load_time_domain(dataset)
 X_train, y_train, X_test,y_test = split_train_data(dataset,"concentracion(g/cm3)")
 
 X_test_fixed = X_test.copy()
-X_test_fixed[:, 0] = X_test[:, 0].max() + X_test[:, 0].min() - X_test[:, 0]
-print("X_test primeras filas:")
-print(X_test[:5])
-
-
+X_test_fixed = X_test_fixed[:, [1, 2, 0]]
 
 
 #-------- Load DeepXDE model ---------------
@@ -247,7 +243,7 @@ model.compile("adam", lr=1e-3)
 
 
 # ----------- Prediction ----------------#
-y_pred = model.predict(X_test)
+y_pred = model.predict(X_test_fixed)
 data_dict = {
         "test_data" : (X_test,y_test),
         "train_data": (X_train,y_train),
