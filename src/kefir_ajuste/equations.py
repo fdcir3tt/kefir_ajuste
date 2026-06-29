@@ -1,8 +1,24 @@
 import torch
+import numpy as np
+import pymc as pm
+
 def verhulst_eq(x:float,y:float,parameters:dict[str,float])->float:
-    r = parameters["r"]
-    m = parameters["m"]
+    r = parameters.get("r")
+    m = parameters.get("m")
     return r * y * (1 - y / m)
+
+def gompertz_eq_solution(x,parameters:dict[str,float]):
+    K  = parameters.get("K")
+    Y0 = parameters.get("Y0")
+    r  = parameters.get("r")
+    return K * np.exp(-np.log(K / Y0) * np.exp(-r * x))
+
+def gompertz_latent_eq(x,parameters:dict[str,float]):
+    K  = parameters.get("K")
+    Y0 = parameters.get("Y0")
+    r  = parameters.get("r")
+    return K * pm.math.exp(-pm.math.log(K / Y0) * pm.math.exp(-r * x))
+
 
 def verhulst(dy_dt:torch.Tensor,t:float,y:float,parameters:dict[str,float])->float:
     """
