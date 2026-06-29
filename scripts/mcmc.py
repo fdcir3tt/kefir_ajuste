@@ -104,7 +104,7 @@ def plot_posterior_fallback(trace, var_names, true_values, hdi_prob=0.94, figsiz
 
 
 # -----------------------------------------------------------------------------
-# 1. Load data
+#  Load data
 # -----------------------------------------------------------------------------
 
 dataset = load_data(DATA_FILE_NAME)
@@ -150,9 +150,11 @@ with pm.Model() as gompertz_model:
     print("Running MCMC Sampler...")
     trace = pm.sample(draws=10000, tune=1000, target_accept=0.95, return_inferencedata=True)
 
+
 # -----------------------------------------------------------------------------
 # 4. RESULTS ANALYSIS
 # -----------------------------------------------------------------------------
+
 # Print text summary of parameter posteriors and convergence metrics (R-hat)
 print("\n--- Posterior Parameter Summary ---")
 
@@ -208,9 +210,14 @@ plt.show()
 
 # Extract posterior sample arrays for plotting
 posterior = trace.posterior
-r_samples = posterior['r'].values.flatten()
-K_samples = posterior['K'].values.flatten()
-Y0_samples = posterior['Y0'].values.flatten()
+samples_dict = {}
+for param in posterior.keys():
+    if param in initial_prior_conditions.keys():
+        samples_dict[param] = (posterior[param].values
+                                               .flatten())
+        
+r_samples = samples_dict.get('r')
+
 
 
 plt.figure(figsize=(10, 6))
@@ -219,9 +226,9 @@ plt.scatter(t_data, y_obs, color='black', zorder=5, label='Observed Noisy Data')
 # Draw 100 random trajectories from the posterior to show estimation uncertainty
 t_plot = np.linspace(0, t_data.max(), 300)
 for i in np.random.choice(len(r_samples), size=100, replace=False):
-    parameters = {'r':r_samples[i], 
-                  'K':K_samples[i], 
-                  'Y0':Y0_samples[i]}
+    parameters = {}
+    for param in samples_dict.keys():
+        parameters[param]=samples_dict.get(param)[i]
     plt.plot(t_plot, ode_solution(t_plot,parameters),
              color='cyan', alpha=0.1, zorder=1)
 
