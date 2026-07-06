@@ -3,3 +3,6 @@ phys_disc:
 
 ui:
 	poetry run mlflow ui
+
+confidence: 
+	poetry run python scripts/mcmc.py

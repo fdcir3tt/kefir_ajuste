@@ -1,12 +1,14 @@
+import os
 import numpy as np
 import pymc as pm
 import arviz as az
 import matplotlib.pyplot as plt
 
-from kefir_ajuste.equations import gompertz_eq_solution,gompertz_latent_eq
+from pathlib import Path
+from kefir_ajuste.equations import *
 from kefir_ajuste.data import load_data,load_time_domain
 # -----------------------------------------------------------------------------
-# 1. SETUP SYNTHETIC DATA (True Parameters)
+# 1. SETUP  (True Parameters)
 # -----------------------------------------------------------------------------
 np.random.seed(42)
 
@@ -16,10 +18,17 @@ TRUE_R         = 0.046                   # Intrinsic growth rate
 TRUE_K         = 47.81                   # Carrying capacity
 TRUE_Y0        = 14.326143333333334      # Initial population size
 TRUE_SIGMA     = 0.15                    # Multiplicative log-normal noise scale
-ODE            = "gompertz"
+ODE            = "verhulst"
+TREATMENT      = 4
 
-
-config_dict  = {"gompertz":(gompertz_eq_solution,gompertz_latent_eq)}
+treatments = ["Testigo (T1) Kéfir sin ultrasonicar",
+              "15 seg. 20 W/cm2 (T2)",
+              "1 min. 20 W/cm2 (T3)",
+              "15 seg. 34 W/cm2 (T4)",
+              "1 min. 34 W/cm2 (T5)"]
+save_path = Path("figures")
+config_dict  = {"gompertz":(gompertz_eq_solution,gompertz_latent_eq),
+                "verhulst":(verhulst_eq_solution,verhulst_latent_eq)}
 ode_solution,latent_eq_solution = config_dict[ODE]
 
 parameter_names = ['r', 'K', 'Y0', 'sigma']
@@ -31,8 +40,8 @@ true_parameter_values = {
 }
 
 initial_prior_conditions = {
-    'r' : 0.2,
-    'K' : 450,
+    'r' : 0.1,
+    'K' : 50,
     'Y0': 10,
 }
 prior_sigmas = {
@@ -102,21 +111,22 @@ def plot_posterior_fallback(trace, var_names, true_values, hdi_prob=0.94, figsiz
     return axes
 
 
+os.makedirs(save_path/ODE/str(TREATMENT),exist_ok=True)
 
 # -----------------------------------------------------------------------------
 #  Load data
 # -----------------------------------------------------------------------------
-
+treatment = treatments[TREATMENT]
 dataset = load_data(DATA_FILE_NAME)
-dataset = dataset.drop(columns=["tratamiento","Unnamed: 0"])
+dataset = dataset.drop(columns=["Unnamed: 0"])
+
+df = dataset[dataset["tratamiento"]==treatment]
 t0,tf   = load_time_domain(dataset)
-t_data  = np.linspace(t0, tf, 200)
+t_data  = np.linspace(t0, tf, len(df))
 
 # Generate clean curve and inject log-normal noise
 y_clean = ode_solution(t_data,true_parameter_values)
-y_obs   = y_clean * np.random.lognormal(mean=0.0, 
-                                        sigma=TRUE_SIGMA, 
-                                        size=len(t_data))
+y_obs   = df["concentracion(g/cm3)"]
 
 # -----------------------------------------------------------------------------
 # 2. BAYESIAN MODEL SPECIFICATION
@@ -158,21 +168,16 @@ with pm.Model() as gompertz_model:
 # Print text summary of parameter posteriors and convergence metrics (R-hat)
 print("\n--- Posterior Parameter Summary ---")
 
-# ArviZ changed summary interval APIs/column names across versions.
-# Build a summary that works on both old and new releases.
 try:
     summary = az.summary(trace, var_names=parameter_names, hdi_prob=0.94)
 except TypeError:
     summary = az.summary(trace, var_names=parameter_names, ci_prob=0.94, ci_kind='hdi')
 
 interval_columns = []
-
-# Legacy ArviZ column names (for example: hdi_3%, hdi_97%)
 legacy_hdi = ['hdi_3%', 'hdi_97%']
 if set(legacy_hdi).issubset(summary.columns):
     interval_columns = legacy_hdi
 else:
-    # Modern ArviZ column names (for example: hdi94_lb, hdi94_ub)
     modern_hdi = [
         c for c in summary.columns
         if c.startswith('hdi') and (c.endswith('_lb') or c.endswith('_ub'))
@@ -206,40 +211,86 @@ else:
         hdi_prob=0.94,
         figsize=(12, 8),
     )
-plt.show()
+plt.savefig(save_path/ODE/str(TREATMENT)/"posterior_distributions.png")
 
-# Extract posterior sample arrays for plotting
+# -----------------------------------------------------------------------------
+# 4b. CREDIBLE BANDS (latent + predictive)
+# -----------------------------------------------------------------------------
+
+# Extract posterior sample arrays for ALL parameters (incluyendo sigma)
 posterior = trace.posterior
 samples_dict = {}
 for param in posterior.keys():
-    if param in initial_prior_conditions.keys():
-        samples_dict[param] = (posterior[param].values
-                                               .flatten())
-        
+    if param in true_parameter_values.keys():   # r, K, Y0, sigma
+        samples_dict[param] = posterior[param].values.flatten()
+
 r_samples = samples_dict.get('r')
+sigma_samples = samples_dict.get('sigma')
 
+n_samples_total = len(r_samples)
 
+# Subsampling razonable si hay demasiadas muestras (ajusta según tu paciencia/CPU)
+MAX_TRAJECTORIES = 3000
+if n_samples_total > MAX_TRAJECTORIES:
+    idx = np.random.choice(n_samples_total, size=MAX_TRAJECTORIES, replace=False)
+else:
+    idx = np.arange(n_samples_total)
+
+t_plot = np.linspace(0, t_data.max(), 300)
+
+latent_trajectories = np.zeros((len(idx), len(t_plot)))
+predictive_trajectories = np.zeros((len(idx), len(t_plot)))
+
+for row, i in enumerate(idx):
+    parameters = {param: samples_dict[param][i] for param in ['r', 'K', 'Y0']}
+    mean_traj = ode_solution(t_plot, parameters)
+    latent_trajectories[row, :] = mean_traj
+
+    sigma_i = sigma_samples[i]
+    predictive_trajectories[row, :] = mean_traj * np.random.lognormal(
+        mean=0.0, sigma=sigma_i, size=len(t_plot)
+    )
+
+HDI_PROB = 0.94
+lower_q = (1 - HDI_PROB) / 2 * 100   # e.g. 3
+upper_q = 100 - lower_q              # e.g. 97
+
+# Banda latente (incertidumbre en los parámetros)
+latent_lower  = np.percentile(latent_trajectories, lower_q, axis=0)
+latent_upper  = np.percentile(latent_trajectories, upper_q, axis=0)
+latent_median = np.percentile(latent_trajectories, 50, axis=0)
+
+# Banda predictiva (incertidumbre en parámetros + ruido de observación)
+pred_lower = np.percentile(predictive_trajectories, lower_q, axis=0)
+pred_upper = np.percentile(predictive_trajectories, upper_q, axis=0)
+
+# -----------------------------------------------------------------------------
+# 4c. PLOT: Data + credible bands + true curve
+# -----------------------------------------------------------------------------
 
 plt.figure(figsize=(10, 6))
-plt.scatter(t_data, y_obs, color='black', zorder=5, label='Observed Noisy Data')
 
-# Draw 100 random trajectories from the posterior to show estimation uncertainty
-t_plot = np.linspace(0, t_data.max(), 300)
-for i in np.random.choice(len(r_samples), size=100, replace=False):
-    parameters = {}
-    for param in samples_dict.keys():
-        parameters[param]=samples_dict.get(param)[i]
-    plt.plot(t_plot, ode_solution(t_plot,parameters),
-             color='cyan', alpha=0.1, zorder=1)
+# Banda predictiva (más ancha, incluye ruido) - dibujar primero, atrás
+plt.fill_between(t_plot, pred_lower, pred_upper,
+                  color='gray', alpha=0.25, zorder=1,
+                  label=f'{int(HDI_PROB*100)}% Predictive Band')
 
-# Overlay the true underlying system curve
+# Banda latente (más angosta, solo incertidumbre de parámetros)
+plt.fill_between(t_plot, latent_lower, latent_upper,
+                  color='cyan', alpha=0.4, zorder=2,
+                  label=f'{int(HDI_PROB*100)}% Credibility Band(latent)')
+
+plt.plot(t_plot, latent_median, color='blue', linewidth=1.5, zorder=3,
+         label='Posterior Median')
+
+plt.scatter(t_data, y_obs, color='black', zorder=5, s=20, label='Observed Data')
+
 plt.plot(t_plot, ode_solution(t_plot, true_parameter_values),
          color='red', linestyle='--', linewidth=2, zorder=4, label='True System Curve')
 
-# Visual configurations
-plt.title("Bayesian MCMC Estimation of Gompertz ODE", fontsize=14)
+plt.title(f"Bayesian MCMC Estimation of {ODE.capitalize()} ODE", fontsize=14)
 plt.xlabel("Time ($t$)", fontsize=12)
 plt.ylabel("Population / Size ($Y$)", fontsize=12)
 plt.grid(True, linestyle=':', alpha=0.6)
 plt.legend()
-plt.show()
+plt.savefig(save_path/ODE/str(TREATMENT)/"plot.png")
