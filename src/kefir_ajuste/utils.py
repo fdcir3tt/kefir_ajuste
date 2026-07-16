@@ -383,6 +383,8 @@ def log_run(
     """
     y_true = data_dict.get("y_true")
     y_pred = data_dict.get("y_pred")
+    X_train,y_train = data_dict.get("train_data")
+    y_pred_train = model.predict(X_train)
 
     dde.utils.plot_loss_history(loss_history)
     mlflow.log_figure(plt.gcf(), "loss_plot.png")
@@ -396,16 +398,25 @@ def log_run(
 
     
     n_params = len(learned_params) + model.net.num_trainable_parameters()
-    metrics = compute_regression_metrics(
+    test_metrics = compute_regression_metrics(
         y_true=y_true,
         y_pred=y_pred,
         n_params=n_params,
     )
 
-    print("Logging metrics...")
-    for metric,value in metrics.items():
-        mlflow.log_metric(metric, value)
 
+    train_metrics = compute_regression_metrics(
+        y_true=y_train,
+        y_pred=y_pred_train,
+        n_params=n_params,
+    )
+
+    print("Logging metrics...")
+    for metric,value in test_metrics.items():
+        mlflow.log_metric(f"test_{metric}", value)
+
+    for metric,value in train_metrics.items():
+        mlflow.log_metric(f"train_{metric}", value)
 
     print(f"Logging Model {model_name}...")
     # Log modelo
