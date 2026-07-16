@@ -4,6 +4,8 @@ phys_disc:
 phys_disc_nn:
 	poetry run python scripts/physics_discovery_nn.py
 
+stability:
+	poetry run python scripts/seed_stability.py
 ui:
 	poetry run mlflow ui
 
