@@ -9,7 +9,7 @@ from pathlib import Path
 from numpy.typing import NDArray
 from typing import Callable,Any
 from mlflow.data.pandas_dataset import PandasDataset
-from kefir_ajuste.utils import ensure_experiment_active,log_run,plot_physics_discovery_solution,get_learned_parameters
+from kefir_ajuste.utils import ensure_experiment_active,log_run,plot_physics_discovery_solution,get_learned_parameters,compute_regression_metrics
 from kefir_ajuste.data import load_data,load_initial_conditions,load_time_domain,split_train_data
 from kefir_ajuste.collocation_methods import equal_collocation,identity_collocation
 from kefir_ajuste.correction_funcs import multi_polynomial,intensity_function,fourier_term
@@ -23,15 +23,15 @@ mlflow.set_tracking_uri("file:./mlruns")
 
 EXPERIMENT_NAME = "Physics Discovery"
 DATA_FILE_NAME = "control_dataset.csv"
-EPOCHS = 100000
-LEARNING_RATE = 0.001
+EPOCHS = 50000
+LEARNING_RATE = 0.01
 PHYSICAL_COLLOCATION_POINTS=200
-COLLOCATION_METHOD = equal_collocation
+COLLOCATION_METHOD = identity_collocation
 COLLOCATION_ARGS = {"collocation_skip":1}
-SEED = 963840241
+SEED = None
 INITIAL_SATURATION = 47.81
 INITIAL_RATE = 0.046 
-delta =  fourier_term
+delta =  intensity_function
 model_equation = verhulst
 r =  INITIAL_RATE
 m =  INITIAL_SATURATION
@@ -380,7 +380,7 @@ with mlflow.start_run(run_name=run_name):
         else:
             delta = correction_function(t,I_t, T_t, c_coef)
 
-        return model_equation(dy_dt,t,y,model_parameters) - delta*y
+        return model_equation(dy_dt,t,y,model_parameters) - delta
 
 # ============================================================
 #                         PINN SETUP
@@ -435,3 +435,7 @@ with mlflow.start_run(run_name=run_name):
             learned_params =learned_parameters,
             plot_solution= plot_physics_discovery_solution,
             data_dict = data_dict)
+    
+    # Métricas de entrenamiento 
+    
+    
