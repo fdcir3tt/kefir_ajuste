@@ -418,10 +418,12 @@ def log_run(
     for metric,value in train_metrics.items():
         mlflow.log_metric(f"train_{metric}", value)
 
-    print(f"Logging Model {model_name}...")
-    # Log modelo
-    mlflow.pytorch.log_model(model.net, 
-                             name=model_name)
+    if test_metrics.get("rmse") < 5:
+        print(f"Logging Model {model_name}...")
+        # Log modelo
+
+        mlflow.pytorch.log_model(model.net, 
+                                name=model_name)
 
     print("Logging learned parameters...")
     # Log parametros aprendidos

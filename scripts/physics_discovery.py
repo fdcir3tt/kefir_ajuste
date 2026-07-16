@@ -21,14 +21,16 @@ from kefir_ajuste.equations import verhulst
 
 mlflow.set_tracking_uri("file:./mlruns")
 
+
 EXPERIMENT_NAME = "Physics Discovery"
 DATA_FILE_NAME = "control_dataset.csv"
-EPOCHS = 50000
+EPOCHS = 10000
 LEARNING_RATE = 0.01
 PHYSICAL_COLLOCATION_POINTS=200
 COLLOCATION_METHOD = identity_collocation
 COLLOCATION_ARGS = {"collocation_skip":1}
 SEED = None
+N_RUNS = 100 # Solo si SEED = None
 INITIAL_SATURATION = 47.81
 INITIAL_RATE = 0.046 
 delta =  intensity_function
@@ -335,107 +337,112 @@ mlflow_dataset: PandasDataset = mlflow.data.from_pandas(dataset,
 
 
 run_name = delta.__name__
-with mlflow.start_run(run_name=run_name):
+n_runs =1
+if SEED is None:
+    n_runs = N_RUNS
 
-    mlflow.log_input(mlflow_dataset, context="discovery")
-    mlflow.log_param("epochs", EPOCHS)
+for i in range(n_runs): 
+    with mlflow.start_run(run_name=run_name):
+
+            
+                                                                                                                                    
+            epochs = EPOCHS
+            lr = LEARNING_RATE
+            correction_function = delta
+            n_phys_points=PHYSICAL_COLLOCATION_POINTS
+            collocation_method= COLLOCATION_METHOD
+            collocation_args = COLLOCATION_ARGS
+
+
+        # ============================================================
+        #                         CARGAR DATOS
+        # ============================================================
+
+            
+            t0,y0 = load_initial_conditions(dataset)
+            t0,tf = load_time_domain(dataset)
+            
+            X_train, y_train, X_test,y_test = split_train_data(dataset,"concentracion(g/cm3)")
+            
+    # ============================================================
+    #                 CONFIGURACION ENTRENAMIENTO
+    # ============================================================
+        # Definir coeficientes de corrección 
                                                                     
-    seed = set_seed(SEED)                                                                                                                            
-    epochs = EPOCHS
-    lr = LEARNING_RATE
-    correction_function = delta
-    n_phys_points=PHYSICAL_COLLOCATION_POINTS
-    collocation_method= COLLOCATION_METHOD
-    collocation_args = COLLOCATION_ARGS
+            seed = set_seed(SEED) 
+            c_coef = make_coeficient_list(correction_function,**kwargs)
+            
+            variable_path= Path('learned_parameters.dat')
+            trainable_variables = c_coef
 
+            def ode(x:torch.Tensor, y:torch.Tensor)->torch.Tensor:
+                t   = x[:, 0:1]   
+                I_t = x[:, 1:2]   
+                T_t = x[:, 2:3] 
 
-# ============================================================
-#                         CARGAR DATOS
-# ============================================================
+                dy_dt = dde.grad.jacobian(y, x, i=0, j=2)
+                if correction_function.__name__ == "multi_polynomial":
+                    delta = correction_function(t,I_t, T_t, c_coef,grade)
+                else:
+                    delta = correction_function(t,I_t, T_t, c_coef)
 
-    
-    t0,y0 = load_initial_conditions(dataset)
-    t0,tf = load_time_domain(dataset)
-    
-    X_train, y_train, X_test,y_test = split_train_data(dataset,"concentracion(g/cm3)")
-    
-# ============================================================
-#                 CONFIGURACION ENTRENAMIENTO
-# ============================================================
-    # Definir coeficientes de corrección 
-    
-    c_coef = make_coeficient_list(correction_function,**kwargs)
-    
-    variable_path= Path('learned_parameters.dat')
-    trainable_variables = c_coef
+                return model_equation(dy_dt,t,y,model_parameters) - delta
 
-    def ode(x:torch.Tensor, y:torch.Tensor)->torch.Tensor:
-        t   = x[:, 0:1]   
-        I_t = x[:, 1:2]   
-        T_t = x[:, 2:3] 
+        # ============================================================
+        #                         PINN SETUP
+        # ============================================================
+            
+            geom = make_geometry(X_train,t0,tf)
 
-        dy_dt = dde.grad.jacobian(y, x, i=0, j=2)
-        if correction_function.__name__ == "multi_polynomial":
-            delta = correction_function(t,I_t, T_t, c_coef,grade)
-        else:
-            delta = correction_function(t,I_t, T_t, c_coef)
+            # Colocación de puntos de entrenamiento 
+            observe_bc,anchor_X = make_boundary_conditions(collocation_method,collocation_args)
 
-        return model_equation(dy_dt,t,y,model_parameters) - delta
+            data_pinn = dde.data.PDE(geometry=geom,
+                                    pde=ode,
+                                    bcs=[observe_bc],
+                                    num_domain=n_phys_points,       # PDE collocation
+                                    num_boundary=0,
+                                    anchors=anchor_X)
 
-# ============================================================
-#                         PINN SETUP
-# ============================================================
-    
-    geom = make_geometry(X_train,t0,tf)
+            
+            model = make_net([3, 50, 50, 50, 1],"tanh", "Glorot uniform",data_pinn)
+            
+            loss_history, model = train_pinn("adam","MSE",lr,epochs,trainable_variables,600,variable_path)
+        # ============================================================
+        #                        ENTRENAMIENTO
+        # ============================================================
+            
+            learned_parameters = get_learned_coeficients(correction_function,lr,n_phys_points,r,m)
+            
+            log_params = {"seed":seed,
+                        "learning_rate":lr,
+                        "initial_rate":INITIAL_RATE,
+                        "n_phys_points":n_phys_points,
+                        "initial_saturation_concentration":INITIAL_SATURATION
 
-    # Colocación de puntos de entrenamiento 
-    observe_bc,anchor_X = make_boundary_conditions(collocation_method,collocation_args)
+                        }
+            
+            os.remove(variable_path)
+            
+            data_dict = {
+                "test_data" : (X_test,y_test),
+                "train_data": (X_train,y_train),
+                "y_true": y_test,
+                "y_pred": model.predict(X_test),
+                "t_min" :t0,
+                "t_max" :tf,
+            }
 
-    data_pinn = dde.data.PDE(geometry=geom,
-                             pde=ode,
-                             bcs=[observe_bc],
-                             num_domain=n_phys_points,       # PDE collocation
-                             num_boundary=0,
-                             anchors=anchor_X)
-
-    
-    model = make_net([3, 50, 50, 50, 1],"tanh", "Glorot uniform",data_pinn)
-    
-    loss_history, model = train_pinn("adam","MSE",lr,epochs,trainable_variables,600,variable_path)
-# ============================================================
-#                        ENTRENAMIENTO
-# ============================================================
-    
-    learned_parameters = get_learned_coeficients(correction_function,lr,n_phys_points,r,m)
-    
-    log_params = {"seed":seed,
-                  "learning_rate":lr,
-                  "initial_rate":INITIAL_RATE,
-                  "n_phys_points":n_phys_points,
-                  "initial_saturation_concentration":INITIAL_SATURATION
-
-                  }
-    
-    os.remove(variable_path)
-    
-    data_dict = {
-        "test_data" : (X_test,y_test),
-        "train_data": (X_train,y_train),
-        "y_true": y_test,
-        "y_pred": model.predict(X_test),
-        "t_min" :t0,
-        "t_max" :tf,
-    }
-
-    log_run(model=model,
-            model_name=delta.__name__,
-            collocation_method = COLLOCATION_METHOD,
-            loss_history = loss_history,
-            log_params= log_params,
-            learned_params =learned_parameters,
-            plot_solution= plot_physics_discovery_solution,
-            data_dict = data_dict)
-    
-    # Métricas de entrenamiento 
-    
-    
+            log_run(model=model,
+                    model_name=delta.__name__,
+                    collocation_method = COLLOCATION_METHOD,
+                    loss_history = loss_history,
+                    log_params= log_params,
+                    learned_params =learned_parameters,
+                    plot_solution= plot_physics_discovery_solution,
+                    data_dict = data_dict)
+            mlflow.log_input(mlflow_dataset, context="discovery")
+            mlflow.log_param("epochs", EPOCHS)
+        
+        
+        
