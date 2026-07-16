@@ -379,6 +379,16 @@ def log_run(
     """
     y_true = data_dict.get("y_true")
     y_pred = data_dict.get("y_pred")
+    X_train,y_train = data_dict.get("train_data")
+    
+    # Predicción de entrenamiento
+    device = next(model.parameters()).device
+    was_training = model.training
+    model.eval()
+    with torch.no_grad():
+        X_train_tensor = torch.as_tensor(X_train, dtype=torch.float32, device=device)
+        y_pred_train = model(X_train_tensor).cpu().numpy()
+    model.train(was_training) 
 
     dde.utils.plot_loss_history(loss_history)
     mlflow.log_figure(plt.gcf(), "loss_plot.png")
@@ -395,15 +405,25 @@ def log_run(
     n_net_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     n_params = len(learned_params) + n_net_params
 
-    metrics = compute_regression_metrics(
+    test_metrics = compute_regression_metrics(
         y_true=y_true,
         y_pred=y_pred,
         n_params=n_params,
     )
 
+
+    train_metrics = compute_regression_metrics(
+        y_true=y_train,
+        y_pred=y_pred_train,
+        n_params=n_params,
+    )
+
     print("Logging metrics...")
-    for metric, value in metrics.items():
-        mlflow.log_metric(metric, value)
+    for metric,value in test_metrics.items():
+        mlflow.log_metric(f"test_{metric}", value)
+
+    for metric,value in train_metrics.items():
+        mlflow.log_metric(f"train_{metric}", value)
 
     print(f"Logging Model {model_name}...")
     # dde.Model requería model.net; un nn.Module plano se loguea directo.
