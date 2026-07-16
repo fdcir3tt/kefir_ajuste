@@ -25,12 +25,12 @@ mlflow.set_tracking_uri("file:./mlruns")
 
 EXPERIMENT_NAME = "Seed Stability"
 DATA_FILE_NAME = "control_dataset.csv"
-EPOCHS = 1000
+EPOCHS = 10000
 LEARNING_RATE = 0.01
 PHYSICAL_COLLOCATION_POINTS=200
 COLLOCATION_METHOD = identity_collocation
 COLLOCATION_ARGS = {"collocation_skip":1}
-N_SAMPLES = 5
+N_SAMPLES = 100
 INITIAL_SATURATION = 47.81
 INITIAL_RATE = 0.046 
 delta =  intensity_function
@@ -437,14 +437,14 @@ with mlflow.start_run(run_name=run_name):
     train_samples_df = pd.DataFrame(samples["train"])
 
     for metric in test_samples_df.columns:
-        test_stats = {f"{metric}_median":test_samples_df[metric].median(),
-                      f"{metric}_mean"  :test_samples_df[metric].mean(),
-                      f"{metric}_std"   :test_samples_df[metric].std()}
+        test_stats = {f"test_{metric}_median":test_samples_df[metric].median(),
+                      f"test_{metric}_mean"  :test_samples_df[metric].mean(),
+                      f"test_{metric}_std"   :test_samples_df[metric].std()}
         mlflow.log_metrics(test_stats)
     for metric in train_samples_df.columns:
-        train_stats = {f"{metric}_median":train_samples_df[metric].median(),
-                      f"{metric}_mean"   :train_samples_df[metric].mean(),
-                      f"{metric}_std"    :train_samples_df[metric].std()}
+        train_stats = {f"train_{metric}_median":train_samples_df[metric].median(),
+                      f"train_{metric}_mean"   :train_samples_df[metric].mean(),
+                      f"train_{metric}_std"    :train_samples_df[metric].std()}
         mlflow.log_metrics(train_stats)
 
     
