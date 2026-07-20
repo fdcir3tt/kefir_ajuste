@@ -13,7 +13,7 @@ from kefir_ajuste.utils import ensure_experiment_active,log_run,plot_physics_dis
 from kefir_ajuste.data import load_data,load_initial_conditions,load_time_domain,split_train_data
 from kefir_ajuste.collocation_methods import equal_collocation,identity_collocation
 from kefir_ajuste.correction_funcs import multi_polynomial,intensity_function,fourier_term
-from kefir_ajuste.equations import verhulst
+from kefir_ajuste.equations import verhulst,gompertz,richards
 
 # ==============================================================================
 #                               Global config
@@ -34,11 +34,12 @@ N_RUNS = 100 # Solo si SEED = None
 INITIAL_SATURATION = 47.81
 INITIAL_RATE = 0.046 
 delta =  intensity_function
-model_equation = verhulst
+model_equation = richards
 r =  INITIAL_RATE
 m =  INITIAL_SATURATION
-model_parameters ={"r":r,"m":m}
-grade = 3
+nu = 2
+model_parameters ={"r":r,"m":m,"nu":nu}
+grade = 6
 kwargs = {"grade":grade}
 
 # ==============================================================================
@@ -443,6 +444,8 @@ for i in range(n_runs):
                     data_dict = data_dict)
             mlflow.log_input(mlflow_dataset, context="discovery")
             mlflow.log_param("epochs", EPOCHS)
-        
+            mlflow.log_param("base_eq", model_equation.__name__)
+            if nu is not None:
+                mlflow.log_param("nu", nu)
         
         
