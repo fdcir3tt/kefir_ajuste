@@ -50,7 +50,7 @@ df[exposure_col]=df[treatment_col].apply(lambda x:intensity_dict[x][0])
 
 df["biomasa_prom(g)"] = df.groupby(["Tiempo de Fermentacón (h)","tratamiento"])[["biomasa(g)"]].transform("mean")
 df = df[["Tiempo de Fermentacón (h)","tratamiento","biomasa_prom(g)","intensidad(W/cm^2)","periodo de exposición(s)"]]
-df = df.rename(columns={"biomasa_prom(g)":"biomasa(g)"}).drop_duplicates()
+df = df.rename(columns={"biomasa_prom(g)":"biomasa(g)","Tiempo de Fermentacón (h)":"tiempo(h)"}).drop_duplicates()
 
 
 df.to_csv("data/processed/fixed_controlset.csv")
