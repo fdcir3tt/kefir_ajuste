@@ -92,7 +92,7 @@ def transform( data_frame:pd.DataFrame )->pd.DataFrame:
     transformed_data = ( data_frame.drop( columns= [f"Unnamed: {k}" for k in range(4)])
                                    .melt( id_vars= 'Tiempo de Fermentacón (h)',
                                           var_name= 'tratamiento',
-                                          value_name= 'concentracion(g/cm3)'
+                                          value_name= 'biomasa(g/L)'
                                         ) 
                         )
     transformed_data["intensidad(W/cm^2)"] = transformed_data["tratamiento"].apply(lambda x:INTENSITY_DICT[TREATMENT_DICT[x]]["intensity"])

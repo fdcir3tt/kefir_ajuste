@@ -56,7 +56,7 @@ def load_initial_conditions(data:pd.DataFrame)->tuple[float,float]:
     condition.
     """
     t0 = data["tiempo(h)"].iloc[0]
-    y0 = data["concentracion(g/cm3)"].iloc[0]
+    y0 = data["biomasa(g/L)"].iloc[0]
 
     return t0,y0
 

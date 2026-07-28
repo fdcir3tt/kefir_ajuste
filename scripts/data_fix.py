@@ -7,7 +7,7 @@ df = pd.read_excel(data_source,sheet_name="Repeticiones",skiprows=9)
 df = df.drop(columns=["Unnamed: 0","Unnamed: 1","Unnamed: 2"])
 df = df.melt(id_vars= 'Tiempo de Fermentacón (h)',
                var_name= 'tratamiento',
-               value_name= 'biomasa(g)'
+               value_name= 'biomasa(g/L)'
                                         )
 df["repetición"] = df["tratamiento"].apply(lambda x:x.split("Repetición ")[1])
 df["tratamiento"]= df["tratamiento"].apply(lambda x:x.split("Repetición ")[1])
@@ -48,9 +48,9 @@ df[exposure_col]=df[treatment_col].apply(lambda x:intensity_dict[x][0])
 
 # Guardado
 
-df["biomasa_prom(g)"] = df.groupby(["Tiempo de Fermentacón (h)","tratamiento"])[["biomasa(g)"]].transform("mean")
-df = df[["Tiempo de Fermentacón (h)","tratamiento","biomasa_prom(g)","intensidad(W/cm^2)","periodo de exposición(s)"]]
-df = df.rename(columns={"biomasa_prom(g)":"biomasa(g)","Tiempo de Fermentacón (h)":"tiempo(h)"}).drop_duplicates()
+df["biomasa_prom(g/L)"] = df.groupby(["Tiempo de Fermentacón (h)","tratamiento"])[["biomasa(g/L)"]].transform("mean")
+df = df[["Tiempo de Fermentacón (h)","tratamiento","biomasa_prom(g/L)","intensidad(W/cm^2)","periodo de exposición(s)"]]
+df = df.rename(columns={"biomasa_prom(g/L)":"biomasa(g/L)","Tiempo de Fermentacón (h)":"tiempo(h)"}).drop_duplicates()
 
 
 df.to_csv("data/processed/fixed_controlset.csv")
