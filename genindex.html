@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -164,23 +164,26 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="docs/problema.html">
-                    Problema
+                    Contexto
                 </a>
             </li>
         </ul>
         <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="docs/fuente_de_datos.html">Fuente de datos</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docs/modelos.html">Modelos de crecimiento microbiano</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="docs/modelos.html">Modelos de crecimiento bacteriano</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docs/pinns.html">Vistazo dentro de la caja negra</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="docs/entrenamiento.html">Construcción de la red neuronal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/mlflow.html">Reproducibilidad utilizando mlflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docs/problema_inverso.html">Problema inverso</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docs/entrenamiento.html">Definición del modelo físico y dominio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/descubrimiento_fisica.html">Descubrimiento de dinámicas ocultas con PINNs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/resultados.html">Ajuste de modelo con datos de tratamientos de ultrasonido</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="docs/problema_directo.html">Corroboración del Modelo de Gompertz para el Crecimiento de Gránulos de Kéfir de Agua</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docs/metricas.html">Métricas de evaluación para la comparación de modelos PINNs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docs/bibliografia.html">Referencias</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 </ul>
 
     </div>
@@ -299,8 +302,214 @@
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#K"><strong>K</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  
 </div>
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.collocation_methods.all_data_collocation">all_data_collocation() (in module kefir_ajuste.collocation_methods)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.utils.compute_regression_metrics">compute_regression_metrics() (in module kefir_ajuste.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.utils.ensure_experiment_active">ensure_experiment_active() (in module kefir_ajuste.utils)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.collocation_methods.equal_collocation">equal_collocation() (in module kefir_ajuste.collocation_methods)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.correction_funcs.fourier_term">fourier_term() (in module kefir_ajuste.correction_funcs)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.utils.get_learned_parameters">get_learned_parameters() (in module kefir_ajuste.utils)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.utils.get_treatment_name">get_treatment_name() (in module kefir_ajuste.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.collocation_methods.identity_collocation">identity_collocation() (in module kefir_ajuste.collocation_methods)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.correction_funcs.intensity_function">intensity_function() (in module kefir_ajuste.correction_funcs)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    kefir_ajuste.collocation_methods
+
+      <ul>
+        <li><a href="api.html#module-kefir_ajuste.collocation_methods">module</a>
+</li>
+      </ul></li>
+      <li>
+    kefir_ajuste.correction_funcs
+
+      <ul>
+        <li><a href="api.html#module-kefir_ajuste.correction_funcs">module</a>
+</li>
+      </ul></li>
+      <li>
+    kefir_ajuste.data
+
+      <ul>
+        <li><a href="api.html#module-kefir_ajuste.data">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    kefir_ajuste.equations
+
+      <ul>
+        <li><a href="api.html#module-kefir_ajuste.equations">module</a>
+</li>
+      </ul></li>
+      <li>
+    kefir_ajuste.ode_solvers
+
+      <ul>
+        <li><a href="api.html#module-kefir_ajuste.ode_solvers">module</a>
+</li>
+      </ul></li>
+      <li>
+    kefir_ajuste.utils
+
+      <ul>
+        <li><a href="api.html#module-kefir_ajuste.utils">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.data.load_data">load_data() (in module kefir_ajuste.data)</a>
+</li>
+      <li><a href="api.html#kefir_ajuste.data.load_initial_conditions">load_initial_conditions() (in module kefir_ajuste.data)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.data.load_time_domain">load_time_domain() (in module kefir_ajuste.data)</a>
+</li>
+      <li><a href="api.html#kefir_ajuste.utils.log_run">log_run() (in module kefir_ajuste.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    module
+
+      <ul>
+        <li><a href="api.html#module-kefir_ajuste.collocation_methods">kefir_ajuste.collocation_methods</a>
+</li>
+        <li><a href="api.html#module-kefir_ajuste.correction_funcs">kefir_ajuste.correction_funcs</a>
+</li>
+        <li><a href="api.html#module-kefir_ajuste.data">kefir_ajuste.data</a>
+</li>
+        <li><a href="api.html#module-kefir_ajuste.equations">kefir_ajuste.equations</a>
+</li>
+        <li><a href="api.html#module-kefir_ajuste.ode_solvers">kefir_ajuste.ode_solvers</a>
+</li>
+        <li><a href="api.html#module-kefir_ajuste.utils">kefir_ajuste.utils</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.correction_funcs.multi_polynomial">multi_polynomial() (in module kefir_ajuste.correction_funcs)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.utils.plot_inverse_problem_solution">plot_inverse_problem_solution() (in module kefir_ajuste.utils)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.utils.plot_physics_discovery_solution">plot_physics_discovery_solution() (in module kefir_ajuste.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.collocation_methods.random_collocation">random_collocation() (in module kefir_ajuste.collocation_methods)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.ode_solvers.runge_kutta">runge_kutta() (in module kefir_ajuste.ode_solvers)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.data.split_train_data">split_train_data() (in module kefir_ajuste.data)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#kefir_ajuste.equations.verhulst">verhulst() (in module kefir_ajuste.equations)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 
 
                 </article>

@@ -1,0 +1,1218 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API Reference &#8212; PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api';</script>
+    <link rel="icon" href="_static/mcd_logo.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Referencias" href="docs/bibliografia.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="docs/problema.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/mcd_logo.png" class="logo__image only-light" alt="PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido - Home"/>
+    <img src="_static/mcd_logo.png" class="logo__image only-dark pst-js-only" alt="PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="docs/problema.html">
+                    Contexto
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="docs/fuente_de_datos.html">Fuente de datos</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="docs/modelos.html">Modelos de crecimiento bacteriano</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/pinns.html">Vistazo dentro de la caja negra</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="docs/entrenamiento.html">Construcción de la red neuronal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/mlflow.html">Reproducibilidad utilizando mlflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/problema_inverso.html">Problema inverso</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/descubrimiento_fisica.html">Descubrimiento de dinámicas ocultas con PINNs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docs/resultados.html">Ajuste de modelo con datos de tratamientos de ultrasonido</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="docs/bibliografia.html">Referencias</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">API Reference</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/fdcir3tt/kefir_ajuste" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/api.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>API Reference</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#paquete-principal">Paquete principal</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-kefir_ajuste.data">Data</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.data.load_data"><code class="docutils literal notranslate"><span class="pre">load_data()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.data.load_initial_conditions"><code class="docutils literal notranslate"><span class="pre">load_initial_conditions()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.data.load_time_domain"><code class="docutils literal notranslate"><span class="pre">load_time_domain()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.data.split_train_data"><code class="docutils literal notranslate"><span class="pre">split_train_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-kefir_ajuste.equations">Equations</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.equations.verhulst"><code class="docutils literal notranslate"><span class="pre">verhulst()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-kefir_ajuste.ode_solvers">ODE Solvers</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.ode_solvers.runge_kutta"><code class="docutils literal notranslate"><span class="pre">runge_kutta()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-kefir_ajuste.collocation_methods">Collocation Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.collocation_methods.all_data_collocation"><code class="docutils literal notranslate"><span class="pre">all_data_collocation()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.collocation_methods.equal_collocation"><code class="docutils literal notranslate"><span class="pre">equal_collocation()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.collocation_methods.identity_collocation"><code class="docutils literal notranslate"><span class="pre">identity_collocation()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.collocation_methods.random_collocation"><code class="docutils literal notranslate"><span class="pre">random_collocation()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-kefir_ajuste.correction_funcs">Correction Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.correction_funcs.fourier_term"><code class="docutils literal notranslate"><span class="pre">fourier_term()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.correction_funcs.intensity_function"><code class="docutils literal notranslate"><span class="pre">intensity_function()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.correction_funcs.multi_polynomial"><code class="docutils literal notranslate"><span class="pre">multi_polynomial()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-kefir_ajuste.utils">Utils</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.utils.compute_regression_metrics"><code class="docutils literal notranslate"><span class="pre">compute_regression_metrics()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.utils.ensure_experiment_active"><code class="docutils literal notranslate"><span class="pre">ensure_experiment_active()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.utils.get_learned_parameters"><code class="docutils literal notranslate"><span class="pre">get_learned_parameters()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.utils.get_treatment_name"><code class="docutils literal notranslate"><span class="pre">get_treatment_name()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.utils.log_run"><code class="docutils literal notranslate"><span class="pre">log_run()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.utils.plot_inverse_problem_solution"><code class="docutils literal notranslate"><span class="pre">plot_inverse_problem_solution()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.utils.plot_physics_discovery_solution"><code class="docutils literal notranslate"><span class="pre">plot_physics_discovery_solution()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scripts">Scripts</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#etl">ETL</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inverse-problem">Inverse Problem</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#logarithmic-equation">Logarithmic Equation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#physics-discovery">Physics Discovery</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ranking">Ranking</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h1>
+<section id="paquete-principal">
+<h2>Paquete principal<a class="headerlink" href="#paquete-principal" title="Link to this heading">#</a></h2>
+<section id="module-kefir_ajuste.data">
+<span id="data"></span><h3>Data<a class="headerlink" href="#module-kefir_ajuste.data" title="Link to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.data.load_data">
+<span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/kefir_ajuste/data.html#load_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.data.load_data" title="Link to this definition">#</a></dt>
+<dd><p>Load a processed dataset from disk.</p>
+<p>Reads a CSV file from the <code class="docutils literal notranslate"><span class="pre">data/processed</span></code> directory and
+returns it as a pandas DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<em>str</em>) – Name of the CSV file to load (e.g., <code class="docutils literal notranslate"><span class="pre">&quot;dataset.csv&quot;</span></code>).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Loaded dataset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The file path is constructed as <code class="docutils literal notranslate"><span class="pre">data/processed/&lt;file_name&gt;</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.data.load_initial_conditions">
+<span class="sig-name descname"><span class="pre">load_initial_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/kefir_ajuste/data.html#load_initial_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.data.load_initial_conditions" title="Link to this definition">#</a></dt>
+<dd><p>Extract initial conditions from a dataset.</p>
+<p>Retrieves the first recorded time value and the first concentration
+value from the dataset, assuming they represent the initial state
+of the system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – Dataset containing at least the columns <code class="docutils literal notranslate"><span class="pre">&quot;tiempo(h)&quot;</span></code> and
+<code class="docutils literal notranslate"><span class="pre">&quot;concentracion(g/cm3)&quot;</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>t0</strong> (<em>float</em>) – Initial time value.</p></li>
+<li><p><strong>y0</strong> (<em>float</em>) – Initial concentration value.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Assumes the first row of the dataset corresponds to the initial
+condition.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.data.load_time_domain">
+<span class="sig-name descname"><span class="pre">load_time_domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/kefir_ajuste/data.html#load_time_domain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.data.load_time_domain" title="Link to this definition">#</a></dt>
+<dd><p>Compute the time domain bounds of a dataset.</p>
+<p>Extracts the minimum and maximum time values from the dataset,
+defining the temporal domain of the experiment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – Dataset containing a <code class="docutils literal notranslate"><span class="pre">&quot;tiempo(h)&quot;</span></code> column.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>t0</strong> (<em>float</em>) – Minimum time value in the dataset.</p></li>
+<li><p><strong>tf</strong> (<em>float</em>) – Maximum time value in the dataset.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Does not assume sorted input; uses <code class="docutils literal notranslate"><span class="pre">min()</span></code> and <code class="docutils literal notranslate"><span class="pre">max()</span></code>
+directly on the time column.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.data.split_train_data">
+<span class="sig-name descname"><span class="pre">split_train_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float32</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float32</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float32</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float32</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/kefir_ajuste/data.html#split_train_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.data.split_train_data" title="Link to this definition">#</a></dt>
+<dd><p>Split a dataset into training and test sets.</p>
+<p>Extracts input features and target values from a DataFrame and
+performs an 80/20 split without shuffling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – Input dataset.</p></li>
+<li><p><strong>target_column</strong> (<em>str</em>) – Name of the column to use as the prediction target. All remaining
+columns are used as input features.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>X_train</strong> (<em>ndarray of shape (n_train, n_features)</em>) – Training input features.</p></li>
+<li><p><strong>y_train</strong> (<em>ndarray of shape (n_train, 1)</em>) – Training target values.</p></li>
+<li><p><strong>X_test</strong> (<em>ndarray of shape (n_test, n_features)</em>) – Test input features.</p></li>
+<li><p><strong>y_test</strong> (<em>ndarray of shape (n_test, 1)</em>) – Test target values.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The split is deterministic and preserves the original row order.
+The cutoff index is computed as <code class="docutils literal notranslate"><span class="pre">int(0.8</span> <span class="pre">*</span> <span class="pre">len(data))</span></code>.</p>
+</dd></dl>
+
+</section>
+<section id="module-kefir_ajuste.equations">
+<span id="equations"></span><h3>Equations<a class="headerlink" href="#module-kefir_ajuste.equations" title="Link to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.equations.verhulst">
+<span class="sig-name descname"><span class="pre">verhulst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dy_dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/kefir_ajuste/equations.html#verhulst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.equations.verhulst" title="Link to this definition">#</a></dt>
+<dd><p>Evaluate the residual of the Verhulst (logistic growth) ODE.</p>
+<p>Computes the residual of the logistic growth equation, which equals
+zero when the solution satisfies the ODE exactly. This form is
+suitable for use as a physics-informed residual in a PINN framework.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dy_dt</strong> (<em>torch.Tensor</em>) – Time derivative of the state variable, typically computed via
+automatic differentiation.</p></li>
+<li><p><strong>t</strong> (<em>float</em>) – Current time value (not directly used but kept for API
+consistency with other ODE residual functions).</p></li>
+<li><p><strong>y</strong> (<em>float</em>) – Current value of the state variable (population or concentration).</p></li>
+<li><p><strong>parameters</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) – <p>Dictionary of model parameters containing:</p>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;kappa&quot;</span></code><span class="classifier">float</span></dt><dd><p>Intrinsic growth rate.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">&quot;L&quot;</span></code><span class="classifier">float</span></dt><dd><p>Carrying capacity.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Residual value of the ODE. Returns zero when <code class="docutils literal notranslate"><span class="pre">y</span></code> exactly
+satisfies the logistic equation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The Verhulst logistic equation is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\frac{dy}{dt} = \kappa \, y \left(1 - \frac{y}{L}\right)\]</div>
+<p>The residual returned by this function is:</p>
+<div class="math notranslate nohighlight">
+\[r = \frac{dy}{dt} - \kappa \, y \left(1 - \frac{y}{L}\right)\]</div>
+</dd></dl>
+
+</section>
+<section id="module-kefir_ajuste.ode_solvers">
+<span id="ode-solvers"></span><h3>ODE Solvers<a class="headerlink" href="#module-kefir_ajuste.ode_solvers" title="Link to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.ode_solvers.runge_kutta">
+<span class="sig-name descname"><span class="pre">runge_kutta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/kefir_ajuste/ode_solvers.html#runge_kutta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.ode_solvers.runge_kutta" title="Link to this definition">#</a></dt>
+<dd><p>Numerically solves an ordinary differential equation (ODE) using the classical
+4th-order Runge-Kutta method (RK4).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> (<em>Callable</em>) – <p>The derivative function of the ODE, with signature f(x, y).
+It must accept two arguments:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>x<span class="classifier">float</span></dt><dd><p>The independent variable.</p>
+</dd>
+<dt>y<span class="classifier">float</span></dt><dd><p>The dependent variable (current estimate of y at x).</p>
+</dd>
+</dl>
+</div></blockquote>
+</p></li>
+<li><p><strong>y0</strong> (<em>float</em>) – Initial value of y at the starting point of the interval (y(x0)).</p></li>
+<li><p><strong>interval</strong> (<em>tuple</em><em> of </em><em>float</em>) – <dl class="simple">
+<dt>A tuple (x0, xn) representing the domain over which to solve the ODE:</dt><dd><dl class="simple">
+<dt>x0<span class="classifier">float</span></dt><dd><p>Start of the interval.</p>
+</dd>
+<dt>xn<span class="classifier">float</span></dt><dd><p>End of the interval.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em><em> (</em><em>default=10</em><em>)</em>) – Number of steps (subintervals) to divide the interval [x0, xn] into.
+A higher value increases accuracy but requires more computation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of (x, y) tuples, where each tuple represents the estimated solution y at a corresponding x.
+The list has (n) points starting from x0 to xn.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of tuple</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<dl class="simple">
+<dt>This implementation uses the classical Runge-Kutta 4th-order method:</dt><dd><p>k1 = h * f(x, y)
+k2 = h * f(x + h/2, y + k1/2)
+k3 = h * f(x + h/2, y + k2/2)
+k4 = h * f(x + h, y + k3)
+y_{n+1} = y_n + (k1 + 2*k2 + 2*k3 + k4) / 6</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y</span> <span class="o">/</span> <span class="mi">40</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">runge_kutta</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">y0</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span> <span class="n">n</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>[(1.0, 1.0), (5.0, 1.452), …, (200.0, 39.99)]</p>
+</dd></dl>
+
+</section>
+<section id="module-kefir_ajuste.collocation_methods">
+<span id="collocation-methods"></span><h3>Collocation Methods<a class="headerlink" href="#module-kefir_ajuste.collocation_methods" title="Link to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.collocation_methods.all_data_collocation">
+<span class="sig-name descname"><span class="pre">all_data_collocation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/kefir_ajuste/collocation_methods.html#all_data_collocation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.collocation_methods.all_data_collocation" title="Link to this definition">#</a></dt>
+<dd><p>Use the full dataset as collocation points.</p>
+<p>This function returns the input data without modification, meaning all
+available samples are used as collocation points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>torch.Tensor</em>) – Input feature tensor.</p></li>
+<li><p><strong>y</strong> (<em>torch.Tensor</em>) – Target tensor.</p></li>
+<li><p><strong>args</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – Additional configuration arguments (not used).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>X</strong> (<em>torch.Tensor</em>) – Unmodified input features.</p></li>
+<li><p><strong>y</strong> (<em>torch.Tensor</em>) – Unmodified target values.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.collocation_methods.equal_collocation">
+<span class="sig-name descname"><span class="pre">equal_collocation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/kefir_ajuste/collocation_methods.html#equal_collocation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.collocation_methods.equal_collocation" title="Link to this definition">#</a></dt>
+<dd><p>Select evenly spaced collocation points from the dataset.</p>
+<p>This function subsamples the dataset using a fixed stride, producing a
+uniformly spaced subset of the training data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_train</strong> (<em>torch.Tensor</em>) – Training input features.</p></li>
+<li><p><strong>y_train</strong> (<em>torch.Tensor</em>) – Training target values.</p></li>
+<li><p><strong>args</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – <p>Configuration dictionary containing:</p>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">collocation_skip</span></code><span class="classifier">int</span></dt><dd><p>Step size for subsampling.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>X_sub</strong> (<em>torch.Tensor</em>) – Subsampled input features.</p></li>
+<li><p><strong>y_sub</strong> (<em>torch.Tensor</em>) – Subsampled target values.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The first sample (index 0) is excluded due to starting index = 1.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.collocation_methods.identity_collocation">
+<span class="sig-name descname"><span class="pre">identity_collocation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/kefir_ajuste/collocation_methods.html#identity_collocation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.collocation_methods.identity_collocation" title="Link to this definition">#</a></dt>
+<dd><p>Return training data without modification.</p>
+<p>This function is equivalent to an identity mapping and is used when
+no collocation strategy is applied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_train</strong> (<em>torch.Tensor</em>) – Training input features.</p></li>
+<li><p><strong>y_train</strong> (<em>torch.Tensor</em>) – Training target values.</p></li>
+<li><p><strong>args</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – Additional configuration arguments (not used).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>X_train</strong> (<em>torch.Tensor</em>) – Unmodified training inputs.</p></li>
+<li><p><strong>y_train</strong> (<em>torch.Tensor</em>) – Unmodified training targets.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.collocation_methods.random_collocation">
+<span class="sig-name descname"><span class="pre">random_collocation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/kefir_ajuste/collocation_methods.html#random_collocation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.collocation_methods.random_collocation" title="Link to this definition">#</a></dt>
+<dd><p>Select a random subset of collocation points.</p>
+<p>This function randomly samples a subset of the training data to be used
+as collocation points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_train</strong> (<em>torch.Tensor</em>) – Training input features.</p></li>
+<li><p><strong>y_train</strong> (<em>torch.Tensor</em>) – Training target values.</p></li>
+<li><p><strong>args</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – <p>Configuration dictionary containing:</p>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">collocation_size</span></code><span class="classifier">int</span></dt><dd><p>Number of samples to select.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">seed</span></code><span class="classifier">int or None</span></dt><dd><p>Random seed for reproducibility.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>X_sub</strong> (<em>torch.Tensor</em>) – Randomly selected input features.</p></li>
+<li><p><strong>y_sub</strong> (<em>torch.Tensor</em>) – Randomly selected target values.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Sampling is done without replacement.</p>
+</dd></dl>
+
+</section>
+<section id="module-kefir_ajuste.correction_funcs">
+<span id="correction-functions"></span><h3>Correction Functions<a class="headerlink" href="#module-kefir_ajuste.correction_funcs" title="Link to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.correction_funcs.fourier_term">
+<span class="sig-name descname"><span class="pre">fourier_term</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Variable</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/kefir_ajuste/correction_funcs.html#fourier_term"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.correction_funcs.fourier_term" title="Link to this definition">#</a></dt>
+<dd><p>Compute a Fourier-modulated correction term.</p>
+<p>This function defines a nonlinear interaction between intensity (I),
+exposure time (T), and periodic temporal dynamics using sine functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>torch.Tensor</em>) – Time variable tensor.</p></li>
+<li><p><strong>I</strong> (<em>torch.Tensor</em>) – Intensity input tensor.</p></li>
+<li><p><strong>T</strong> (<em>torch.Tensor</em>) – Exposure/temperature tensor.</p></li>
+<li><p><strong>coef</strong> (<em>list</em><em> of </em><em>dde.Variable</em>) – <p>List of two trainable coefficients:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">coef[0]</span></code>: amplitude scaling.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">coef[1]</span></code>: frequency scaling applied to T inside the sine.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tensor of shape (batch_size, 1) representing the correction term.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The output is computed as:</p>
+<div class="math notranslate nohighlight">
+\[c_0 \cdot I \cdot \sin(c_1 T) \cdot \sin\!\left(\frac{2\pi t}{15}\right)\]</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.correction_funcs.intensity_function">
+<span class="sig-name descname"><span class="pre">intensity_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Variable</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/kefir_ajuste/correction_funcs.html#intensity_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.correction_funcs.intensity_function" title="Link to this definition">#</a></dt>
+<dd><p>Compute a sinusoidally modulated intensity-based correction function.</p>
+<p>This function models a time-dependent signal where the amplitude depends
+on a linear interaction between intensity (I) and exposure time (T),
+and the temporal dynamics are given by a sine function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>torch.Tensor</em>) – Time variable tensor.</p></li>
+<li><p><strong>I</strong> (<em>torch.Tensor</em>) – Intensity input tensor.</p></li>
+<li><p><strong>T</strong> (<em>torch.Tensor</em>) – Exposure/temperature tensor.</p></li>
+<li><p><strong>coef</strong> (<em>list</em><em> of </em><em>dde.Variable</em>) – <p>List of four trainable coefficients:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">coef[0]</span></code>: bias term.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">coef[1]</span></code>: intensity scaling.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">coef[2]</span></code>: exposure time scaling.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">coef[3]</span></code>: interaction term (I * T).</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tensor of shape (batch_size, 1) representing the corrected signal.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The output is computed as:</p>
+<div class="math notranslate nohighlight">
+\[(c_0 + c_1 I + c_2 T + c_3 I T) \cdot \sin\!\left(\frac{2\pi t}{12}\right)\]</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.correction_funcs.multi_polynomial">
+<span class="sig-name descname"><span class="pre">multi_polynomial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Variable</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grade</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/kefir_ajuste/correction_funcs.html#multi_polynomial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.correction_funcs.multi_polynomial" title="Link to this definition">#</a></dt>
+<dd><p>Evaluate a 2D polynomial correction term over intensity and exposure time.</p>
+<p>This function constructs a polynomial surface of degree <code class="docutils literal notranslate"><span class="pre">grade</span></code> in the
+variables intensity (I) and temperature/exposure time (T), using trainable
+coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>torch.Tensor</em>) – Time variable (not directly used in computation but kept for API
+consistency with other correction functions).</p></li>
+<li><p><strong>I</strong> (<em>torch.Tensor</em>) – Intensity input tensor of shape (batch_size,).</p></li>
+<li><p><strong>T</strong> (<em>torch.Tensor</em>) – Exposure/temperature tensor of shape (batch_size,).</p></li>
+<li><p><strong>coef</strong> (<em>list</em><em> of </em><em>dde.Variable</em>) – List of trainable coefficients representing the polynomial weights.</p></li>
+<li><p><strong>grade</strong> (<em>int</em>) – Maximum polynomial degree. Only terms satisfying i + j &lt;= grade are used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output tensor of shape (batch_size, 1) representing the evaluated
+polynomial correction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The polynomial is evaluated as:</p>
+<div class="math notranslate nohighlight">
+\[\sum_{i,j} c_{i,j} \cdot I^i \cdot T^j, \quad i + j \leq \text{grade}\]</div>
+<p>The coefficient list is reshaped into a (grade+1, grade+1) matrix where
+entry [i, j] corresponds to the weight of the I^i * T^j term.</p>
+</dd></dl>
+
+</section>
+<section id="module-kefir_ajuste.utils">
+<span id="utils"></span><h3>Utils<a class="headerlink" href="#module-kefir_ajuste.utils" title="Link to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.utils.compute_regression_metrics">
+<span class="sig-name descname"><span class="pre">compute_regression_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_params</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/kefir_ajuste/utils.html#compute_regression_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.utils.compute_regression_metrics" title="Link to this definition">#</a></dt>
+<dd><p>Compute regression and model selection metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>array_like</em>) – Ground truth target values.</p></li>
+<li><p><strong>y_pred</strong> (<em>array_like</em>) – Predicted values from the model.</p></li>
+<li><p><strong>n_params</strong> (<em>int</em>) – Number of parameters in the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary containing RMSE, MAE, MAPE, R², AIC, and BIC metrics.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict of str to float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>MAPE ignores zero values in <code class="docutils literal notranslate"><span class="pre">y_true</span></code> to avoid division errors.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.utils.ensure_experiment_active">
+<span class="sig-name descname"><span class="pre">ensure_experiment_active</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/kefir_ajuste/utils.html#ensure_experiment_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.utils.ensure_experiment_active" title="Link to this definition">#</a></dt>
+<dd><p>Ensure that an MLflow experiment exists and is active.</p>
+<p>If the experiment exists but is marked as deleted, it is restored.
+If it does not exist, it is created.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>experiment_name</strong> (<em>str</em>) – Name of the MLflow experiment.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Experiment ID.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function interacts with the MLflow tracking server and may modify
+experiment state.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.utils.get_learned_parameters">
+<span class="sig-name descname"><span class="pre">get_learned_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/kefir_ajuste/utils.html#get_learned_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.utils.get_learned_parameters" title="Link to this definition">#</a></dt>
+<dd><p>Extract learned parameters from a file and format them by model type.</p>
+<p>This function reads the last line of a parameter log file and parses
+the stored values into a dictionary whose structure depends on the
+specified model name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>str</em>) – Name of the model used to determine how parameters are structured.
+Supported patterns include <code class="docutils literal notranslate"><span class="pre">&quot;verhulst&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;multi_polynomial&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;intensity_function&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;fourier_term&quot;</span></code>.</p></li>
+<li><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em>) – Polynomial degree used when <code class="docutils literal notranslate"><span class="pre">model</span></code> corresponds to a
+<code class="docutils literal notranslate"><span class="pre">&quot;multi_polynomial&quot;</span></code> model. Required in that case.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary containing the learned parameters. The structure depends
+on the model type.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict of str to float or torch.Tensor</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function assumes that the file <code class="docutils literal notranslate"><span class="pre">'learned_parameters.dat'</span></code> exists
+and that its last line contains parameter values in list format.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">get_learned_parameters</span><span class="p">(</span><span class="s2">&quot;verhulst&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">]</span>
+<span class="go">0.12</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.utils.get_treatment_name">
+<span class="sig-name descname"><span class="pre">get_treatment_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">treatment_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/kefir_ajuste/utils.html#get_treatment_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.utils.get_treatment_name" title="Link to this definition">#</a></dt>
+<dd><p>Map a treatment index to its descriptive name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>treatment_index</strong> (<em>int</em>) – Identifier of the treatment.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Human-readable name of the treatment. Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> if the index
+is not recognized.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.utils.log_run">
+<span class="sig-name descname"><span class="pre">log_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collocation_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_history</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learned_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_solution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/kefir_ajuste/utils.html#log_run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.utils.log_run" title="Link to this definition">#</a></dt>
+<dd><p>Log training results, metrics, and artifacts to MLflow.</p>
+<p>This function records loss history plots, prediction figures, regression
+metrics, trained models, and learned parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> (<em>pandas.DataFrame</em>) – Dataset used for training and evaluation.</p></li>
+<li><p><strong>model</strong> (<em>deepxde.Model</em>) – Trained model containing a <code class="docutils literal notranslate"><span class="pre">net</span></code> attribute.</p></li>
+<li><p><strong>model_name</strong> (<em>str</em>) – Name used to log the model in MLflow.</p></li>
+<li><p><strong>collocation_method</strong> (<em>Callable</em><em> or </em><em>None</em>) – Collocation method used during training. Logged as a parameter.</p></li>
+<li><p><strong>loss_history</strong> (<em>object</em>) – Training loss history returned by the model.</p></li>
+<li><p><strong>learned_params</strong> (<em>dict</em><em> of </em><em>str to Any</em>) – Dictionary of learned parameters to log.</p></li>
+<li><p><strong>plot_solution</strong> (<em>Callable</em>) – Function that generates plots from the model and dataset.</p></li>
+<li><p><strong>y_true</strong> (<em>ndarray</em>) – Ground truth values.</p></li>
+<li><p><strong>y_pred</strong> (<em>ndarray</em>) – Model predictions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function assumes an active MLflow run.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.utils.plot_inverse_problem_solution">
+<span class="sig-name descname"><span class="pre">plot_inverse_problem_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Figure</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/kefir_ajuste/utils.html#plot_inverse_problem_solution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.utils.plot_inverse_problem_solution" title="Link to this definition">#</a></dt>
+<dd><p>Plot model predictions for the inverse problem.</p>
+<p>This function generates a single plot comparing model predictions with
+training and test data over time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>deepxde.Model</em>) – Trained model with a <code class="docutils literal notranslate"><span class="pre">predict</span></code> method.</p></li>
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – Dataset containing time and concentration values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List containing a single figure and its associated name.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of tuple of (matplotlib.figure.Figure, str)</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The prediction is performed over a uniform grid of 200 time points.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kefir_ajuste.utils.plot_physics_discovery_solution">
+<span class="sig-name descname"><span class="pre">plot_physics_discovery_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Figure</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/kefir_ajuste/utils.html#plot_physics_discovery_solution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kefir_ajuste.utils.plot_physics_discovery_solution" title="Link to this definition">#</a></dt>
+<dd><p>Plot model predictions grouped by treatment conditions.</p>
+<p>This function generates one figure per unique combination of intensity
+and exposure time, along with an additional figure showing all test
+data across conditions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>object</em>) – Trained model with a <code class="docutils literal notranslate"><span class="pre">predict</span></code> method.</p></li>
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – Dataset containing input features and target values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of generated figures and their corresponding names.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of tuple of (matplotlib.figure.Figure, str)</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Each condition is defined by unique values of intensity and exposure time.
+Predictions are evaluated on a fixed time grid of 200 points.</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="scripts">
+<h2>Scripts<a class="headerlink" href="#scripts" title="Link to this heading">#</a></h2>
+<section id="etl">
+<h3>ETL<a class="headerlink" href="#etl" title="Link to this heading">#</a></h3>
+</section>
+<section id="inverse-problem">
+<h3>Inverse Problem<a class="headerlink" href="#inverse-problem" title="Link to this heading">#</a></h3>
+</section>
+<section id="logarithmic-equation">
+<h3>Logarithmic Equation<a class="headerlink" href="#logarithmic-equation" title="Link to this heading">#</a></h3>
+</section>
+<section id="physics-discovery">
+<h3>Physics Discovery<a class="headerlink" href="#physics-discovery" title="Link to this heading">#</a></h3>
+</section>
+<section id="ranking">
+<h3>Ranking<a class="headerlink" href="#ranking" title="Link to this heading">#</a></h3>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="docs/bibliografia.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Referencias</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#paquete-principal">Paquete principal</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-kefir_ajuste.data">Data</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.data.load_data"><code class="docutils literal notranslate"><span class="pre">load_data()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.data.load_initial_conditions"><code class="docutils literal notranslate"><span class="pre">load_initial_conditions()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.data.load_time_domain"><code class="docutils literal notranslate"><span class="pre">load_time_domain()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.data.split_train_data"><code class="docutils literal notranslate"><span class="pre">split_train_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-kefir_ajuste.equations">Equations</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.equations.verhulst"><code class="docutils literal notranslate"><span class="pre">verhulst()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-kefir_ajuste.ode_solvers">ODE Solvers</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.ode_solvers.runge_kutta"><code class="docutils literal notranslate"><span class="pre">runge_kutta()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-kefir_ajuste.collocation_methods">Collocation Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.collocation_methods.all_data_collocation"><code class="docutils literal notranslate"><span class="pre">all_data_collocation()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.collocation_methods.equal_collocation"><code class="docutils literal notranslate"><span class="pre">equal_collocation()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.collocation_methods.identity_collocation"><code class="docutils literal notranslate"><span class="pre">identity_collocation()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.collocation_methods.random_collocation"><code class="docutils literal notranslate"><span class="pre">random_collocation()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-kefir_ajuste.correction_funcs">Correction Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.correction_funcs.fourier_term"><code class="docutils literal notranslate"><span class="pre">fourier_term()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.correction_funcs.intensity_function"><code class="docutils literal notranslate"><span class="pre">intensity_function()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.correction_funcs.multi_polynomial"><code class="docutils literal notranslate"><span class="pre">multi_polynomial()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-kefir_ajuste.utils">Utils</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.utils.compute_regression_metrics"><code class="docutils literal notranslate"><span class="pre">compute_regression_metrics()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.utils.ensure_experiment_active"><code class="docutils literal notranslate"><span class="pre">ensure_experiment_active()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.utils.get_learned_parameters"><code class="docutils literal notranslate"><span class="pre">get_learned_parameters()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.utils.get_treatment_name"><code class="docutils literal notranslate"><span class="pre">get_treatment_name()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.utils.log_run"><code class="docutils literal notranslate"><span class="pre">log_run()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.utils.plot_inverse_problem_solution"><code class="docutils literal notranslate"><span class="pre">plot_inverse_problem_solution()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir_ajuste.utils.plot_physics_discovery_solution"><code class="docutils literal notranslate"><span class="pre">plot_physics_discovery_solution()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scripts">Scripts</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#etl">ETL</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inverse-problem">Inverse Problem</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#logarithmic-equation">Logarithmic Equation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#physics-discovery">Physics Discovery</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ranking">Ranking</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The Jupyter Book community
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

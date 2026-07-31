@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -66,8 +66,8 @@
     <link rel="icon" href="../_static/mcd_logo.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Definición del modelo físico y dominio" href="entrenamiento.html" />
-    <link rel="prev" title="Vistazo dentro de la caja negra" href="pinns.html" />
+    <link rel="next" title="Descubrimiento de dinámicas ocultas con PINNs" href="descubrimiento_fisica.html" />
+    <link rel="prev" title="Reproducibilidad utilizando mlflow" href="mlflow.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -167,23 +167,26 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="problema.html">
-                    Problema
+                    Contexto
                 </a>
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="fuente_de_datos.html">Fuente de datos</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modelos.html">Modelos de crecimiento microbiano</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="modelos.html">Modelos de crecimiento bacteriano</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pinns.html">Vistazo dentro de la caja negra</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="entrenamiento.html">Construcción de la red neuronal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mlflow.html">Reproducibilidad utilizando mlflow</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Problema inverso</a></li>
-<li class="toctree-l1"><a class="reference internal" href="entrenamiento.html">Definición del modelo físico y dominio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="descubrimiento_fisica.html">Descubrimiento de dinámicas ocultas con PINNs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resultados.html">Ajuste de modelo con datos de tratamientos de ultrasonido</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="problema_directo.html">Corroboración del Modelo de Gompertz para el Crecimiento de Gránulos de Kéfir de Agua</a></li>
-<li class="toctree-l1"><a class="reference internal" href="metricas.html">Métricas de evaluación para la comparación de modelos PINNs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliografia.html">Referencias</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 </ul>
 
     </div>
@@ -321,7 +324,9 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -337,6 +342,15 @@
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#componentes-de-la-funcion-de-perdida">Componentes de la función de perdida</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementacion-de-deepxde">Implementación de DeepXDE</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -348,19 +362,110 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="problema-inverso">
 <h1>Problema inverso<a class="headerlink" href="#problema-inverso" title="Link to this heading">#</a></h1>
-<p>En el modelado matemático del crecimiento microbiano, un problema directo consiste en determinar la evolución temporal de la población <span class="math notranslate nohighlight">\(P(t)\)</span> a partir de una ecuación diferencial conocida y un conjunto de parámetros biológicos <span class="math notranslate nohighlight">\(\lambda\)</span> previamente establecidos. En el contexto del kéfir de agua, esto implicaría resolver ecuaciones de crecimiento —como los modelos logístico o de Gompertz— asumiendo valores fijos para parámetros como la tasa de crecimiento <span class="math notranslate nohighlight">\(k\)</span>, la capacidad de carga <span class="math notranslate nohighlight">\(m\)</span> y condiciones iniciales <span class="math notranslate nohighlight">\(P(t=0)\)</span>.</p>
+<p>En el modelado matemático del crecimiento microbiano, dijimos que un problema directo consiste en determinar la evolución temporal de la población <span class="math notranslate nohighlight">\(y(t)\)</span> a partir de una ecuación diferencial conocida y un conjunto de parámetros biológicos <span class="math notranslate nohighlight">\(\phi\)</span> previamente establecidos. En el contexto del kéfir de agua, esto implicaría resolver ecuaciones de crecimiento —como los modelos logístico o de Gompertz— asumiendo valores fijos para parámetros como la tasa de crecimiento <span class="math notranslate nohighlight">\(r\)</span>, la capacidad de carga <span class="math notranslate nohighlight">\(m\)</span> y condiciones iniciales <span class="math notranslate nohighlight">\(y(t=0)\)</span>.</p>
 <p>Sin embargo, en escenarios experimentales reales, muchos de estos parámetros no son directamente observables o pueden variar en función de tratamientos externos, como el pretratamiento por ultrasonido. En estos casos, el interés principal no radica únicamente en predecir la dinámica poblacional, sino en inferir los parámetros biológicos efectivos que gobiernan el crecimiento microbiano bajo distintas condiciones. Este planteamiento da lugar a un problema inverso, siendo que partimos de una curva y lo que se quiere inferir son los parámetros que generan esta curva dada una ecuación diferencial.</p>
-<p>Las Redes Neuronales Informadas por Modelos Físicos (PINNs) han demostrado ser particularmente eficaces para la formulación y resolución de problemas inversos, ya que permiten tratar los parámetros desconocidos de la ecuación diferencial como variables adicionales a optimizar durante el entrenamiento. En este marco, tanto la solución <span class="math notranslate nohighlight">\(\hat{P}(t)\)</span> como los parámetros biológicos <span class="math notranslate nohighlight">\(\lambda\)</span> (por ejemplo, <span class="math notranslate nohighlight">\(r\)</span>, <span class="math notranslate nohighlight">\(m\)</span> o parámetros dependientes del ultrasonido) se parametrizan mediante la red neuronal.</p>
-<p>El procedimiento general consiste en imponer las ecuaciones gobernantes del crecimiento microbiano dentro de la función de pérdida, de modo que el residuo físico dependa explícitamente de los parámetros desconocidos. A partir de datos experimentales parciales —las series de tiempo del crecimiento de los gránulos de kéfir—, la red se entrena para encontrar simultáneamente una solución consistente con los datos y un conjunto de parámetros que satisfagan la estructura física del sistema.</p>
-<p>La principal diferencia entre la formulación de problemas directos e inversos dentro del marco PINN radica en la función de pérdida, que en el caso inverso incorpora explícitamente términos asociados a los datos observados. Una formulación típica es</p>
+<p>Las Redes Neuronales Informadas por Modelos Físicos (PINNs) han demostrado ser particularmente eficaces para la formulación y resolución de <strong>problemas inversos</strong>, ya que permiten tratar los parámetros desconocidos de la ecuación diferencial como variables adicionales a optimizar durante el entrenamiento. En este marco, tanto la solución <span class="math notranslate nohighlight">\(\hat{y}(t)\)</span> como los parámetros biológicos <span class="math notranslate nohighlight">\(\phi\)</span> (por ejemplo, <span class="math notranslate nohighlight">\(r\)</span>, <span class="math notranslate nohighlight">\(m\)</span> o parámetros dependientes del ultrasonido como la intensidad <span class="math notranslate nohighlight">\(I\)</span> y periodo de exposición <span class="math notranslate nohighlight">\(T\)</span>) se parametrizan mediante la red neuronal.</p>
+<p>El procedimiento general consiste en imponer las ecuaciones gobernantes del crecimiento microbiano dentro de la función de pérdida, de modo que el residuo físico dependa explícitamente de los parámetros desconocidos. Entonces, definimos una función de residuos <span class="math notranslate nohighlight">\(R(\hat y,x;\phi)\)</span>:</p>
 <div class="math notranslate nohighlight">
-\[ \mathcal{L}(\theta,\lambda;T)=w_f\mathcal{L}_f(\theta,\lambda;T_f)+w_b\mathcal{L}_b(\theta,\lambda;T_b)+w_i\mathcal{L}_i(\theta,\lambda;T_i),\]</div>
-<p>donde <span class="math notranslate nohighlight">\(\theta\)</span> son los parámetros de la red neuronal y <span class="math notranslate nohighlight">\(\lambda\)</span> representa los parámetros físicos o biológicos a estimar. El término de información experimental se define como</p>
+\[
+R(\hat y,x;\phi) = \frac{d\hat y}{dt} -{f}(\hat y,x;\phi) ,
+\]</div>
+<p>donde <span class="math notranslate nohighlight">\(f( y,t;\phi) \)</span> representa la función del lado derecho la ecuación diferencial ordinaria <a class="reference internal" href="pinns.html#equation-general-ode">(6)</a>.</p>
+<p>A partir de datos experimentales parciales —las series de tiempo del crecimiento de los gránulos de kéfir—, la red se entrena para encontrar simultáneamente una solución consistente con los datos y un conjunto de parámetros que satisfagan la estructura física del sistema.</p>
+<section id="componentes-de-la-funcion-de-perdida">
+<h2>Componentes de la función de perdida<a class="headerlink" href="#componentes-de-la-funcion-de-perdida" title="Link to this heading">#</a></h2>
+<p>La principal diferencia entre la formulación de problemas directos e inversos dentro del marco PINN radica en la función de pérdida, que en el caso inverso incorpora explícitamente términos asociados a los datos observados. Una formulación típica es <a class="reference internal" href="pinns.html#equation-total-loss-function">(7)</a>, donde <span class="math notranslate nohighlight">\(\theta\)</span> son los parámetros de la red neuronal y <span class="math notranslate nohighlight">\(\phi\)</span> representa los parámetros físicos o biológicos a estimar.</p>
+<p>Este enfoque resulta especialmente atractivo para el estudio del crecimiento microbiano del kéfir de agua, ya que permite trabajar con datos escasos e incompletos sin recurrir a discretizaciones finas ni simulaciones numéricas tradicionales. Además, posibilita la inferencia de parámetros biológicos difíciles de medir experimentalmente, proporcionando información cuantitativa sobre el efecto del pretratamiento de ultrasonido en la dinámica de crecimiento.</p>
+<p>En el caso específico que trabajamos,<a class="reference internal" href="pinns.html#equation-total-loss-function">(7)</a> toma la forma:</p>
 <div class="math notranslate nohighlight">
-\[\mathcal{L}_i(\theta,\lambda;T_i)=\frac{1}{|T_i|}\sum_{x\in T_i}||\mathcal{I}(\hat{u},x)||^2_2,\]</div>
-<p>asegurando la compatibilidad entre la solución reconstruida y las mediciones experimentales disponibles.
-Este enfoque resulta especialmente atractivo para el estudio del crecimiento microbiano del kéfir de agua, ya que permite trabajar con datos escasos e incompletos sin recurrir a discretizaciones finas ni simulaciones numéricas tradicionales. Además, posibilita la inferencia de parámetros biológicos difíciles de medir experimentalmente, proporcionando información cuantitativa sobre el efecto del pretratamiento de ultrasonido en la dinámica de crecimiento.
-En resumen, las PINNs ofrecen un marco unificado para abordar problemas directos e inversos de manera coherente, integrando datos experimentales y conocimiento físico-biológico. En este proyecto, el interés principal se centra en la resolución del problema inverso, orientado a la identificación de parámetros y dinámicas ocultas asociadas al crecimiento microbiano del kéfir de agua bajo distintos pretratamientos.</p>
+\[
+ \mathcal{L}(\theta,r,m;X=\{C,D\})=\mathcal{L}_F+\mathcal{L}_D,
+\]</div>
+<p>donde se asume en el caso de modelo Verhulst:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{L}_F  = \sum_{t_i \in C_n}\frac{1}{2}\Big|\Big|R(\hat y_i,t_i;r,m)\Big|\Big|^2
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{L}_D  =\sum_{t_i\in \mathcal{D}}\frac{1}{2}\Big|\Big|y_i-\hat y_i\Big|\Big|^2
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+R(\hat y,t;r,m) = \frac{d\hat y}{dt} -r\hat y\Big( 1- \frac{1}{m}\hat y \Big) ,
+\]</div>
+<p>y la derivada de <span class="math notranslate nohighlight">\(\hat y\)</span> se cálcula utilizando un método númerico de diferenciación automátizada. Aquí, queremos estimar valores puntuales de los parametros <span class="math notranslate nohighlight">\(\kappa\)</span> y <span class="math notranslate nohighlight">\(L\)</span>.</p>
+<p>En resumen, las PINNs ofrecen un marco unificado para abordar problemas directos e inversos de manera coherente, integrando datos experimentales y conocimiento físico-biológico. En este proyecto, el interés principal se centra en la resolución del problema inverso, orientado a la identificación de parámetros y dinámicas ocultas asociadas al crecimiento microbiano del kéfir de agua bajo distintos pretratamientos.</p>
+</section>
+<section id="implementacion-de-deepxde">
+<h2>Implementación de DeepXDE<a class="headerlink" href="#implementacion-de-deepxde" title="Link to this heading">#</a></h2>
+<p>Con el apoyo de la paquetería <a class="reference external" href="https://deepxde.readthedocs.io/en/latest/index.html">DeepXDE</a>, podemos lograr esto definiendo las variables <code class="docutils literal notranslate"><span class="pre">kappa</span></code>  y <code class="docutils literal notranslate"><span class="pre">L</span></code> como variables entrenables partiendo de un valor inicial que queramos de cual partir:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">deepxde</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dde</span>
+
+
+<span class="n">kappa</span> <span class="o">=</span> <span class="n">dde</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">0.04</span><span class="p">)</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">dde</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mf">51.0</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">verhulst_eq</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="n">dy_dt</span> <span class="o">=</span> <span class="n">dde</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">jacobian</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">dy_dt</span><span class="o">-</span> <span class="n">kappa</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y</span> <span class="o">/</span> <span class="n">L</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>De esta manera, al momento de compilar y entrenar el PINN, se aprenden tanto los parametros <span class="math notranslate nohighlight">\(\theta\)</span> de la red neuronal como los parametros <span class="math notranslate nohighlight">\(\kappa\)</span> y <span class="math notranslate nohighlight">\(L\)</span>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">kefir_ajuste.trainers</span><span class="w"> </span><span class="kn">import</span> <span class="n">verhulst</span>
+
+<span class="n">model_equation</span> <span class="o">=</span> <span class="n">verhulst</span>
+<span class="n">run_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_equation</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">LEARNING_RATE</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">EPOCHS</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="k">with</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">start_run</span><span class="p">(</span><span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">):</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s2">&quot;epochs&quot;</span><span class="p">,</span> <span class="n">EPOCHS</span><span class="p">)</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s2">&quot;learning_rate&quot;</span><span class="p">,</span> <span class="n">LEARNING_RATE</span><span class="p">)</span>
+
+    <span class="n">model</span><span class="p">,</span> <span class="n">loss_history</span><span class="p">,</span><span class="n">learned_parameters</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model_equation</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+                                                                            <span class="n">epochs</span><span class="o">=</span><span class="n">EPOCHS</span><span class="p">,</span><span class="n">lr</span><span class="o">=</span><span class="n">LEARNING_RATE</span><span class="p">,</span>          <span class="n">collocation_method</span><span class="o">=</span><span class="n">collocation_method</span><span class="p">)</span>
+                                            
+</pre></div>
+</div>
+<p>donde primero definimos el espacio de datos de entrenamiento que se utilizaran para la PINN:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="n">geom</span> <span class="o">=</span> <span class="n">dde</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">TimeDomain</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">tf</span><span class="p">)</span>
+<span class="n">ic</span> <span class="o">=</span> <span class="n">dde</span><span class="o">.</span><span class="n">icbc</span><span class="o">.</span><span class="n">IC</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span>
+                 <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">y0</span><span class="p">,</span>
+                 <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">on_initial</span><span class="p">:</span> <span class="n">on_initial</span><span class="p">)</span>
+
+<span class="n">data_pinn</span> <span class="o">=</span> <span class="n">dde</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">PDE</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">geom</span><span class="p">,</span>
+                         <span class="n">pde</span><span class="o">=</span><span class="n">ode</span><span class="p">,</span>
+                         <span class="n">bcs</span><span class="o">=</span><span class="p">[</span> <span class="n">observe_bc</span><span class="p">],</span>
+                         <span class="n">num_domain</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+                         <span class="n">num_boundary</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                         <span class="n">num_test</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                         <span class="n">anchors</span><span class="o">=</span><span class="n">anchor_t</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Después, definimos la arquitectura de nuestra red neuronal de dirección directa, pero especificando qué parametros queremos aprender aparte de los pesos de las funciones de activación utilizando la variable <code class="docutils literal notranslate"><span class="pre">external_trainable_variables</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">layer_size</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">net</span> <span class="o">=</span> <span class="n">dde</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">FNN</span><span class="p">(</span><span class="n">layer_size</span><span class="p">,</span>
+                 <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">,</span>
+                 <span class="n">kernel_initializer</span><span class="o">=</span><span class="s2">&quot;Glorot uniform&quot;</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">dde</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">data_pinn</span><span class="p">,</span> <span class="n">net</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s2">&quot;adam&quot;</span><span class="p">,</span>
+              <span class="n">loss</span><span class="o">=</span><span class="s2">&quot;MSE&quot;</span><span class="p">,</span>
+              <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span>
+              <span class="n">external_trainable_variables</span><span class="o">=</span><span class="p">[</span><span class="n">kappa</span><span class="p">,</span> <span class="n">L</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Finalmente, definimos cómo guardar los valores aprendidos durante el entrenamiento de nuestra red, utilizando el método <code class="docutils literal notranslate"><span class="pre">dde.callbacks.VariableValue</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="n">variable</span> <span class="o">=</span> <span class="n">dde</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">VariableValue</span><span class="p">(</span><span class="n">var_list</span><span class="o">=</span><span class="p">[</span><span class="n">kappa</span><span class="p">,</span><span class="n">L</span><span class="p">],</span> 
+                                       <span class="n">period</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> 
+                                       <span class="n">filename</span><span class="o">=</span><span class="n">VARIABLES_PATH</span><span class="p">)</span>
+<span class="n">callbacks</span> <span class="o">=</span> <span class="p">[</span><span class="n">variable</span><span class="p">]</span>
+
+<span class="n">loss_history</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">iterations</span><span class="o">=</span><span class="n">epochs</span><span class="p">,</span>
+                              <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -394,20 +499,20 @@ En resumen, las PINNs ofrecen un marco unificado para abordar problemas directos
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="pinns.html"
+       href="mlflow.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Vistazo dentro de la caja negra</p>
+        <p class="prev-next-title">Reproducibilidad utilizando mlflow</p>
       </div>
     </a>
     <a class="right-next"
-       href="entrenamiento.html"
+       href="descubrimiento_fisica.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Definición del modelo físico y dominio</p>
+        <p class="prev-next-title">Descubrimiento de dinámicas ocultas con PINNs</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -417,6 +522,24 @@ En resumen, las PINNs ofrecen un marco unificado para abordar problemas directos
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#componentes-de-la-funcion-de-perdida">Componentes de la función de perdida</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementacion-de-deepxde">Implementación de DeepXDE</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

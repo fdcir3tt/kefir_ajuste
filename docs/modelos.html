@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Modelos de crecimiento microbiano &#8212; PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido</title>
+    <title>Modelos de crecimiento bacteriano &#8212; PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido</title>
   
   
   
@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -167,23 +167,26 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="problema.html">
-                    Problema
+                    Contexto
                 </a>
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="fuente_de_datos.html">Fuente de datos</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Modelos de crecimiento microbiano</a></li>
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Modelos de crecimiento bacteriano</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pinns.html">Vistazo dentro de la caja negra</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="entrenamiento.html">Construcción de la red neuronal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mlflow.html">Reproducibilidad utilizando mlflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="problema_inverso.html">Problema inverso</a></li>
-<li class="toctree-l1"><a class="reference internal" href="entrenamiento.html">Definición del modelo físico y dominio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="descubrimiento_fisica.html">Descubrimiento de dinámicas ocultas con PINNs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resultados.html">Ajuste de modelo con datos de tratamientos de ultrasonido</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="problema_directo.html">Corroboración del Modelo de Gompertz para el Crecimiento de Gránulos de Kéfir de Agua</a></li>
-<li class="toctree-l1"><a class="reference internal" href="metricas.html">Métricas de evaluación para la comparación de modelos PINNs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliografia.html">Referencias</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 </ul>
 
     </div>
@@ -321,7 +324,9 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -332,11 +337,21 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Modelos de crecimiento microbiano</h1>
+    <h1>Modelos de crecimiento bacteriano</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#formulacion-matematica">Formulación matemática</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ecuaciones-interpretables">Ecuaciones interpretables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limites-de-modelos">Límites de modelos</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -346,56 +361,140 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="modelos-de-crecimiento-microbiano">
-<h1>Modelos de crecimiento microbiano<a class="headerlink" href="#modelos-de-crecimiento-microbiano" title="Link to this heading">#</a></h1>
-<p>El crecimiento de comunidades microbianas, como el presente en los gránulos de kéfir de agua, puede describirse mediante modelos matemáticos de tipo poblacional <span id="id1">[<a class="reference internal" href="bibliografia.html#id10" title="M H Zwietering, I Jongenburger, F M Rombouts, K Van ', and T Riet. Modeling of the bacterial growth curve. APPLIED AND ENVIRONMENTAL MICROBIOLOGY, pages 1875-1881, 1990. URL: https://journals.asm.org/journal/aem.">Zwietering <em>et al.</em>, 1990</a>]</span>. Estos modelos permiten representar la evolución temporal de la biomasa microbiana <span class="math notranslate nohighlight">\(P(t)\)</span>  bajo ciertas hipótesis biológicas y ambientales, y han sido ampliamente utilizados en el estudio de fermentaciones y sistemas probióticos.</p>
-<p>El modelo Malthusiano asume que la tasa de crecimiento es proporcional al tamaño poblacional<span id="id2">[<a class="reference internal" href="bibliografia.html#id18" title="A. Adkins Williams and G. Davidson Mark. Ordinary Differential Equations. Springer, 2012. ISBN 978-1-4614-3617-1. URL: http://www.springer.com/series/666, doi:10.1007/978-1-4614-3618-8.">Williams and Mark, 2012</a>]</span>, lo que conduce a un crecimiento exponencial. En forma matemática, partimos de las tazas de nacimiento <span class="math notranslate nohighlight">\(b(t)\)</span> y de muertes <span class="math notranslate nohighlight">\(d(t)\)</span> . Se propone que tanto <span class="math notranslate nohighlight">\(b(t)\)</span> como <span class="math notranslate nohighlight">\(d(t)\)</span> comparten una relación de proporcionalidad con el tamaño de población <span class="math notranslate nohighlight">\(P(t)\)</span> :</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="modelos-de-crecimiento-bacteriano">
+<h1>Modelos de crecimiento bacteriano<a class="headerlink" href="#modelos-de-crecimiento-bacteriano" title="Link to this heading">#</a></h1>
+<section id="formulacion-matematica">
+<h2>Formulación matemática<a class="headerlink" href="#formulacion-matematica" title="Link to this heading">#</a></h2>
+<p>El crecimiento de comunidades microbianas, como el presente en los gránulos de kéfir de agua, puede describirse mediante modelos matemáticos de tipo poblacional <span id="id1">[<a class="reference internal" href="bibliografia.html#id10" title="M H Zwietering, I Jongenburger, F M Rombouts, K Van ', and T Riet. Modeling of the bacterial growth curve. APPLIED AND ENVIRONMENTAL MICROBIOLOGY, pages 1875-1881, 1990. URL: https://journals.asm.org/journal/aem, doi:10.48550/arXiv.1806.07366.">Zwietering <em>et al.</em>, 1990</a>]</span>. Estos modelos permiten representar la evolución temporal de la biomasa microbiana <span class="math notranslate nohighlight">\(y(t)\)</span>  bajo ciertas hipótesis biológicas y ambientales, y han sido ampliamente utilizados en el estudio de fermentaciones y sistemas probióticos.</p>
+<p>El modelo Malthusiano asume que la tasa de crecimiento es proporcional al tamaño poblacional<span id="id2">[<a class="reference internal" href="bibliografia.html#id18" title="A. Adkins Williams and G. Davidson Mark. Ordinary Differential Equations. Springer, 2012. ISBN 978-1-4614-3617-1. URL: http://www.springer.com/series/666, doi:10.1007/978-1-4614-3618-8.">Williams and Mark, 2012</a>]</span>, lo que conduce a un crecimiento exponencial. En forma matemática, partimos de las tazas de nacimiento <span class="math notranslate nohighlight">\(b(t)\)</span> y de muertes <span class="math notranslate nohighlight">\(d(t)\)</span> . Se propone que tanto <span class="math notranslate nohighlight">\(b(t)\)</span> como <span class="math notranslate nohighlight">\(d(t)\)</span> comparten una relación de proporcionalidad con el tamaño de población <span class="math notranslate nohighlight">\(y(t)\)</span> :</p>
 <div class="math notranslate nohighlight" id="equation-rates">
-<span class="eqno">(1)<a class="headerlink" href="#equation-rates" title="Link to this equation">#</a></span>\[b(t)=\beta P(t), \quad d(t)=\delta P(t).\]</div>
+<span class="eqno">(1)<a class="headerlink" href="#equation-rates" title="Link to this equation">#</a></span>\[b(t)=\beta y(t), \quad d(t)=\delta y(t).\]</div>
 <p>De aquí, se plantea que la taza en la que cambia el tamaño de población se da por la diferencia entre las tazas de nacimiento y muerte:</p>
 <div class="math notranslate nohighlight">
 \[
 \begin{equation*}
-\frac{dP}{dt}=b(t)-d(t).
+\frac{dy}{dt}=b(t)-d(t).
 \end{equation*}
 \]</div>
 <p>Teniendo en mente las expresiones de <a class="reference internal" href="#equation-rates">(1)</a> , obtenemos la ecuación</p>
 <div class="math notranslate nohighlight" id="equation-exponential">
-<span class="eqno">(2)<a class="headerlink" href="#equation-exponential" title="Link to this equation">#</a></span>\[\frac{dP}{dt}=rP(t).\]</div>
-<p>Donde <span class="math notranslate nohighlight">\(r=\beta-\delta\)</span> es una constante real. El modelo Veltusiano también considera las mismas premisas y la forma de <a class="reference internal" href="#equation-exponential">(2)</a>, solo cambian  <span class="math notranslate nohighlight">\(b(t)\)</span> y <span class="math notranslate nohighlight">\(d(t)\)</span>. Con este modelo se considera que el cociente <span class="math notranslate nohighlight">\(b(t)/P(t)\)</span> en vez de mantenerse constante, se considera que este decrese linealmente con respecto a la población: <span class="math notranslate nohighlight">\(b(t)/P(t)=\beta - k_\beta P(t)\)</span> . De manera similar con la taza de muerte. Como consecuencia, obtenemos:</p>
+<span class="eqno">(2)<a class="headerlink" href="#equation-exponential" title="Link to this equation">#</a></span>\[\frac{dy}{dt}=ry(t).\]</div>
+<p>Donde <span class="math notranslate nohighlight">\(r=\beta-\delta\)</span> es una constante real. El modelo Veltusiano también considera las mismas premisas y la forma de <a class="reference internal" href="#equation-exponential">(2)</a>, solo cambian  <span class="math notranslate nohighlight">\(b(t)\)</span> y <span class="math notranslate nohighlight">\(d(t)\)</span>. Con este modelo se considera que el cociente <span class="math notranslate nohighlight">\(b(t)/y(t)\)</span> en vez de mantenerse constante, se considera que este decrese linealmente con respecto a la población: <span class="math notranslate nohighlight">\(b(t)/y(t)=\beta - k_\beta y(t)\)</span> . De manera similar con la taza de muerte. Como consecuencia, obtenemos:</p>
 <div class="math notranslate nohighlight">
 \[
 \begin{equation*}
-b(t)=(\beta - k_{\beta}P) P ,\hspace{5mm} d(t)=(\delta + k_{\delta}P) P.
+b(t)=(\beta - k_{\beta}y) y ,\hspace{5mm} d(t)=(\delta + k_{\delta}y) y.
 \end{equation*}
 \]</div>
 <p>Teniendo esto en mente, obtenemos</p>
 <div class="math notranslate nohighlight" id="equation-proc-logistic">
 <span class="eqno">(3)<a class="headerlink" href="#equation-proc-logistic" title="Link to this equation">#</a></span>\[\begin{split}\begin{align}
-\frac{dP}{dt} &amp;= (\beta - k_{\beta}P) P - (\delta + k_{\delta}P) P \\
-&amp;= (\beta - \delta - (k_{\beta}+k_{\delta})P) P \\
-&amp;= (\beta - \delta)\left(1 - \frac{k_{\beta}+k_{\delta}}{\beta - \delta} P \right) P.
+\frac{dy}{dt} &amp;= (\beta - k_{\beta}y) y - (\delta + k_{\delta}y) y \\
+&amp;= (\beta - \delta - (k_{\beta}+k_{\delta})y) y \\
+&amp;= (\beta - \delta)\left(1 - \frac{k_{\beta}+k_{\delta}}{\beta - \delta} y \right) y.
 \end{align}\end{split}\]</div>
 <p>Para incorporar estas restricciones, el modelo logístico introduce una capacidad de carga <span class="math notranslate nohighlight">\(m\)</span>, asociada a la disponibilidad de recursos y al entorno físico-químico del medio de cultivo.Podemos renombrar los términos de <a class="reference internal" href="#equation-proc-logistic">(3)</a> en forma compacta para por fin llegar a la ecuación logística:</p>
+<div class="math notranslate nohighlight" id="equation-verhulst-eq">
+<span class="eqno">(4)<a class="headerlink" href="#equation-verhulst-eq" title="Link to this equation">#</a></span>\[\begin{equation*}
+\frac{dy}{dt}=ry(1-\frac{y}{m}),
+\end{equation*}\]</div>
 <div class="math notranslate nohighlight">
 \[
 \begin{equation*}
-\frac{dP}{dt}=rP(1-\frac{P}{m}),
+    r=\beta -\delta,\hspace{5mm}m=\frac{\beta -\delta}{k_{\beta}+k_{\delta}},
 \end{equation*}
 \]</div>
+<p>donde <span class="math notranslate nohighlight">\(k_\beta\)</span> y <span class="math notranslate nohighlight">\(k_\delta\)</span> son constantes reales positivas. Este modelo describe adecuadamente la dinámica sigmoide observada en muchos procesos fermentativos, incluyendo el de granulos de kéfir <span id="id3">[<a class="reference internal" href="bibliografia.html#id11" title="Katja Zajšek and Andreja Goršek. Modelling of batch kefir fermentation kinetics for ethanol production by mixed natural microflora. Food and Bioproducts Processing, 88:55-60, 3 2010. doi:10.1016/j.fbp.2009.09.002.">Zajšek and Goršek, 2010</a>, <a class="reference internal" href="bibliografia.html#id19" title="Fernando Baltazar-Larios, Francisco Delgado-Vences, and Arelly Ornelas. Parameter estimation and model selection for stochastic differential equations for biological growth. Environmental and Ecological Statistics, 32:195-227, 3 2025. doi:10.1007/s10651-025-00643-z.">Baltazar-Larios <em>et al.</em>, 2025</a>]</span>, permitiendo además definir parámetros biológicos interpretables, como la rapidez máxima de crecimiento <span class="math notranslate nohighlight">\(\mu_m\)</span> y el tiempo de retraso <span class="math notranslate nohighlight">\(\lambda\)</span> <span id="id4">[<a class="reference internal" href="bibliografia.html#id10" title="M H Zwietering, I Jongenburger, F M Rombouts, K Van ', and T Riet. Modeling of the bacterial growth curve. APPLIED AND ENVIRONMENTAL MICROBIOLOGY, pages 1875-1881, 1990. URL: https://journals.asm.org/journal/aem, doi:10.48550/arXiv.1806.07366.">Zwietering <em>et al.</em>, 1990</a>]</span>.</p>
+</section>
+<section id="ecuaciones-interpretables">
+<h2>Ecuaciones interpretables<a class="headerlink" href="#ecuaciones-interpretables" title="Link to this heading">#</a></h2>
+<p>A continuación, veremos cómo obtener dichos parámetros de 3 modelos típicos
+en la literatura de epidemología. Nos interesan las reparametrizaciones de estos modelos para comprender con mayor facilidad. A continuación se muestra cómo podemos llegar a estas reparametrizaciones interpretables.</p>
+<p>Primero, <span class="math notranslate nohighlight">\(\mu_m\)</span>,<span class="math notranslate nohighlight">\(\lambda\)</span> se definen como “máxima taza de crecimiento específico” y “tiempo de retraso” respectivamente <span id="id5">[<a class="reference internal" href="bibliografia.html#id10" title="M H Zwietering, I Jongenburger, F M Rombouts, K Van ', and T Riet. Modeling of the bacterial growth curve. APPLIED AND ENVIRONMENTAL MICROBIOLOGY, pages 1875-1881, 1990. URL: https://journals.asm.org/journal/aem, doi:10.48550/arXiv.1806.07366.">Zwietering <em>et al.</em>, 1990</a>]</span>, y se pueden representar estas definiciones con las expresiones:</p>
 <div class="math notranslate nohighlight">
 \[
-\begin{equation*}
-    r=\beta -\delta,\hspace{5mm}m=\frac{\beta -\delta}{k_{\beta}+k_{\delta}}.
-\end{equation*}
+\mu_m := \text{arg}\Bigg[\text{max}\Bigg( \frac{dy}{dt}\Bigg)\Bigg] \]</div>
+<div class="math notranslate nohighlight">
+\[
+\lambda :=\text{arg} \Bigg[ L \cap\Bigg \{(t,y = 0): t\in\mathbb{R}\Bigg\} \Bigg] ,
 \]</div>
-<p>Donde <span class="math notranslate nohighlight">\(k_\beta\)</span> y <span class="math notranslate nohighlight">\(k_\delta\)</span> son constantes reales positivas. Este modelo describe adecuadamente la dinámica sigmoide observada en muchos procesos fermentativos, incluyendo el de granulos de kéfir <span id="id3">[<a class="reference internal" href="bibliografia.html#id11" title="Katja Zajšek and Andreja Goršek. Modelling of batch kefir fermentation kinetics for ethanol production by mixed natural microflora. Food and Bioproducts Processing, 88:55-60, 3 2010. doi:10.1016/j.fbp.2009.09.002.">Zajšek and Goršek, 2010</a>, <a class="reference internal" href="bibliografia.html#id19" title="Fernando Baltazar-Larios, Francisco Delgado-Vences, and Arelly Ornelas. Parameter estimation and model selection for stochastic differential equations for biological growth. Environmental and Ecological Statistics, 32:195-227, 3 2025. doi:10.1007/s10651-025-00643-z.">Baltazar-Larios <em>et al.</em>, 2025</a>]</span>, permitiendo además definir parámetros biológicos interpretables, como la rapidez máxima de crecimiento <span class="math notranslate nohighlight">\(\mu\)</span> y el tiempo de retraso <span class="math notranslate nohighlight">\(\lambda\)</span> <span id="id4">[<a class="reference internal" href="bibliografia.html#id10" title="M H Zwietering, I Jongenburger, F M Rombouts, K Van ', and T Riet. Modeling of the bacterial growth curve. APPLIED AND ENVIRONMENTAL MICROBIOLOGY, pages 1875-1881, 1990. URL: https://journals.asm.org/journal/aem.">Zwietering <em>et al.</em>, 1990</a>]</span>. Sin embargo, el modelo logístico supone una respuesta simétrica alrededor del punto de máxima rapidez, lo cual no siempre se observa en cultivos microbianos complejos.</p>
-<p>El modelo de Gompertz ofrece una alternativa más flexible para describir el crecimiento microbiano asimétrico, característica común en fermentaciones reales. Sus parámetros permiten capturar de manera más realista las fases de adaptación, crecimiento acelerado y saturación. En su forma matemática tenemos:</p>
-<div class="math notranslate nohighlight" id="equation-gompertz">
-<span class="eqno">(4)<a class="headerlink" href="#equation-gompertz" title="Link to this equation">#</a></span>\[\frac{dP}{dt}=rP\hspace{0.5mm}ln(\frac{m}{P}).\]</div>
-<p>Si bien este modelo puede aproximar fases iniciales de crecimiento microbiano, resulta insuficiente para describir sistemas reales como el abordado por las series de tratamiento, ya que se presentan efectos inducidos. Tanto el modelo logístico como el de Gompertz dependen de supuestos funcionales específicos y parámetros constantes, lo que limita su capacidad para representar fenómenos no lineales como el que tenemos a la mano. En el caso particular de los experimentos con tratamiento, los efectos no siempre pueden ser capturados adecuadamente por modelos clásicos con parámetros fijos o formas funcionales predefinidas.</p>
-<p>Es por eso que, las redes neuronales informadas por modelos físicos (Physics-Informed Neural Networks, PINNs) representan una alternativa robusta para el análisis del crecimiento microbiano. PINNs permiten integrar ecuaciones diferenciales poblacionales —como las del modelo logístico o de Gompertz directamente en el proceso de entrenamiento de la red, al mismo tiempo que aprenden dinámicas no observables a partir de datos experimentales <span id="id5">[<a class="reference internal" href="bibliografia.html#id22" title="Salvatore Cuomo, Vincenzo Schiano Di Cola, Fabio Giampaolo, Gianluigi Rozza, Maziar Raissi, and Francesco Piccialli. Scientific machine learning through physics–informed neural networks: where we are and what’s next. Journal of Scientific Computing, 9 2022. doi:10.1007/s10915-022-01939-z.">Cuomo <em>et al.</em>, 2022</a>, <a class="reference internal" href="bibliografia.html#id23" title="Karthik Pappu, Prathamesh Dinesh Joshi, Raj Abhijit Dandekar, Rajat Dandekar, and Sreedath Panat. Understanding malware propagation dynamics through scientific machine learning. 7 2025. URL: http://arxiv.org/abs/2507.07143.">Pappu <em>et al.</em>, 2025</a>]</span>. De esta forma, es posible identificar parámetros efectivos dependientes del pretratamiento, modelar dinámicas ocultas y capturar desviaciones respecto a los modelos clásicos, incluso en escenarios con datos escasos, como las series de tiempo disponibles para el crecimiento de gránulos de kéfir de agua.</p>
+<p>donde <span class="math notranslate nohighlight">\(L\)</span> es la recta tangencial a la curva en el punto de inflección.</p>
+<p>Tomando como ejemplo el modelo de Verhulst, cuya ecuación diferencial tiene la forma de <a class="reference internal" href="#equation-verhulst-eq">(4)</a> para cálcular primero <span class="math notranslate nohighlight">\(\mu_m\)</span>, partimos de:</p>
+<div class="math notranslate nohighlight" id="equation-mu-proc">
+<span class="eqno">(5)<a class="headerlink" href="#equation-mu-proc" title="Link to this equation">#</a></span>\[\begin{split}\begin{align*}
+\text{max}\Big(\frac{dy}{dt}\Big)\iff \frac{d^2y}{dt^2}=0,\\
+\frac{d}{dt}\Big[ry\Big(1-\frac{y}{m}\Big) \Big]= 0 \\
+\frac{d}{dt}[ry]\Big(1-\frac{y}{m}\Big) + ry\frac{d}{dt}\Big(1-\frac{y}{m}\Big) = 0 \\
+r\frac{dy}{dt}\Big(1-\frac{y}{m}\Big)-\frac{r}{m}y\frac{dy}{dt}= 0\\
+r\frac{dy}{dt}\Bigg[1-\frac{2y}{m}\Bigg] = 0.
+\end{align*}\end{split}\]</div>
+<p>De <a class="reference internal" href="#equation-mu-proc">(5)</a> obtenemos la solución
+no trivial :</p>
+<div class="math notranslate nohighlight">
+\[
+1-\frac{2y}{m} = 0 \to y(t_i) = \frac{m}{2}
+\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\frac{dy}{dt}\Big|_{t_i} 
+&amp;= r y(t_i) \Bigl( 1 - \frac{y(t_i)}{m} \Bigr) \\
+&amp;= r \frac{m}{2} \Bigl( 1 - \frac{1}{2} \Bigr) \\
+&amp;= r \frac{m}{4}
+\end{aligned}
+\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[
+\begin{aligned}
+\mu_m =\frac{dy}{dt}\Bigg|_{t_i} = r\frac{m}{4}
+\end{aligned}
+\]</div>
+<p>Ahora solo nos falta conocer <span class="math notranslate nohighlight">\(t_i\)</span> despejando de la solución explícita <span class="math notranslate nohighlight">\(P(t)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{split}
+y(t_i) = \frac{my_0e^{rt_i}}{m+y_0(e^{rt_i}-1)} \\\end{split}\\\begin{split}
+\frac{m}{2} = \frac{my_0e^{rt_i}}{m+y_0(e^{rt_i}-1)} \\ 
+m+y_0(e^{rt_i}-1) = 2y_0e^{rt_i}\\\end{split}\\\begin{split}m-(y_0e^{rt_i}+1)= 0 \\ 
+\frac{m-1}{y_0} = e^{rt_i}\\\end{split}\\t_i = ln\Bigg[\Big(\frac{m-1}{ry_0}\Big)\Bigg]\end{aligned}\end{align} \]</div>
+<p>Una vez tenemos <span class="math notranslate nohighlight">\(\mu_m\)</span> y el punto de inflección <span class="math notranslate nohighlight">\(t_i\)</span>, podemos cálcular <span class="math notranslate nohighlight">\(\lambda\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{split}
+\frac{m}{2} = \mu_m t_i + y_0 \to y_0 =\frac{m}{2} -\mu_m t_i\\\end{split}\\\begin{split}0=\mu_m\lambda+y_0\\
+\lambda = -\frac{y_0}{\mu_m}=t_i-\frac{m}{2\mu_m}\\
+\lambda = ln\Bigg[\Big(\frac{m-1}{ry_0}\Big)\Bigg] - \frac{2}{r}
+\end{split}\end{aligned}\end{align} \]</div>
+<p>De similar forma podemos reescribir los modelos típicos en términos de los parámetros interpretables<span id="id6">[<a class="reference internal" href="bibliografia.html#id10" title="M H Zwietering, I Jongenburger, F M Rombouts, K Van ', and T Riet. Modeling of the bacterial growth curve. APPLIED AND ENVIRONMENTAL MICROBIOLOGY, pages 1875-1881, 1990. URL: https://journals.asm.org/journal/aem, doi:10.48550/arXiv.1806.07366.">Zwietering <em>et al.</em>, 1990</a>]</span>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Nombre</p></th>
+<th class="head"><p>Ecuación típica</p></th>
+<th class="head"><p>Ecuación con términos interpretables</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Verhulst</p></td>
+<td><p><span class="math notranslate nohighlight">\(y(x) =\frac{a}{1+e^{(b-cx)}}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(y(t)=\frac{A}{1+e^{(\frac{4\mu_m}{A}(\lambda-t)+2)}}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Gompertz</p></td>
+<td><p><span class="math notranslate nohighlight">\(y(x)=a e^{-e^{(b-cx)}}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(y(t)=Ae^{-e^{\frac{4\mu_m}{A}(\lambda-t)+1}}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Richards</p></td>
+<td><p><span class="math notranslate nohighlight">\(y(x)=a(1+\nu  e^{k(\tau-x)})^{-\frac{1}{\nu}}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(y(t)=A(1+\nu e^{(1+\nu)} \cdot e^{\frac{\mu_m}{A}\cdot(1+\nu)^{(1+\frac{1}{\nu})}\cdot(\lambda - t)})^{-\frac{1}{\nu}}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="limites-de-modelos">
+<h2>Límites de modelos<a class="headerlink" href="#limites-de-modelos" title="Link to this heading">#</a></h2>
+<p>Estos modelos suponen una respuesta simétrica alrededor del punto de máxima rapidez, lo cual no se observa en la figura {figure}``. Si bien estos modelos pueden aproximar fases iniciales de crecimiento microbiano, resultan insuficiente para describir sistemas reales como el abordado por las series de tratamiento, ya que se presentan efectos inducidos. Tanto el modelo logístico como el de Gompertz dependen de supuestos funcionales específicos y parámetros constantes como se tocó previamente, lo que limita su capacidad para representar fenómenos no lineales como el que tenemos a la mano. En el caso particular de los experimentos con tratamiento, los efectos no siempre pueden ser capturados adecuadamente por modelos clásicos con parámetros fijos o formas funcionales predefinidas.</p>
+<p>Es por eso que, las redes neuronales informadas por modelos físicos (Physics-Informed Neural Networks, PINNs) representan una alternativa robusta para el análisis del crecimiento microbiano. PINNs permiten integrar ecuaciones diferenciales ordinarias —como las del modelo de Verhulst, Gompertz o de Richards directamente en el proceso de entrenamiento de la red, al mismo tiempo que aprenden dinámicas a partir de datos experimentales <span id="id7">[<a class="reference internal" href="bibliografia.html#id22" title="Salvatore Cuomo, Vincenzo Schiano Di Cola, Fabio Giampaolo, Gianluigi Rozza, Maziar Raissi, and Francesco Piccialli. Scientific machine learning through physics–informed neural networks: where we are and what’s next. Journal of Scientific Computing, 9 2022. doi:10.1007/s10915-022-01939-z.">Cuomo <em>et al.</em>, 2022</a>, <a class="reference internal" href="bibliografia.html#id23" title="Karthik Pappu, Prathamesh Dinesh Joshi, Raj Abhijit Dandekar, Rajat Dandekar, and Sreedath Panat. Understanding malware propagation dynamics through scientific machine learning. 7 2025. URL: http://arxiv.org/abs/2507.07143, doi:10.48550/arXiv.2507.07143.">Pappu <em>et al.</em>, 2025</a>]</span>.</p>
+<p>De esta forma, es posible identificar parámetros efectivos dependientes del pretratamiento, modelar dinámicas ocultas y capturar desviaciones respecto a los modelos clásicos, incluso en escenarios con datos escasos <span class="math notranslate nohighlight">\((n_{obs}&lt;200)\)</span>, como las series de tiempo disponibles para el crecimiento de gránulos de kéfir de agua (<span class="math notranslate nohighlight">\(n_{obs}=75\)</span>).</p>
 <p>Este enfoque híbrido combina la interpretabilidad de los modelos tradicionales con la flexibilidad de las técnicas de aprendizaje profundo, ofreciendo una herramienta adecuada para caracterizar y comparar el efecto del ultrasonido sobre el crecimiento microbiano del kéfir.</p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -452,6 +551,25 @@ b(t)=(\beta - k_{\beta}P) P ,\hspace{5mm} d(t)=(\delta + k_{\delta}P) P.
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#formulacion-matematica">Formulación matemática</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ecuaciones-interpretables">Ecuaciones interpretables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limites-de-modelos">Límites de modelos</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

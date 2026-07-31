@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -64,7 +64,8 @@
     <link rel="icon" href="../_static/mcd_logo.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="Métricas de evaluación para la comparación de modelos PINNs" href="metricas.html" />
+    <link rel="next" title="API Reference" href="../api.html" />
+    <link rel="prev" title="Ajuste de modelo con datos de tratamientos de ultrasonido" href="resultados.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -164,23 +165,26 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="problema.html">
-                    Problema
+                    Contexto
                 </a>
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="fuente_de_datos.html">Fuente de datos</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modelos.html">Modelos de crecimiento microbiano</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="modelos.html">Modelos de crecimiento bacteriano</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pinns.html">Vistazo dentro de la caja negra</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="entrenamiento.html">Construcción de la red neuronal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mlflow.html">Reproducibilidad utilizando mlflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="problema_inverso.html">Problema inverso</a></li>
-<li class="toctree-l1"><a class="reference internal" href="entrenamiento.html">Definición del modelo físico y dominio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="descubrimiento_fisica.html">Descubrimiento de dinámicas ocultas con PINNs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resultados.html">Ajuste de modelo con datos de tratamientos de ultrasonido</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="problema_directo.html">Corroboración del Modelo de Gompertz para el Crecimiento de Gránulos de Kéfir de Agua</a></li>
-<li class="toctree-l1"><a class="reference internal" href="metricas.html">Métricas de evaluación para la comparación de modelos PINNs</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Referencias</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 </ul>
 
     </div>
@@ -351,37 +355,77 @@
 <span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
 <p>Proenza Delgado Y and J. C. Rodríguez Figueroa. Efecto del ultrasonido de intensidad alta y la fermentación sobre metabolitos específicos y propiedades funcionales del kéfir de agua. 2025.</p>
 </div>
-<div class="citation" id="id10" role="doc-biblioentry">
+<div class="citation" id="id12" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
-<p>M H Zwietering, I Jongenburger, F M Rombouts, K Van ', and T Riet. Modeling of the bacterial growth curve. <em>APPLIED AND ENVIRONMENTAL MICROBIOLOGY</em>, pages 1875–1881, 1990. URL: <a class="reference external" href="https://journals.asm.org/journal/aem">https://journals.asm.org/journal/aem</a>.</p>
+<p>Thomas Asikis, Lucas Böttcher, and Nino Antulov-Fantulin. Neural ordinary differential equation control of dynamics on graphs. <em>Physical Review Research</em>, 4:13221, 2022. URL: <a class="reference external" href="https://arxiv.org/pdf/2006.09773">https://arxiv.org/pdf/2006.09773</a>, <a class="reference external" href="https://doi.org/10.1103/physrevresearch.4.013221">doi:10.1103/physrevresearch.4.013221</a>.</p>
+</div>
+<div class="citation" id="id22" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<p>Salvatore Cuomo, Vincenzo Schiano Di Cola, Fabio Giampaolo, Gianluigi Rozza, Maziar Raissi, and Francesco Piccialli. Scientific machine learning through physics–informed neural networks: where we are and what’s next. <em>Journal of Scientific Computing</em>, 9 2022. <a class="reference external" href="https://doi.org/10.1007/s10915-022-01939-z">doi:10.1007/s10915-022-01939-z</a>.</p>
+</div>
+<div class="citation" id="id10" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
+<p>M H Zwietering, I Jongenburger, F M Rombouts, K Van ', and T Riet. Modeling of the bacterial growth curve. <em>APPLIED AND ENVIRONMENTAL MICROBIOLOGY</em>, pages 1875–1881, 1990. URL: <a class="reference external" href="https://journals.asm.org/journal/aem">https://journals.asm.org/journal/aem</a>, <a class="reference external" href="https://doi.org/10.48550/arXiv.1806.07366">doi:10.48550/arXiv.1806.07366</a>.</p>
 </div>
 <div class="citation" id="id18" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
 <p>A. Adkins Williams and G. Davidson Mark. <em>Ordinary Differential Equations</em>. Springer, 2012. ISBN 978-1-4614-3617-1. URL: <a class="reference external" href="http://www.springer.com/series/666">http://www.springer.com/series/666</a>, <a class="reference external" href="https://doi.org/10.1007/978-1-4614-3618-8">doi:10.1007/978-1-4614-3618-8</a>.</p>
 </div>
 <div class="citation" id="id11" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></span>
 <p>Katja Zajšek and Andreja Goršek. Modelling of batch kefir fermentation kinetics for ethanol production by mixed natural microflora. <em>Food and Bioproducts Processing</em>, 88:55–60, 3 2010. <a class="reference external" href="https://doi.org/10.1016/j.fbp.2009.09.002">doi:10.1016/j.fbp.2009.09.002</a>.</p>
 </div>
 <div class="citation" id="id19" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></span>
 <p>Fernando Baltazar-Larios, Francisco Delgado-Vences, and Arelly Ornelas. Parameter estimation and model selection for stochastic differential equations for biological growth. <em>Environmental and Ecological Statistics</em>, 32:195–227, 3 2025. <a class="reference external" href="https://doi.org/10.1007/s10651-025-00643-z">doi:10.1007/s10651-025-00643-z</a>.</p>
 </div>
-<div class="citation" id="id22" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></span>
-<p>Salvatore Cuomo, Vincenzo Schiano Di Cola, Fabio Giampaolo, Gianluigi Rozza, Maziar Raissi, and Francesco Piccialli. Scientific machine learning through physics–informed neural networks: where we are and what’s next. <em>Journal of Scientific Computing</em>, 9 2022. <a class="reference external" href="https://doi.org/10.1007/s10915-022-01939-z">doi:10.1007/s10915-022-01939-z</a>.</p>
-</div>
 <div class="citation" id="id23" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></span>
-<p>Karthik Pappu, Prathamesh Dinesh Joshi, Raj Abhijit Dandekar, Rajat Dandekar, and Sreedath Panat. Understanding malware propagation dynamics through scientific machine learning. 7 2025. URL: <a class="reference external" href="http://arxiv.org/abs/2507.07143">http://arxiv.org/abs/2507.07143</a>.</p>
+<span class="label"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></span>
+<p>Karthik Pappu, Prathamesh Dinesh Joshi, Raj Abhijit Dandekar, Rajat Dandekar, and Sreedath Panat. Understanding malware propagation dynamics through scientific machine learning. 7 2025. URL: <a class="reference external" href="http://arxiv.org/abs/2507.07143">http://arxiv.org/abs/2507.07143</a>, <a class="reference external" href="https://doi.org/10.48550/arXiv.2507.07143">doi:10.48550/arXiv.2507.07143</a>.</p>
 </div>
 <div class="citation" id="id6" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></span>
 <p>Lu Lu, Xuhui Meng, Zhiping Mao, and George Em Karniadakis. Deepxde: a deep learning library for solving differential equations. <em>SIAM Review</em>, 63:208–228, 2021. <a class="reference external" href="https://doi.org/10.1137/19M1274067">doi:10.1137/19M1274067</a>.</p>
 </div>
 <div class="citation" id="id25" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></span>
 <p>Amer Farea, Olli Yli-Harja, and Frank Emmert-Streib. Using physics-informed neural networks for modeling biological and epidemiological dynamical systems. <em>Mathematics</em>, 5 2025. <a class="reference external" href="https://doi.org/10.3390/math13101664">doi:10.3390/math13101664</a>.</p>
+</div>
+<div class="citation" id="id37" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>11<span class="fn-bracket">]</span></span>
+<p>Diederik P. Kingma and Jimmy Ba. Adam: a method for stochastic optimization. 2017. URL: <a class="reference external" href="https://arxiv.org/abs/1412.6980">https://arxiv.org/abs/1412.6980</a>, <a class="reference external" href="https://arxiv.org/abs/1412.6980">arXiv:1412.6980</a>, <a class="reference external" href="https://doi.org/10.48550/arXiv.1412.6980">doi:10.48550/arXiv.1412.6980</a>.</p>
+</div>
+<div class="citation" id="id30" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></span>
+<p>Harry Draper, Norman R.;Smith. <em>Applied Regression Analysis</em>. Applied Regression Analysis 326. Wiley, 3rd edition edition, 2014. <a class="reference external" href="https://doi.org/10.1002/9781118625590">doi:10.1002/9781118625590</a>.</p>
+</div>
+<div class="citation" id="id31" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>13<span class="fn-bracket">]</span></span>
+<p>C. J. Willmott and K. Matsuura. Advantages of the mean absolute error (mae) over the root mean square error (rmse) in assessing average model performance. <em>Climate Research</em>, 30:79–82, 2005. <a class="reference external" href="https://doi.org/10.3354/cr030079">doi:10.3354/cr030079</a>.</p>
+</div>
+<div class="citation" id="id32" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>14<span class="fn-bracket">]</span></span>
+<p>J. Scott Armstrong and Fred Collopy. Error measures for generalizing about forecasting methods: empirical comparisons. <em>International Journal of Forecasting</em>, 8(1):69–80, 1992. <a class="reference external" href="https://doi.org/10.1016/0169-2070(92)90008-W">doi:10.1016/0169-2070(92)90008-W</a>.</p>
+</div>
+<div class="citation" id="id33" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>15<span class="fn-bracket">]</span></span>
+<p>Hirotugu Akaike. A new look at the statistical model identification. <em>IEEE Transactions on Automatic Control</em>, 19(6):716–723, 1974. <a class="reference external" href="https://doi.org/10.1109/TAC.1974.1100705">doi:10.1109/TAC.1974.1100705</a>.</p>
+</div>
+<div class="citation" id="id34" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>16<span class="fn-bracket">]</span></span>
+<p>Gideon Schwarz. Estimating the dimension of a model. <em>The Annals of Statistics</em>, 6(2):461–464, 1978. <a class="reference external" href="https://doi.org/10.1214/aos/1176344136">doi:10.1214/aos/1176344136</a>.</p>
+</div>
+<div class="citation" id="id36" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>17<span class="fn-bracket">]</span></span>
+<p>George A. F. Seber and Alan J. Lee. <em>Linear Regression Analysis</em>. Wiley, 2 edition, 2003. ISBN 0471415405; 9780471722199; 0471722197; 9780471415404. <a class="reference external" href="https://doi.org/10.1002/9780471722199">doi:10.1002/9780471722199</a>.</p>
+</div>
+<div class="citation" id="id27" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>18<span class="fn-bracket">]</span></span>
+<p>Steven L. Brunton and J. Nathan Kutz. <em>Data-Driven Science and Engineering: Machine Learning, Dynamical Systems, and Control</em>. Cambridge University Press, Cambridge, United Kingdom, 1 edition, 2019. ISBN 978-1-108-42209-3. <a class="reference external" href="https://doi.org/10.1017/9781108380690">doi:10.1017/9781108380690</a>.</p>
+</div>
+<div class="citation" id="id28" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>19<span class="fn-bracket">]</span></span>
+<p>Klaus Dietz. The incidence of infectious diseases under the influence of seasonal fluctuations. In <em>Mathematical Models in Medicine</em>, volume 11 of Lecture Notes in Biomathematics, pages 1–15. Springer, Berlin, Heidelberg, 1976. <a class="reference external" href="https://doi.org/10.1007/978-3-642-93048-5_1">doi:10.1007/978-3-642-93048-5_1</a>.</p>
 </div>
 </div>
 </div>
@@ -418,13 +462,22 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="metricas.html"
+       href="resultados.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Métricas de evaluación para la comparación de modelos PINNs</p>
+        <p class="prev-next-title">Ajuste de modelo con datos de tratamientos de ultrasonido</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="../api.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">API Reference</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>

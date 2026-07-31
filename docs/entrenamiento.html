@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Definición del modelo físico y dominio &#8212; PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido</title>
+    <title>Construcción de la red neuronal &#8212; PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido</title>
   
   
   
@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -66,8 +66,8 @@
     <link rel="icon" href="../_static/mcd_logo.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Corroboración del Modelo de Gompertz para el Crecimiento de Gránulos de Kéfir de Agua" href="problema_directo.html" />
-    <link rel="prev" title="Problema inverso" href="problema_inverso.html" />
+    <link rel="next" title="Reproducibilidad utilizando mlflow" href="mlflow.html" />
+    <link rel="prev" title="Vistazo dentro de la caja negra" href="pinns.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -167,23 +167,26 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="problema.html">
-                    Problema
+                    Contexto
                 </a>
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="fuente_de_datos.html">Fuente de datos</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modelos.html">Modelos de crecimiento microbiano</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="modelos.html">Modelos de crecimiento bacteriano</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pinns.html">Vistazo dentro de la caja negra</a></li>
 
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Construcción de la red neuronal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mlflow.html">Reproducibilidad utilizando mlflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="problema_inverso.html">Problema inverso</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Definición del modelo físico y dominio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="descubrimiento_fisica.html">Descubrimiento de dinámicas ocultas con PINNs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resultados.html">Ajuste de modelo con datos de tratamientos de ultrasonido</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="problema_directo.html">Corroboración del Modelo de Gompertz para el Crecimiento de Gránulos de Kéfir de Agua</a></li>
-<li class="toctree-l1"><a class="reference internal" href="metricas.html">Métricas de evaluación para la comparación de modelos PINNs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliografia.html">Referencias</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 </ul>
 
     </div>
@@ -334,7 +337,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Definición del modelo físico y dominio</h1>
+    <h1>Construcción de la red neuronal</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -344,12 +347,18 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Definición del modelo físico y dominio</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#construccion-de-la-red-neuronal">Construcción de la red neuronal</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optimizacion">Optimización</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluacion-y-analisis-de-resultados">Evaluación y análisis de resultados</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definicion-del-modelo-fisico-y-dominio">Definición del modelo físico y dominio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimizacion">Optimización</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluacion-y-analisis-de-resultados">Evaluación y análisis de resultados</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metrica-root-mean-square-error-rmse">Métrica: Root Mean Square Error (RMSE)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metrica-mean-absolute-error-mae">Métrica: Mean Absolute Error (MAE)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metrica-mean-absolute-percentage-error-mape">Métrica: Mean Absolute Percentage Error (MAPE)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#criterio-de-informacion-de-akaike-aic">Criterio de Información de Akaike (AIC)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#criterio-de-informacion-bayesiano-bic">Criterio de Información Bayesiano (BIC)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coeficiente-de-determinacion-r-2">Coeficiente de determinación (<span class="math notranslate nohighlight">\(R^2\)</span>)</a></li>
 </ul>
-
+</li>
+</ul>
             </nav>
         </div>
     </div>
@@ -360,19 +369,14 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="definicion-del-modelo-fisico-y-dominio">
-<h1>Definición del modelo físico y dominio<a class="headerlink" href="#definicion-del-modelo-fisico-y-dominio" title="Link to this heading">#</a></h1>
-<p>El primer paso consiste en definir el modelo de crecimiento poblacional que describe el
-fenómeno de estudio, típicamente mediante ecuaciones diferenciales ordinarias de tipo
-logístico o Gompertz. Estas ecuaciones representan una aproximación física del
-crecimiento microbiano bajo condiciones controladas de temperatura y presión, y
-constituyen la restricción principal que se impondrá durante el entrenamiento. Se define
-el dominio temporal del problema, correspondiente al intervalo experimental de 175 horas,
-junto con las condiciones iniciales asociadas a la concentración inicial de gránulos de
-kéfir.</p>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="construccion-de-la-red-neuronal">
+  <section class="tex2jax_ignore mathjax_ignore" id="construccion-de-la-red-neuronal">
 <h1>Construcción de la red neuronal<a class="headerlink" href="#construccion-de-la-red-neuronal" title="Link to this heading">#</a></h1>
+<p>El tipo de red neuronal que se utiliza frecuentemente en el campo de aprendizaje
+automatizado científico suele ser una red neuronal profunda (Deep Neural Network, DNN)
+de  2-3 capas ocultas unidireccionales de 50-100 neuronas . Las funciones de activación
+que  han mostrado buen desempeño en mayoría de casos de uso de problemas inversos con
+ecuaciones diferenciales ordinarias han sido  <span class="math notranslate nohighlight">\(\tanh\)</span>, <span class="math notranslate nohighlight">\(\text{ReLu}\)</span>  ,<span class="math notranslate nohighlight">\(\text{Softmax}\)</span>
+<span id="id1">[<a class="reference internal" href="bibliografia.html#id22" title="Salvatore Cuomo, Vincenzo Schiano Di Cola, Fabio Giampaolo, Gianluigi Rozza, Maziar Raissi, and Francesco Piccialli. Scientific machine learning through physics–informed neural networks: where we are and what’s next. Journal of Scientific Computing, 9 2022. doi:10.1007/s10915-022-01939-z.">Cuomo <em>et al.</em>, 2022</a>, <a class="reference internal" href="bibliografia.html#id23" title="Karthik Pappu, Prathamesh Dinesh Joshi, Raj Abhijit Dandekar, Rajat Dandekar, and Sreedath Panat. Understanding malware propagation dynamics through scientific machine learning. 7 2025. URL: http://arxiv.org/abs/2507.07143, doi:10.48550/arXiv.2507.07143.">Pappu <em>et al.</em>, 2025</a>, <a class="reference internal" href="bibliografia.html#id25" title="Amer Farea, Olli Yli-Harja, and Frank Emmert-Streib. Using physics-informed neural networks for modeling biological and epidemiological dynamical systems. Mathematics, 5 2025. doi:10.3390/math13101664.">Farea <em>et al.</em>, 2025</a>]</span> .</p>
 <p>Después, se construye una red neuronal profunda que recibe como entrada el tiempo <span class="math notranslate nohighlight">\(t\)</span>
 y produce como salida una aproximación continua de la población microbiana <span class="math notranslate nohighlight">\(\hat{u}(t)\)</span>.
 En el caso del problema inverso, los parámetros biológicos desconocidos del modelo de
@@ -380,34 +384,150 @@ crecimiento se incorporan explícitamente como variables entrenables adicionales
 diferenciación automática, se calculan las derivadas temporales de la salida de la red,
 necesarias para evaluar el residuo de la ecuación diferencial que gobierna el crecimiento
 microbiano.</p>
-<p>El tipo de red neuronal que se utiliza frecuentemente en el campo de aprendizaje
-automatizado científico suele ser una red neuronal profunda (Deep Neural Network, DNN)
-de  2-3 capas ocultas unidireccionales de 50-100 neuronas . Las funciones de activación
-que  han mostrado buen desempeño en mayoría de casos de uso de problemas inversos con
-ecuaciones diferenciales ordinarias han sido  <span class="math notranslate nohighlight">\(\tanh\)</span>, <span class="math notranslate nohighlight">\(\text{ReLu}\)</span>  ,<span class="math notranslate nohighlight">\(\text{Softmax}\)</span>
-<span id="id1">[<a class="reference internal" href="bibliografia.html#id22" title="Salvatore Cuomo, Vincenzo Schiano Di Cola, Fabio Giampaolo, Gianluigi Rozza, Maziar Raissi, and Francesco Piccialli. Scientific machine learning through physics–informed neural networks: where we are and what’s next. Journal of Scientific Computing, 9 2022. doi:10.1007/s10915-022-01939-z.">Cuomo <em>et al.</em>, 2022</a>, <a class="reference internal" href="bibliografia.html#id23" title="Karthik Pappu, Prathamesh Dinesh Joshi, Raj Abhijit Dandekar, Rajat Dandekar, and Sreedath Panat. Understanding malware propagation dynamics through scientific machine learning. 7 2025. URL: http://arxiv.org/abs/2507.07143.">Pappu <em>et al.</em>, 2025</a>, <a class="reference internal" href="bibliografia.html#id25" title="Amer Farea, Olli Yli-Harja, and Frank Emmert-Streib. Using physics-informed neural networks for modeling biological and epidemiological dynamical systems. Mathematics, 5 2025. doi:10.3390/math13101664.">Farea <em>et al.</em>, 2025</a>]</span> .</p>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="optimizacion">
-<h1>Optimización<a class="headerlink" href="#optimizacion" title="Link to this heading">#</a></h1>
-<p>El entrenamiento de la PINN se realiza mediante algoritmos de optimización basados en
-pasos de gradiente, ajustando tanto los pesos de la red como  los parámetros del modelo.
-Durante este proceso, se busca minimizar la función de pérdida global, equilibrando el
-ajuste a datos y el cumplimiento de las ecuaciones gobernantes.</p>
-<p>La correcta ponderación de los términos de la pérdida es un aspecto clave del flujo
-de trabajo, ya que un desbalance puede afectar la estabilidad del entrenamiento o sesgar
-la inferencia de parámetros.</p>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="evaluacion-y-analisis-de-resultados">
-<h1>Evaluación y análisis de resultados<a class="headerlink" href="#evaluacion-y-analisis-de-resultados" title="Link to this heading">#</a></h1>
-<p>Una vez entrenada la red, se evalúa su desempeño comparando la solución
-reconstruida con los datos experimentales disponibles. En el caso del problema inverso,
-los parámetros inferidos se analizan e interpretan desde un punto de vista biológico,
-evaluando su relación con el pretratamiento de ultrasonido aplicado a los gránulos de
+<p>La arquitectura de las redes utilizadas consisten de:</p>
+<p><strong>Modelo utilizado para problema inverso</strong></p>
+<ul class="simple">
+<li><p><strong>Capa de entrada</strong>: Capa de una sola neurona con función de activación <span class="math notranslate nohighlight">\(\sigma = \tanh\)</span>.</p></li>
+<li><p><strong>Capas ocultas</strong>: 3 capas ocultas densas de 50 neuronas cada una con función de activación <span class="math notranslate nohighlight">\(\sigma = \tanh\)</span>.</p></li>
+<li><p><strong>Capa de salida</strong>: Capa de una sola neurona con función de activación <span class="math notranslate nohighlight">\(\sigma = \tanh\)</span>.</p></li>
+<li><p><strong>Representación matemática</strong>:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+NN(t) = \sigma(W_4\hspace{1mm}...\hspace{1mm}\sigma(W_1t+\mathbf{b}_1)+\mathbf{b}_4).
+\]</div>
+<ul class="simple">
+<li><p><strong>Pesos</strong>:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+dim(W_1) &amp;= 1\times50 = 50 \\
+dim(W_2) &amp;= 50\times50 = 2500\\
+dim(W_3) &amp;= 50\times50 = 2500\\
+dim(W_4) &amp;= 50\times1 = 50
+\end{align}\end{split}\]</div>
+<ul class="simple">
+<li><p><strong>Sesgos</strong>:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+dim(\mathbf{b}_1) &amp;= 50 \\
+dim(\mathbf{b}_2) &amp;= 50\\
+dim(\mathbf{b}_3) &amp;= 50\\
+dim(\mathbf{b}_4) &amp;= 1
+\end{align}\end{split}\]</div>
+<ul class="simple">
+<li><p><strong>Parámetros entrenables</strong>: Total de 5251 parámetros</p></li>
+</ul>
+<p><strong>Modelo utilizado en descubrimiento físico</strong></p>
+<ul class="simple">
+<li><p><strong>Capa de entrada</strong>: Capa de una sola neurona con función de activación <span class="math notranslate nohighlight">\(\sigma = \tanh\)</span>.</p></li>
+<li><p><strong>Capas ocultas</strong>: 3 capas ocultas densas de 50 neuronas cada una con función de activación <span class="math notranslate nohighlight">\(\sigma = \tanh\)</span>.</p></li>
+<li><p><strong>Capa de salida</strong>: Capa de una sola neurona con función de activación <span class="math notranslate nohighlight">\(\sigma = \tanh\)</span>.</p></li>
+<li><p><strong>Representación matemática</strong>:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+NN(\mathbf{x}) = \sigma(W_4\hspace{1mm}...\hspace{1mm}\sigma(W_1\mathbf{x}+\mathbf{b}_1)+\mathbf{b}_4).
+\]</div>
+<ul class="simple">
+<li><p><strong>Pesos</strong>:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+dim(W_1) &amp;= 3\times50  = 150 \\
+dim(W_2) &amp;= 50\times50 = 2500\\
+dim(W_3) &amp;= 50\times50 = 2500\\
+dim(W_4) &amp;= 50\times1  = 50
+\end{align}\end{split}\]</div>
+<ul class="simple">
+<li><p><strong>Sesgos</strong>:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+dim(\mathbf{b}_1) &amp;= 50 \\
+dim(\mathbf{b}_2) &amp;= 50 \\
+dim(\mathbf{b}_3) &amp;= 50 \\
+dim(\mathbf{b}_4) &amp;= 1
+\end{align}\end{split}\]</div>
+<ul class="simple">
+<li><p><strong>Parámetros entrenables</strong>: Total de 5351 parámetros</p></li>
+</ul>
+<section id="definicion-del-modelo-fisico-y-dominio">
+<h2>Definición del modelo físico y dominio<a class="headerlink" href="#definicion-del-modelo-fisico-y-dominio" title="Link to this heading">#</a></h2>
+<p>Definimos el modelo de crecimiento poblacional que describe el
+fenómeno de estudio, típicamente mediante ecuaciones diferenciales ordinarias de tipo
+logístico o Gompertz que constituyen la restricción principal que se impondrá durante el entrenamiento. Se define
+el dominio temporal del problema, correspondiente al intervalo experimental de 168 horas,
+junto con las condiciones iniciales asociadas a la concentración inicial de gránulos de
 kéfir.</p>
-<p>Finalmente, los resultados obtenidos con distintas configuraciones (tanto modelo
-matemático como red ) se comparan utilizando métricas de desempeño, lo que nos permitirá
-seleccionar el modelo más adecuado para describir la dinámica de crecimiento microbiano
-en función del tratamiento experimental.</p>
+</section>
+<section id="optimizacion">
+<h2>Optimización<a class="headerlink" href="#optimizacion" title="Link to this heading">#</a></h2>
+<p>El entrenamiento de la PINN se realiza mediante el algoritmo de optimización de ADAM ,ya que resulta ser eficiente para problemas inversos <span id="id2">[<a class="reference internal" href="bibliografia.html#id23" title="Karthik Pappu, Prathamesh Dinesh Joshi, Raj Abhijit Dandekar, Rajat Dandekar, and Sreedath Panat. Understanding malware propagation dynamics through scientific machine learning. 7 2025. URL: http://arxiv.org/abs/2507.07143, doi:10.48550/arXiv.2507.07143.">Pappu <em>et al.</em>, 2025</a>, <a class="reference internal" href="bibliografia.html#id25" title="Amer Farea, Olli Yli-Harja, and Frank Emmert-Streib. Using physics-informed neural networks for modeling biological and epidemiological dynamical systems. Mathematics, 5 2025. doi:10.3390/math13101664.">Farea <em>et al.</em>, 2025</a>]</span> y en general en el entrenamiento de perceptrones de multiples capas <span id="id3">[<a class="reference internal" href="bibliografia.html#id37" title="Diederik P. Kingma and Jimmy Ba. Adam: a method for stochastic optimization. 2017. URL: https://arxiv.org/abs/1412.6980, arXiv:1412.6980, doi:10.48550/arXiv.1412.6980.">Kingma and Ba, 2017</a>]</span>. ADAM consiste de un algoritmo de descenso de gradiente que hace uso de estimaciones del promedio y la varianza del gradiente para actualizar mejor los pasos de gradiente <span id="id4">[<a class="reference internal" href="bibliografia.html#id37" title="Diederik P. Kingma and Jimmy Ba. Adam: a method for stochastic optimization. 2017. URL: https://arxiv.org/abs/1412.6980, arXiv:1412.6980, doi:10.48550/arXiv.1412.6980.">Kingma and Ba, 2017</a>]</span>.</p>
+<p>En el proceso de entrenamiento se van ajustando tanto los pesos de la red como  los parámetros del modelo. Durante este proceso, se busca minimizar la función de pérdida global, equilibrando el ajuste a datos y el cumplimiento de las ecuaciones gobernantes.</p>
+<p>La correcta ponderación de los términos de la función de pérdida constituye un aspecto fundamental del flujo de trabajo, ya que un desbalance entre ellos puede comprometer la estabilidad del entrenamiento o introducir sesgos en la inferencia de parámetros. En este trabajo se empleará la función de pérdida definida en <a class="reference internal" href="pinns.html#equation-total-loss-function">(7)</a>, cuyos términos se describen en detalle según el proceso considerado en las secciones correspondientes (véanse las páginas <em>Problema inverso</em> y <em>Descubrimiento de dinámicas ocultas con PINNs</em>)</p>
+</section>
+<section id="evaluacion-y-analisis-de-resultados">
+<h2>Evaluación y análisis de resultados<a class="headerlink" href="#evaluacion-y-analisis-de-resultados" title="Link to this heading">#</a></h2>
+<p>Una vez entrenada la red, se evalúa su desempeño comparando la solución reconstruida con los datos experimentales disponibles. Los resultados obtenidos con las distintas configuraciones (tanto de modelo matemático como de red) se comparan utilizando métricas de desempeño, lo que permite seleccionar el modelo más adecuado para describir la dinámica de crecimiento microbiano en función del tratamiento experimental.</p>
+<p>Con el objetivo de evaluar y comparar los resultados obtenidos al resolver problemas inversos mediante distintas configuraciones de Redes Neuronales Informadas por Modelos Físicos (PINNs), se emplean métricas estadísticas ampliamente utilizadas en el análisis de modelos de regresión. En particular, se utilizan las métricas error cuadrático medio (RMSE), error absoluto medio (MAE) y error porcentual absoluto medio (MAPE), en ese orden de prioridad, para evaluar el desempeño. Posteriormente, se van a comparar el coeficiente de determinación (<span class="math notranslate nohighlight">\(R^2\)</span>), el criterio de información de Akaike (AIC) y el criterio de información Bayesiano (BIC), los cuales permiten cuantificar tanto la calidad del ajuste a los datos experimentales como la complejidad del modelo inferido.</p>
+<p>En el contexto de este proyecto, estas medidas se aplican para comparar las diferentes PINNs utilizadas en la estimación de parámetros del modelo de crecimiento microbiano a partir de las series de tiempo del crecimiento de gránulos de kéfir de agua sometidos a distintos pretratamientos de ultrasonido.</p>
+<section id="metrica-root-mean-square-error-rmse">
+<h3>Métrica: Root Mean Square Error (RMSE)<a class="headerlink" href="#metrica-root-mean-square-error-rmse" title="Link to this heading">#</a></h3>
+<p>El RMSE es una métrica que mide la diferencia promedio entre los valores predichos por un modelo y los valores reales, penalizando más los errores grandes debido a que se elevan al cuadrado antes de promediar. Se calcula como la raíz cuadrada del promedio de los cuadrados de los errores. Esta métrica es especialmente útil cuando los errores grandes son más críticos y se desea que el modelo evite desviaciones significativas. Un gran error puede tener un impacto mucho mayor que varios errores pequeños ya que estamos trabajando con muy pocos datos, por lo que RMSE ayuda a capturar esa sensibilidad. Se calcula de la siguiente forma<span id="id5">[<a class="reference internal" href="bibliografia.html#id30" title="Harry Draper, Norman R.;Smith. Applied Regression Analysis. Applied Regression Analysis 326. Wiley, 3rd edition edition, 2014. doi:10.1002/9781118625590.">Draper, 2014</a>]</span>,(ver <span id="id6">[<a class="reference internal" href="bibliografia.html#id31" title="C. J. Willmott and K. Matsuura. Advantages of the mean absolute error (mae) over the root mean square error (rmse) in assessing average model performance. Climate Research, 30:79–82, 2005. doi:10.3354/cr030079.">Willmott and Matsuura, 2005</a>]</span>,pp 80, ec. 2):</p>
+<div class="math notranslate nohighlight" id="equation-rmse-formula">
+<span class="eqno">(11)<a class="headerlink" href="#equation-rmse-formula" title="Link to this equation">#</a></span>\[\begin{equation*}
+\text{RMSE} = \Bigg[ \frac{1}{\Big|X\Big|} \sum_{x_i \in X} \Big(y_i - \hat{y}_i \Big)^2 \Bigg]^{-\frac{1}{2}}
+\end{equation*}\]</div>
+</section>
+<section id="metrica-mean-absolute-error-mae">
+<h3>Métrica: Mean Absolute Error (MAE)<a class="headerlink" href="#metrica-mean-absolute-error-mae" title="Link to this heading">#</a></h3>
+<p>El MAE mide el promedio de las diferencias absolutas entre los valores predichos y los reales, sin importar si el error es positivo o negativo. A diferencia del RMSE, no penaliza de forma desproporcionada los errores grandes, por lo que ofrece una visión más “lineal” del desempeño del modelo. Es útil cuando se busca entender el error promedio de manera directa y sencilla, sin que los valores atípicos distorsionen la evaluación. Por ejemplo,nos permite saber, en promedio, cuán lejos se está de la predicción esperada en las mismas unidades de la variable medida. Se calcula (ver <span id="id7">[<a class="reference internal" href="bibliografia.html#id31" title="C. J. Willmott and K. Matsuura. Advantages of the mean absolute error (mae) over the root mean square error (rmse) in assessing average model performance. Climate Research, 30:79–82, 2005. doi:10.3354/cr030079.">Willmott and Matsuura, 2005</a>]</span>,pp 80, ec. 3):</p>
+<div class="math notranslate nohighlight" id="equation-mae-formula">
+<span class="eqno">(12)<a class="headerlink" href="#equation-mae-formula" title="Link to this equation">#</a></span>\[\begin{equation*}
+\text{MAE} = \frac{1}{\Big| X \Big|} \sum_{x_i \in X} \Big | y_i - \hat{y}_i \Big |
+\end{equation*}\]</div>
+</section>
+<section id="metrica-mean-absolute-percentage-error-mape">
+<h3>Métrica: Mean Absolute Percentage Error (MAPE)<a class="headerlink" href="#metrica-mean-absolute-percentage-error-mape" title="Link to this heading">#</a></h3>
+<p>El MAPE expresa el error promedio como un porcentaje de los valores reales, calculando la magnitud del error relativo. Esto permite interpretar los errores de manera proporcional, lo que resulta útil cuando se comparan predicciones en diferentes escalas o se quiere entender el desempeño del modelo en términos porcentuales. Ayuda a evaluar la precisión relativa de las predicciones, evitando que los valores altos dominen la evaluación de todo el modelo. Se calcula (ver <span id="id8">[<a class="reference internal" href="bibliografia.html#id32" title="J. Scott Armstrong and Fred Collopy. Error measures for generalizing about forecasting methods: empirical comparisons. International Journal of Forecasting, 8(1):69–80, 1992. doi:10.1016/0169-2070(92)90008-W.">Armstrong and Collopy, 1992</a>]</span>, pp 78):</p>
+<div class="math notranslate nohighlight" id="equation-mape-formula">
+<span class="eqno">(13)<a class="headerlink" href="#equation-mape-formula" title="Link to this equation">#</a></span>\[\begin{equation*}
+\text{MAPE} = \frac{1}{\Big| X \Big|} \sum_{x_i \in X}\Big | \frac{\hat{y}_i-y_i}{y_i} \Big |
+\end{equation*}\]</div>
+</section>
+<section id="criterio-de-informacion-de-akaike-aic">
+<h3>Criterio de Información de Akaike (AIC)<a class="headerlink" href="#criterio-de-informacion-de-akaike-aic" title="Link to this heading">#</a></h3>
+<p>El criterio de información de Akaike (AIC) evalúa el equilibrio entre la bondad del ajuste del modelo y su complejidad, penalizando explícitamente el número de parámetros estimados.</p>
+<p>En problemas inversos resueltos con PINNs, esta métrica resulta especialmente útil para comparar configuraciones que ajustan los parámetros del modelo de crecimiento bajo distintas arquitecturas de red, funciones de activación o estrategias de ponderación de la función de pérdida<span id="id9">[<a class="reference internal" href="bibliografia.html#id19" title="Fernando Baltazar-Larios, Francisco Delgado-Vences, and Arelly Ornelas. Parameter estimation and model selection for stochastic differential equations for biological growth. Environmental and Ecological Statistics, 32:195-227, 3 2025. doi:10.1007/s10651-025-00643-z.">Baltazar-Larios <em>et al.</em>, 2025</a>]</span>. Se calcula de la siguiente forma: (ver <span id="id10">[<a class="reference internal" href="bibliografia.html#id33" title="Hirotugu Akaike. A new look at the statistical model identification. IEEE Transactions on Automatic Control, 19(6):716–723, 1974. doi:10.1109/TAC.1974.1100705.">Akaike, 1974</a>]</span>,pp 719)</p>
+<div class="math notranslate nohighlight" id="equation-akaike-information-criteria-formula">
+<span class="eqno">(14)<a class="headerlink" href="#equation-akaike-information-criteria-formula" title="Link to this equation">#</a></span>\[\begin{equation*}
+\text{AIC} = 2k - 2ln\Big(\text{max}(\mathcal{L}(\theta;X))\Big)
+\end{equation*}\]</div>
+<p>Un valor menor de AIC indica un modelo más parsimonioso, es decir, aquel que logra describir adecuadamente la dinámica de crecimiento microbiano del kéfir utilizando el menor número efectivo de parámetros. Por ello, las PINNs con valores de AIC más bajos se consideran preferibles desde un punto de vista estadístico.</p>
+</section>
+<section id="criterio-de-informacion-bayesiano-bic">
+<h3>Criterio de Información Bayesiano (BIC)<a class="headerlink" href="#criterio-de-informacion-bayesiano-bic" title="Link to this heading">#</a></h3>
+<p>El BIC es conceptualmente similar al AIC, pero introduce una penalización más severa por el número de parámetros, lo que lo hace particularmente adecuado en escenarios con conjuntos de datos pequeños, como las series de tiempo disponibles en este estudio.
+<span id="id11">[<a class="reference internal" href="bibliografia.html#id34" title="Gideon Schwarz. Estimating the dimension of a model. The Annals of Statistics, 6(2):461–464, 1978. doi:10.1214/aos/1176344136.">Schwarz, 1978</a>]</span></p>
+<div class="math notranslate nohighlight" id="equation-bayesian-information-criteria-formula">
+<span class="eqno">(15)<a class="headerlink" href="#equation-bayesian-information-criteria-formula" title="Link to this equation">#</a></span>\[\begin{equation*}
+\text{BIC} = 2ln\Big(\text{max}(\mathcal{L}(\theta;X))\Big) - kln(|X|)
+\end{equation*}\]</div>
+<p>Esta métrica favorece modelos más simples y robustos, reduciendo el riesgo de sobreajuste al resolver problemas inversos. El BIC permite identificar qué configuraciones de PINNs logran capturar el crecimiento de los gránulos de kéfir de agua de manera consistente, manteniendo al mismo tiempo una estructura de modelo lo más sencilla posible. Al igual que en el caso del AIC, valores menores de BIC indican un mejor desempeño global.</p>
+</section>
+<section id="coeficiente-de-determinacion-r-2">
+<h3>Coeficiente de determinación (<span class="math notranslate nohighlight">\(R^2\)</span>)<a class="headerlink" href="#coeficiente-de-determinacion-r-2" title="Link to this heading">#</a></h3>
+<p>El coeficiente de determinación (<span class="math notranslate nohighlight">\(R^2\)</span>) mide la proporción de la variabilidad de los datos experimentales que es explicada por el modelo ajustado. Dentro del marco de las PINNs aplicadas a problemas inversos, esta métrica permite evaluar directamente la capacidad de la solución inferida para reproducir las curvas de crecimiento observadas en los gránulos de kéfir de agua.
+(ver <span id="id12">[<a class="reference internal" href="bibliografia.html#id36" title="George A. F. Seber and Alan J. Lee. Linear Regression Analysis. Wiley, 2 edition, 2003. ISBN 0471415405; 9780471722199; 0471722197; 9780471415404. doi:10.1002/9780471722199.">Seber and Lee, 2003</a>]</span> Cap. 4.4 ,pp 111,teorema 4.2)</p>
+<div class="math notranslate nohighlight" id="equation-multiple-correlation-coefficient-formula">
+<span class="eqno">(16)<a class="headerlink" href="#equation-multiple-correlation-coefficient-formula" title="Link to this equation">#</a></span>\[\begin{equation*}
+R^2 = 1-\frac{\text{RSS}}{\sum_{x_i\in X}{(y_i-\bar{y})^2}}
+\end{equation*} , RSS = \sum_{x_i\in X}(y_i-\hat{y}_i)^2\]</div>
+<p>Valores de <span class="math notranslate nohighlight">\(R^2\)</span> cercanos a 1 indican un alto grado de concordancia entre las predicciones del modelo de crecimiento —con parámetros inferidos por la PINN— y las mediciones experimentales. No obstante, dado que esta métrica no penaliza explícitamente la complejidad del modelo, su interpretación debe complementarse con criterios de información como el AIC y el BIC.</p>
+</section>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -441,20 +561,20 @@ en función del tratamiento experimental.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="problema_inverso.html"
+       href="pinns.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Problema inverso</p>
+        <p class="prev-next-title">Vistazo dentro de la caja negra</p>
       </div>
     </a>
     <a class="right-next"
-       href="problema_directo.html"
+       href="mlflow.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Corroboración del Modelo de Gompertz para el Crecimiento de Gránulos de Kéfir de Agua</p>
+        <p class="prev-next-title">Reproducibilidad utilizando mlflow</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -476,12 +596,18 @@ en función del tratamiento experimental.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Definición del modelo físico y dominio</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#construccion-de-la-red-neuronal">Construcción de la red neuronal</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optimizacion">Optimización</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluacion-y-analisis-de-resultados">Evaluación y análisis de resultados</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definicion-del-modelo-fisico-y-dominio">Definición del modelo físico y dominio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimizacion">Optimización</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluacion-y-analisis-de-resultados">Evaluación y análisis de resultados</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metrica-root-mean-square-error-rmse">Métrica: Root Mean Square Error (RMSE)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metrica-mean-absolute-error-mae">Métrica: Mean Absolute Error (MAE)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metrica-mean-absolute-percentage-error-mape">Métrica: Mean Absolute Percentage Error (MAPE)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#criterio-de-informacion-de-akaike-aic">Criterio de Información de Akaike (AIC)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#criterio-de-informacion-bayesiano-bic">Criterio de Información Bayesiano (BIC)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coeficiente-de-determinacion-r-2">Coeficiente de determinación (<span class="math notranslate nohighlight">\(R^2\)</span>)</a></li>
 </ul>
-
+</li>
+</ul>
   </nav></div>
 
 </div></div>

@@ -1,0 +1,521 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>kefir_ajuste.correction_funcs &#8212; PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/kefir_ajuste/correction_funcs';</script>
+    <link rel="icon" href="../../_static/mcd_logo.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../docs/problema.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/mcd_logo.png" class="logo__image only-light" alt="PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido - Home"/>
+    <img src="../../_static/mcd_logo.png" class="logo__image only-dark pst-js-only" alt="PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../docs/problema.html">
+                    Contexto
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../docs/fuente_de_datos.html">Fuente de datos</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../../docs/modelos.html">Modelos de crecimiento bacteriano</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/pinns.html">Vistazo dentro de la caja negra</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../../docs/entrenamiento.html">Construcción de la red neuronal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/mlflow.html">Reproducibilidad utilizando mlflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/problema_inverso.html">Problema inverso</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/descubrimiento_fisica.html">Descubrimiento de dinámicas ocultas con PINNs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/resultados.html">Ajuste de modelo con datos de tratamientos de ultrasonido</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../docs/bibliografia.html">Referencias</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/fdcir3tt/kefir_ajuste" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for kefir_ajuste.correction_funcs</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span> 
+<span class="kn">import</span><span class="w"> </span><span class="nn">deepxde</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dde</span>
+
+
+
+<div class="viewcode-block" id="multi_polynomial">
+<a class="viewcode-back" href="../../api.html#kefir_ajuste.correction_funcs.multi_polynomial">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">multi_polynomial</span><span class="p">(</span><span class="n">t</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span><span class="n">I</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span><span class="n">T</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span><span class="nb">list</span><span class="p">[</span><span class="n">dde</span><span class="o">.</span><span class="n">Variable</span><span class="p">],</span><span class="n">grade</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate a 2D polynomial correction term over intensity and exposure time.</span>
+
+<span class="sd">    This function constructs a polynomial surface of degree ``grade`` in the</span>
+<span class="sd">    variables intensity (I) and temperature/exposure time (T), using trainable</span>
+<span class="sd">    coefficients.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : torch.Tensor</span>
+<span class="sd">        Time variable (not directly used in computation but kept for API</span>
+<span class="sd">        consistency with other correction functions).</span>
+<span class="sd">    I : torch.Tensor</span>
+<span class="sd">        Intensity input tensor of shape (batch_size,).</span>
+<span class="sd">    T : torch.Tensor</span>
+<span class="sd">        Exposure/temperature tensor of shape (batch_size,).</span>
+<span class="sd">    coef : list of dde.Variable</span>
+<span class="sd">        List of trainable coefficients representing the polynomial weights.</span>
+<span class="sd">    grade : int</span>
+<span class="sd">        Maximum polynomial degree. Only terms satisfying i + j &lt;= grade are used.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    torch.Tensor</span>
+<span class="sd">        Output tensor of shape (batch_size, 1) representing the evaluated</span>
+<span class="sd">        polynomial correction.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The polynomial is evaluated as:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\sum_{i,j} c_{i,j} \\cdot I^i \\cdot T^j, \\quad i + j \\leq \\text{grade}</span>
+
+<span class="sd">    The coefficient list is reshaped into a (grade+1, grade+1) matrix where</span>
+<span class="sd">    entry [i, j] corresponds to the weight of the I^i * T^j term.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">coef_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">coef</span><span class="p">])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">grade</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">grade</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">I</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        
+    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="c1">#print(I)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">grade</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">grade</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">+</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">grade</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">+=</span> <span class="n">coef_tensor</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">I</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">T</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="n">j</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="intensity_function">
+<a class="viewcode-back" href="../../api.html#kefir_ajuste.correction_funcs.intensity_function">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">intensity_function</span><span class="p">(</span><span class="n">t</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span><span class="n">I</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span><span class="n">T</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span><span class="nb">list</span><span class="p">[</span><span class="n">dde</span><span class="o">.</span><span class="n">Variable</span><span class="p">])</span><span class="o">-&gt;</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute a sinusoidally modulated intensity-based correction function.</span>
+
+<span class="sd">    This function models a time-dependent signal where the amplitude depends</span>
+<span class="sd">    on a linear interaction between intensity (I) and exposure time (T),</span>
+<span class="sd">    and the temporal dynamics are given by a sine function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : torch.Tensor</span>
+<span class="sd">        Time variable tensor.</span>
+<span class="sd">    I : torch.Tensor</span>
+<span class="sd">        Intensity input tensor.</span>
+<span class="sd">    T : torch.Tensor</span>
+<span class="sd">        Exposure/temperature tensor.</span>
+<span class="sd">    coef : list of dde.Variable</span>
+<span class="sd">        List of four trainable coefficients:</span>
+
+<span class="sd">        - ``coef[0]``: bias term.</span>
+<span class="sd">        - ``coef[1]``: intensity scaling.</span>
+<span class="sd">        - ``coef[2]``: exposure time scaling.</span>
+<span class="sd">        - ``coef[3]``: interaction term (I * T).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    torch.Tensor</span>
+<span class="sd">        Tensor of shape (batch_size, 1) representing the corrected signal.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The output is computed as:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        (c_0 + c_1 I + c_2 T + c_3 I T) \\cdot \\sin\\!\\left(\\frac{2\\pi t}{12}\\right)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">intensity</span> <span class="o">=</span> <span class="p">(</span><span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">coef</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">I</span><span class="o">+</span><span class="n">coef</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">T</span><span class="o">+</span><span class="n">coef</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="n">I</span><span class="o">*</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">sine_term</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">t</span> <span class="o">/</span> <span class="mi">12</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">intensity</span><span class="o">*</span><span class="n">sine_term</span></div>
+
+
+<div class="viewcode-block" id="fourier_term">
+<a class="viewcode-back" href="../../api.html#kefir_ajuste.correction_funcs.fourier_term">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fourier_term</span><span class="p">(</span><span class="n">t</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span><span class="n">I</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span><span class="n">T</span><span class="p">:</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">coef</span><span class="p">:</span><span class="nb">list</span><span class="p">[</span><span class="n">dde</span><span class="o">.</span><span class="n">Variable</span><span class="p">])</span><span class="o">-&gt;</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute a Fourier-modulated correction term.</span>
+
+<span class="sd">    This function defines a nonlinear interaction between intensity (I),</span>
+<span class="sd">    exposure time (T), and periodic temporal dynamics using sine functions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : torch.Tensor</span>
+<span class="sd">        Time variable tensor.</span>
+<span class="sd">    I : torch.Tensor</span>
+<span class="sd">        Intensity input tensor.</span>
+<span class="sd">    T : torch.Tensor</span>
+<span class="sd">        Exposure/temperature tensor.</span>
+<span class="sd">    coef : list of dde.Variable</span>
+<span class="sd">        List of two trainable coefficients:</span>
+
+<span class="sd">        - ``coef[0]``: amplitude scaling.</span>
+<span class="sd">        - ``coef[1]``: frequency scaling applied to T inside the sine.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    torch.Tensor</span>
+<span class="sd">        Tensor of shape (batch_size, 1) representing the correction term.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The output is computed as:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        c_0 \\cdot I \\cdot \\sin(c_1 T) \\cdot \\sin\\!\\left(\\frac{2\\pi t}{15}\\right)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">intensity</span> <span class="o">=</span> <span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">I</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">coef</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span> <span class="n">T</span><span class="p">)</span>
+    <span class="n">sine_term</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">t</span> <span class="o">/</span> <span class="mi">15</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">intensity</span><span class="o">*</span><span class="n">sine_term</span></div>
+
+
+
+    
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The Jupyter Book community
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

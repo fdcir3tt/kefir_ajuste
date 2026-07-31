@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Problema &#8212; PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido</title>
+    <title>Contexto &#8212; PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido</title>
   
   
   
@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -168,23 +168,26 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1 current active">
                 <a class="reference internal" href="#">
-                    Problema
+                    Contexto
                 </a>
             </li>
         </ul>
         <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="fuente_de_datos.html">Fuente de datos</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modelos.html">Modelos de crecimiento microbiano</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="modelos.html">Modelos de crecimiento bacteriano</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pinns.html">Vistazo dentro de la caja negra</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="entrenamiento.html">Construcción de la red neuronal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mlflow.html">Reproducibilidad utilizando mlflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="problema_inverso.html">Problema inverso</a></li>
-<li class="toctree-l1"><a class="reference internal" href="entrenamiento.html">Definición del modelo físico y dominio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="descubrimiento_fisica.html">Descubrimiento de dinámicas ocultas con PINNs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resultados.html">Ajuste de modelo con datos de tratamientos de ultrasonido</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="problema_directo.html">Corroboración del Modelo de Gompertz para el Crecimiento de Gránulos de Kéfir de Agua</a></li>
-<li class="toctree-l1"><a class="reference internal" href="metricas.html">Métricas de evaluación para la comparación de modelos PINNs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliografia.html">Referencias</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 </ul>
 
     </div>
@@ -322,7 +325,9 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -333,11 +338,20 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Problema</h1>
+    <h1>Contexto</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir-de-agua">Kéfir de Agua</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aprendizaje-automatico-cientifico">Aprendizaje automático científico</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -347,10 +361,17 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="problema">
-<h1>Problema<a class="headerlink" href="#problema" title="Link to this heading">#</a></h1>
-<p>En la industria de alimentos probióticos existe un avance significativo en la producción de gránulos de kéfir en base leche; sin embargo, el desarrollo de gránulos en base agua ha sido limitado. Un estudio realizado en la Universidad de Sonora (UNISON) generó cinco series de tiempo del crecimiento de gránulos de kéfir en base agua: una serie testigo sin tratamiento y cuatro series con pretratamiento de ultrasonido aplicado en cada medición puntual.</p>
-<p>El objetivo de este proyecto es identificar la dinámica oculta de las cuatro series de tiempo con pretratamiento mediante el uso de redes neuronales informadas por modelos físicos (Physics-Informed Neural Networks, PINNs). Se quiere lograr desarrollar una paquetería capaz de recibir datos asociados al fenómeno de estudio y ejecutar una búsqueda eficiente de parámetros, con el fin de caracterizar el comportamiento del crecimiento de los gránulos en función del pretratamiento aplicado.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="contexto">
+<h1>Contexto<a class="headerlink" href="#contexto" title="Link to this heading">#</a></h1>
+<section id="kefir-de-agua">
+<h2>Kéfir de Agua<a class="headerlink" href="#kefir-de-agua" title="Link to this heading">#</a></h2>
+<p>En la industria de alimentos probióticos existe un avance significativo en la producción de gránulos de kéfir en base láctea; sin embargo, el desarrollo de gránulos en base agua ha sido limitado. Conocer la forma en que crecen los gránulos de kéfir de agua representaría una gran ventaja para la optimización en la producción de productos probióticos. Un estudio realizado en la Universidad de Sonora (UNISON) <span id="id1">[<a class="reference internal" href="bibliografia.html#id26" title="Proenza Delgado Y and J. C. Rodríguez Figueroa. Efecto del ultrasonido de intensidad alta y la fermentación sobre metabolitos específicos y propiedades funcionales del kéfir de agua. 2025.">Y and Figueroa, 2025</a>]</span> generó cinco series de tiempo del crecimiento de gránulos de kéfir en base agua: una serie testigo sin tratamiento y cuatro series con pretratamiento de ultrasonido, aplicado en cada medición puntual.</p>
+<p>El objetivo de este proyecto es identificar la dinámica oculta de las cuatro series de tiempo con pretratamiento mediante el uso de redes neuronales informadas por modelos físicos (<em>Physics-Informed Neural Networks</em>, PINNs). Se busca desarrollar una paquetería capaz de recibir datos asociados al fenómeno de estudio y ejecutar una búsqueda eficiente de parámetros, con el fin de caracterizar el comportamiento del crecimiento de los gránulos en función del pretratamiento aplicado.</p>
+</section>
+<section id="aprendizaje-automatico-cientifico">
+<h2>Aprendizaje automático científico<a class="headerlink" href="#aprendizaje-automatico-cientifico" title="Link to this heading">#</a></h2>
+<p>El aprendizaje automático científico se ha consolidado como una nueva rama que ha demostrado gran utilidad en la resolución de diversos problemas: problemas de continuidad, óptica/electromagnetismo, imágenes médicas y aplicaciones de control <span id="id2">[<a class="reference internal" href="bibliografia.html#id12" title="Thomas Asikis, Lucas Böttcher, and Nino Antulov-Fantulin. Neural ordinary differential equation control of dynamics on graphs. Physical Review Research, 4:13221, 2022. URL: https://arxiv.org/pdf/2006.09773, doi:10.1103/physrevresearch.4.013221.">Asikis <em>et al.</em>, 2022</a>, <a class="reference internal" href="bibliografia.html#id22" title="Salvatore Cuomo, Vincenzo Schiano Di Cola, Fabio Giampaolo, Gianluigi Rozza, Maziar Raissi, and Francesco Piccialli. Scientific machine learning through physics–informed neural networks: where we are and what’s next. Journal of Scientific Computing, 9 2022. doi:10.1007/s10915-022-01939-z.">Cuomo <em>et al.</em>, 2022</a>]</span> (ver sección 4.2, “Aplicaciones”). Todas estas clases de problemas tienen un impacto práctico, que va desde la clasificación de resonancias médicas y la inferencia de datos 3D a partir de datos 2D, hasta el estudio de dinámicas moleculares en materiales y la degradación de lubricantes en maquinaria industrial. Nuestro caso particular se enfoca en la inferencia de la dinámica de crecimiento de los gránulos de kéfir de agua bajo los efectos de un tratamiento de ultrasonido.</p>
+</section>
 <div class="toctree-wrapper compound">
 </div>
 </section>
@@ -400,6 +421,24 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kefir-de-agua">Kéfir de Agua</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aprendizaje-automatico-cientifico">Aprendizaje automático científico</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

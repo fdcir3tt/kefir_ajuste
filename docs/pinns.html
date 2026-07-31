@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -66,8 +66,8 @@
     <link rel="icon" href="../_static/mcd_logo.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Problema inverso" href="problema_inverso.html" />
-    <link rel="prev" title="Modelos de crecimiento microbiano" href="modelos.html" />
+    <link rel="next" title="Construcción de la red neuronal" href="entrenamiento.html" />
+    <link rel="prev" title="Modelos de crecimiento bacteriano" href="modelos.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -167,23 +167,26 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="problema.html">
-                    Problema
+                    Contexto
                 </a>
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="fuente_de_datos.html">Fuente de datos</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modelos.html">Modelos de crecimiento microbiano</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="modelos.html">Modelos de crecimiento bacteriano</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Vistazo dentro de la caja negra</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="entrenamiento.html">Construcción de la red neuronal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mlflow.html">Reproducibilidad utilizando mlflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="problema_inverso.html">Problema inverso</a></li>
-<li class="toctree-l1"><a class="reference internal" href="entrenamiento.html">Definición del modelo físico y dominio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="descubrimiento_fisica.html">Descubrimiento de dinámicas ocultas con PINNs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resultados.html">Ajuste de modelo con datos de tratamientos de ultrasonido</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="problema_directo.html">Corroboración del Modelo de Gompertz para el Crecimiento de Gránulos de Kéfir de Agua</a></li>
-<li class="toctree-l1"><a class="reference internal" href="metricas.html">Métricas de evaluación para la comparación de modelos PINNs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliografia.html">Referencias</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 </ul>
 
     </div>
@@ -345,7 +348,7 @@
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Vistazo dentro de la caja negra</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#construccion-de-funcion-de-perdida">Construcción de función de pérdida</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#funcion-de-perdida">Función de pérdida</a></li>
 </ul>
 
             </nav>
@@ -361,51 +364,41 @@
   <section class="tex2jax_ignore mathjax_ignore" id="vistazo-dentro-de-la-caja-negra">
 <h1>Vistazo dentro de la caja negra<a class="headerlink" href="#vistazo-dentro-de-la-caja-negra" title="Link to this heading">#</a></h1>
 <p>Redes Neuronales Informadas por Modelos Físicos (Physics-Informed Neural Networks, PINNs) constituyen una metodología de modelado computacional que integra explícitamente el conocimiento físico de un sistema dentro del proceso de entrenamiento de una red neuronal. A diferencia de los enfoques puramente basados en datos, las PINNs incorporan ecuaciones diferenciales ordinarias (ODEs), parciales (PDEs) u otras restricciones físicas directamente en la función de pérdida, forzando a la red a aprender soluciones que no solo se ajusten a los datos experimentales, sino que también respeten las ecuaciones gobernantes del fenómeno de estudio.<span id="id1">[<a class="reference internal" href="bibliografia.html#id22" title="Salvatore Cuomo, Vincenzo Schiano Di Cola, Fabio Giampaolo, Gianluigi Rozza, Maziar Raissi, and Francesco Piccialli. Scientific machine learning through physics–informed neural networks: where we are and what’s next. Journal of Scientific Computing, 9 2022. doi:10.1007/s10915-022-01939-z.">Cuomo <em>et al.</em>, 2022</a>, <a class="reference internal" href="bibliografia.html#id6" title="Lu Lu, Xuhui Meng, Zhiping Mao, and George Em Karniadakis. Deepxde: a deep learning library for solving differential equations. SIAM Review, 63:208-228, 2021. doi:10.1137/19M1274067.">Lu <em>et al.</em>, 2021</a>]</span></p>
-<p>En el contexto de este proyecto, PINNs se emplean para modelar el crecimiento microbiano de los gránulos de kéfir de agua, donde la dinámica poblacional ideal puede describirse mediante ecuaciones diferenciales de tipo logístico / Gompertz.</p>
+<p>En el contexto de este proyecto, PINNs se emplean para modelar el crecimiento microbiano de los gránulos de kéfir de agua, donde la dinámica poblacional ideal puede describirse mediante ecuaciones diferenciales de tipo logístico / Gompertz <span id="id2">[<a class="reference internal" href="bibliografia.html#id10" title="M H Zwietering, I Jongenburger, F M Rombouts, K Van ', and T Riet. Modeling of the bacterial growth curve. APPLIED AND ENVIRONMENTAL MICROBIOLOGY, pages 1875-1881, 1990. URL: https://journals.asm.org/journal/aem, doi:10.48550/arXiv.1806.07366.">Zwietering <em>et al.</em>, 1990</a>]</span>.</p>
 <p>La motivación principal para el uso de PINNs radica en su capacidad para combinar la flexibilidad de aproximación de las redes neuronales con la interpretabilidad de los modelos clásicos. El uso de PINNs resulta particularmente adecuado en escenarios con datos escasos, incompletos o ruidosos —como las series de tiempo disponibles—, permitiendo inferir parámetros efectivos y dinámicas ocultas sin imponer formas funcionales rígidas.</p>
 <p>El mecanismo de las redes neuronales informadas por física se puede seccionar en tres elementos: la red neuronal, diferenciación automática , retropropagación . En nuestro caso particular, estamos lidiando con un problema gobernado por una ecuación ordinaria de forma:</p>
-<div class="math notranslate nohighlight">
-\[
-\begin{equation*}
-    \frac{du}{dt} = f(t,u;\lambda); \hspace{1mm} B(t,u) = g(t),
-\end{equation*}
-\]</div>
-<p>donde <span class="math notranslate nohighlight">\(u\)</span> representa la población en un instante dado, y <span class="math notranslate nohighlight">\(\lambda\)</span> parametros que caracterizan el sistema físico.</p>
-<p>Entonces, si quisieramos resolver este sistema, la red neuronal <span class="math notranslate nohighlight">\(\hat u\)</span> vendría siendo una red con arquitectura de elección propia. Esta se somete bajo un entrenamiento usual de aprendizaje automático, el cambio rádicando en el uso de diferenciación automática para evaluar residuos de las ecuaciones diferenciales. Esto evita discretizaciones explícitas y permite trabajar con dominios continuos <span id="id2">[<a class="reference internal" href="bibliografia.html#id22" title="Salvatore Cuomo, Vincenzo Schiano Di Cola, Fabio Giampaolo, Gianluigi Rozza, Maziar Raissi, and Francesco Piccialli. Scientific machine learning through physics–informed neural networks: where we are and what’s next. Journal of Scientific Computing, 9 2022. doi:10.1007/s10915-022-01939-z.">Cuomo <em>et al.</em>, 2022</a>]</span> y es necesario para evaluar componentes clave de la función de perdida. La forma de esta función de onda dependerá del tipo de problema estemos atacando: directo o inverso.</p>
-<p>Un problema directo consistiría en determinar la evolución temporal de la población <span class="math notranslate nohighlight">\(u(t)\)</span> a partir de la ecuación diferencial conocida junto con los parámetros <span class="math notranslate nohighlight">\(\lambda\)</span> previamente establecidos. En nuestro caso , esto implicaría resolver ecuaciones de crecimiento —como los modelos logístico o de Gompertz— asumiendo valores fijos para parámetros como la tasa de crecimiento <span class="math notranslate nohighlight">\(k\)</span>, la capacidad de carga <span class="math notranslate nohighlight">\(m\)</span> con condición inicial <span class="math notranslate nohighlight">\(u(t=0)\)</span>. En escenarios experimentales reales, muchos de estos parámetros no son directamente observables o pueden variar en función de fuerzas externas. Este planteamiento da lugar a un problema inverso, siendo que partimos de una curva y lo que se quiere inferir son los parámetros que generan esta curva partiendo de una ecuación diferencial.</p>
-<p>PINNs han demostrado ser particularmente eficaces para la formulación y resolución de problemas inversos, ya que permiten tratar los parámetros desconocidos de una ecuación diferencial como variables adicionales a optimizar durante el entrenamiento. En este marco, tanto la solución <span class="math notranslate nohighlight">\(\hat{u}(t)\)</span> como los parámetros <span class="math notranslate nohighlight">\(\lambda\)</span> (por ejemplo, <span class="math notranslate nohighlight">\(r\)</span>, <span class="math notranslate nohighlight">\(m\)</span> ) se parametrizan mediante la red neuronal. El procedimiento general consiste en imponer las ecuaciones gobernantes del crecimiento microbiano dentro de la función de pérdida, de modo que el residuo físico dependa explícitamente de los parámetros desconocidos. A partir de datos experimentales parciales —las series de tiempo del crecimiento de los gránulos de kéfir—, la red se entrena para encontrar simultáneamente una solución consistente con los datos y un conjunto de parámetros que satisfagan la estructura física del sistema.</p>
+<div class="math notranslate nohighlight" id="equation-general-ode">
+<span class="eqno">(6)<a class="headerlink" href="#equation-general-ode" title="Link to this equation">#</a></span>\[\begin{equation*}
+    \frac{dy}{dt} = f(t,y;\phi); \hspace{1mm} B(t,y) = g(t),
+\end{equation*}\]</div>
+<p>donde <span class="math notranslate nohighlight">\(y\)</span> representa la población en un instante dado, y <span class="math notranslate nohighlight">\(\phi\)</span> parametros que caracterizan el sistema físico.</p>
+<p>Entonces, si quisieramos resolver este sistema, la red neuronal <span class="math notranslate nohighlight">\(\hat P\)</span> vendría siendo una red con arquitectura de elección propia. Esta se somete bajo un entrenamiento usual de aprendizaje automático, el cambio rádicando en el uso de diferenciación automática para evaluar residuos de las ecuaciones diferenciales. Esto evita discretizaciones explícitas y permite trabajar con dominios continuos <span id="id3">[<a class="reference internal" href="bibliografia.html#id22" title="Salvatore Cuomo, Vincenzo Schiano Di Cola, Fabio Giampaolo, Gianluigi Rozza, Maziar Raissi, and Francesco Piccialli. Scientific machine learning through physics–informed neural networks: where we are and what’s next. Journal of Scientific Computing, 9 2022. doi:10.1007/s10915-022-01939-z.">Cuomo <em>et al.</em>, 2022</a>]</span> y es necesario para evaluar componentes clave de la función de perdida. La forma de esta función de onda dependerá del tipo de problema estemos atacando: directo o inverso.</p>
+<p>Un problema directo consistiría en determinar la evolución temporal de la población <span class="math notranslate nohighlight">\(y(t)\)</span> a partir de la ecuación diferencial conocida junto con los parámetros <span class="math notranslate nohighlight">\(\phi\)</span> previamente establecidos. En nuestro caso , esto implicaría resolver ecuaciones de crecimiento —como los modelos logístico o de Gompertz—<span id="id4">[<a class="reference internal" href="bibliografia.html#id10" title="M H Zwietering, I Jongenburger, F M Rombouts, K Van ', and T Riet. Modeling of the bacterial growth curve. APPLIED AND ENVIRONMENTAL MICROBIOLOGY, pages 1875-1881, 1990. URL: https://journals.asm.org/journal/aem, doi:10.48550/arXiv.1806.07366.">Zwietering <em>et al.</em>, 1990</a>]</span> asumiendo valores fijos para parámetros como la tasa de crecimiento <span class="math notranslate nohighlight">\(r\)</span>, la capacidad de carga <span class="math notranslate nohighlight">\(m\)</span> con condición inicial <span class="math notranslate nohighlight">\(y(t=0)\)</span>. En escenarios experimentales reales, muchos de estos parámetros no son directamente observables o pueden variar en función de fuerzas externas. Este planteamiento da lugar a un problema inverso, siendo que partimos de una curva y lo que se quiere inferir son los parámetros que generan esta curva partiendo de una ecuación diferencial.</p>
+<p>PINNs han demostrado ser particularmente eficaces para la formulación y resolución de problemas inversos<span id="id5">[<a class="reference internal" href="bibliografia.html#id23" title="Karthik Pappu, Prathamesh Dinesh Joshi, Raj Abhijit Dandekar, Rajat Dandekar, and Sreedath Panat. Understanding malware propagation dynamics through scientific machine learning. 7 2025. URL: http://arxiv.org/abs/2507.07143, doi:10.48550/arXiv.2507.07143.">Pappu <em>et al.</em>, 2025</a>, <a class="reference internal" href="bibliografia.html#id25" title="Amer Farea, Olli Yli-Harja, and Frank Emmert-Streib. Using physics-informed neural networks for modeling biological and epidemiological dynamical systems. Mathematics, 5 2025. doi:10.3390/math13101664.">Farea <em>et al.</em>, 2025</a>]</span>, ya que permiten tratar los parámetros desconocidos de una ecuación diferencial como variables adicionales a optimizar durante el entrenamiento. En este marco, tanto la solución <span class="math notranslate nohighlight">\(\hat{y}(x)\)</span> como los parámetros <span class="math notranslate nohighlight">\(\phi\)</span> (por ejemplo, <span class="math notranslate nohighlight">\(r\)</span>, <span class="math notranslate nohighlight">\(m\)</span> ) se parametrizan mediante la red neuronal. El procedimiento general consiste en imponer las ecuaciones gobernantes del crecimiento microbiano dentro de la función de pérdida, de modo que el residuo físico dependa explícitamente de los parámetros desconocidos. A partir de datos experimentales parciales —las series de tiempo del crecimiento de los gránulos de kéfir—, la red se entrena para encontrar simultáneamente una solución consistente con los datos y un conjunto de parámetros que satisfagan la estructura física del sistema.</p>
 </section>
-<section class="tex2jax_ignore mathjax_ignore" id="construccion-de-funcion-de-perdida">
-<h1>Construcción de función de pérdida<a class="headerlink" href="#construccion-de-funcion-de-perdida" title="Link to this heading">#</a></h1>
+<section class="tex2jax_ignore mathjax_ignore" id="funcion-de-perdida">
+<h1>Función de pérdida<a class="headerlink" href="#funcion-de-perdida" title="Link to this heading">#</a></h1>
 <p>La idea central de las PINNs se basa en la construcción de una función de pérdida compuesta, diseñada para equilibrar simultáneamente el ajuste a los datos experimentales y el cumplimiento de las ecuaciones diferenciales que gobiernan el crecimiento microbiano. La formulación típica de la función de perdida para problemas inversos viene siendo:</p>
-<div class="math notranslate nohighlight">
-\[
-\begin{equation*}
-\mathcal{L}(\theta,\lambda)=w_D\mathcal{L}_D(\theta)+w_F\mathcal{L}_F(\theta,\lambda)+w_B\mathcal{L}_B(\theta),
-\end{equation*}
-\]</div>
-<p>donde <span class="math notranslate nohighlight">\(\theta\)</span> representa los parámetros entrenables de la red,<span class="math notranslate nohighlight">\(\mathcal{L}_F\)</span> mientras que <span class="math notranslate nohighlight">\(\mathcal{L}_F\)</span> ,<span class="math notranslate nohighlight">\(\mathcal{L}_B\)</span> las perdidas asociadas al fenómeno físico  , y los pesos <span class="math notranslate nohighlight">\(w\)</span> controlan la contribución relativa de cada término.</p>
+<div class="math notranslate nohighlight" id="equation-total-loss-function">
+<span class="eqno">(7)<a class="headerlink" href="#equation-total-loss-function" title="Link to this equation">#</a></span>\[\begin{equation*}
+\mathcal{L}(\theta,\phi)=w_D\mathcal{L}_D(\theta)+w_F\mathcal{L}_F(\theta,\phi)+w_B\mathcal{L}_B(\theta),
+\end{equation*}\]</div>
+<p>donde <span class="math notranslate nohighlight">\(\theta\)</span> representa los parámetros entrenables de la red. <span class="math notranslate nohighlight">\(\mathcal{L}_D\)</span> es la perdida calculada con respecto a las observaciones, mientras que <span class="math notranslate nohighlight">\(\mathcal{L}_F\)</span> ,<span class="math notranslate nohighlight">\(\mathcal{L}_B\)</span> las perdidas asociadas al fenómeno físico  , y los pesos <span class="math notranslate nohighlight">\(w\)</span> controlan la contribución relativa de cada término.</p>
 <p>El término asociado a las ecuaciones gobernantes se define como</p>
-<div class="math notranslate nohighlight">
-\[
-\begin{equation*}
-\mathcal{L}_F(\theta,\lambda)=\frac{1}{|T_F|}\sum_{t\in T_F}||\frac{d\hat{u}_\theta}{dt}-f(t,\hat{u};\lambda)||^2,
-\end{equation*}
-\]</div>
-<p>donde <span class="math notranslate nohighlight">\(\hat{u}\)</span> es la salida de la red neuronal y<span class="math notranslate nohighlight">\(\lambda\)</span> corresponde a parámetros desconocidos que pueden ser inferidos durante el entrenamiento. Es decir, son variables que se estimaran junto con los parámetros de la red. De manera análoga, el término de condiciones iniciales y de frontera se expresa como</p>
-<div class="math notranslate nohighlight">
-\[
-\begin{equation*}
-\mathcal{L}_B(\theta)=\frac{1}{|T_B|}\sum_{t_i\in T_B}||\mathcal{B}(\hat{u}_\theta,t_i)-g(t_i)||^2,
-\end{equation*}
-\]</div>
-<p>asegurando que la solución aprendida sea consistente con las condiciones experimentales del sistema, como la biomasa inicial de los gránulos de kéfir. Finalmente, se agrega el término asociado a que tan bien se ajusta la red a los datos observados y la clave de la resolución del problema inverso :</p>
-<div class="math notranslate nohighlight">
-\[
-\begin{equation*}
-    \mathcal{L}_D(\theta)=\frac{1}{|T_D|}\sum_{t_i\in T_D}||\hat{u}_\theta(t_i)-x_i||^2
-\end{equation*},
-\]</div>
+<div class="math notranslate nohighlight" id="equation-ode-loss">
+<span class="eqno">(8)<a class="headerlink" href="#equation-ode-loss" title="Link to this equation">#</a></span>\[\begin{equation*} 
+\mathcal{L}_F(\theta,\phi)=\frac{1}{|C|}\sum_{x_i\in C}\Big|\Big|\frac{d\hat{y}_\theta}{dt}-f(x_i,\hat{y_\theta};\phi)\Big|\Big|^2,
+\end{equation*}\]</div>
+<p>donde <span class="math notranslate nohighlight">\(\hat{y}\)</span> es la salida de la red neuronal,<span class="math notranslate nohighlight">\(C\)</span> los puntos de colocación y <span class="math notranslate nohighlight">\(\phi\)</span> corresponde a parámetros desconocidos que pueden ser inferidos durante el entrenamiento. Es decir, son variables que se estimaran junto con los parámetros de la red. De manera análoga, el término de condiciones iniciales y de frontera se expresa como</p>
+<div class="math notranslate nohighlight" id="equation-boundary-loss">
+<span class="eqno">(9)<a class="headerlink" href="#equation-boundary-loss" title="Link to this equation">#</a></span>\[\begin{equation*}
+\mathcal{L}_B(\theta)=\frac{1}{|B|}\sum_{x_i\in B}\Big|\Big|\mathcal{B}(\hat{y}_\theta,x_i)-g(x_i)\Big|\Big|^2,
+\end{equation*}\]</div>
+<p>donde <span class="math notranslate nohighlight">\(B\)</span> asegurando que la solución aprendida sea consistente con las condiciones experimentales del sistema, como la biomasa inicial de los gránulos de kéfir. Finalmente, se agrega el término asociado a que tan bien se ajusta la red a los datos observados y la clave de la resolución del problema inverso :</p>
+<div class="math notranslate nohighlight" id="equation-data-loss">
+<span class="eqno">(10)<a class="headerlink" href="#equation-data-loss" title="Link to this equation">#</a></span>\[\begin{equation*}
+    \mathcal{L}_D(\theta)=\frac{1}{|D|}\sum_{x_i\in D}\Big|\Big|\hat{y}_\theta(x_i)-x_i\Big|\Big|^2
+\end{equation*},\]</div>
 <p>donde <span class="math notranslate nohighlight">\(x_i\)</span> es el dato observado en el instante <span class="math notranslate nohighlight">\(t_i\)</span>.</p>
 <p>Este enfoque permite utilizar modelos poblacionales clásicos como guías físicas, mientras se exploran y cuantifican los efectos del pretratamiento de ultrasonido sobre la dinámica de crecimiento microbiano del kéfir de agua.</p>
 </section>
@@ -446,15 +439,15 @@
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Modelos de crecimiento microbiano</p>
+        <p class="prev-next-title">Modelos de crecimiento bacteriano</p>
       </div>
     </a>
     <a class="right-next"
-       href="problema_inverso.html"
+       href="entrenamiento.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Problema inverso</p>
+        <p class="prev-next-title">Construcción de la red neuronal</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -477,7 +470,7 @@
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Vistazo dentro de la caja negra</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#construccion-de-funcion-de-perdida">Construcción de función de pérdida</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#funcion-de-perdida">Función de pérdida</a></li>
 </ul>
 
   </nav></div>

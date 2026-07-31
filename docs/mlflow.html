@@ -1,0 +1,700 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Reproducibilidad utilizando mlflow &#8212; PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/mlflow';</script>
+    <link rel="icon" href="../_static/mcd_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Problema inverso" href="problema_inverso.html" />
+    <link rel="prev" title="Construcción de la red neuronal" href="entrenamiento.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="problema.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/mcd_logo.png" class="logo__image only-light" alt="PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido - Home"/>
+    <img src="../_static/mcd_logo.png" class="logo__image only-dark pst-js-only" alt="PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="problema.html">
+                    Contexto
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="fuente_de_datos.html">Fuente de datos</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="modelos.html">Modelos de crecimiento bacteriano</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pinns.html">Vistazo dentro de la caja negra</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="entrenamiento.html">Construcción de la red neuronal</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Reproducibilidad utilizando mlflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="problema_inverso.html">Problema inverso</a></li>
+<li class="toctree-l1"><a class="reference internal" href="descubrimiento_fisica.html">Descubrimiento de dinámicas ocultas con PINNs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resultados.html">Ajuste de modelo con datos de tratamientos de ultrasonido</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="bibliografia.html">Referencias</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/fdcir3tt/kefir_ajuste" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/docs/mlflow.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Reproducibilidad utilizando mlflow</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demo">Demo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion-de-experimentos">Configuración de experimentos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#registro-de-parametros-y-metricas">Registro de parámetros y métricas</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="reproducibilidad-utilizando-mlflow">
+<h1>Reproducibilidad utilizando mlflow<a class="headerlink" href="#reproducibilidad-utilizando-mlflow" title="Link to this heading">#</a></h1>
+<p>Con el objetivo de garantizar la reproducibilidad de los resultados obtenidos en este proyecto, se optó por utilizar la herramienta <a class="reference external" href="https://mlflow.org/docs/latest/ml/">mlflow</a> como solución de seguimiento y gestión de experimentos. La meta de reproducibilidad es que,al partir de una configuración de experimento dada, se pueda obtener consistentemente el mismo resultado.</p>
+<p>Se eligió MLflow como la herramienta más adecuada para este caso de uso, ya que cumple con las características requeridas, entre ellas:</p>
+<ul class="simple">
+<li><p><strong>Código abierto</strong></p></li>
+<li><p><strong>Seguimiento de experimentos</strong> : registra métricas, hiperparámetros, artefactos y configuraciones de entrenamiento.</p></li>
+<li><p><strong>Model Registry</strong>: permite versionar modelos y gestionar su ciclo de vida.</p></li>
+<li><p><strong>Gestión de artefactos</strong>: almacena modelos, gráficos, logs y otros archivos generados durante el entrenamiento.</p></li>
+<li><p><strong>Reproducibilidad</strong>: registra información del entorno y dependencias para facilitar la repetición de experimentos.</p></li>
+<li><p><strong>Compatibilidad amplia</strong>: funciona con PyTorch, TensorFlow, Scikit-learn, XGBoost, Hugging Face y muchas otras herramientas.</p></li>
+<li><p><strong>Despliegue flexible</strong>: puede ejecutarse localmente o utilizando servicios de almacenamiento externos.</p></li>
+<li><p><strong>Valor currícular</strong>: Se utiliza mucho en roles corporativos de ciencia de datos por estar integrado a la herramienta de <a class="reference external" href="https://www.databricks.com/">DataBricks</a></p></li>
+</ul>
+<p>Otras herramientas que se pudieron haber utilizado son:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Nombre</p></th>
+<th class="head"><p>Descripción</p></th>
+<th class="head"><p>Características</p></th>
+<th class="head"><p>Página de recurso</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Weights&amp;Biases</strong></p></td>
+<td><p>Plataforma de MLOps enfocada en el seguimiento y análisis de experimentos de machine learning. Permite registrar automáticamente métricas, hiperparámetros, modelos, datasets y artefactos durante el entrenamiento.</p></td>
+<td><p>- Seguimiento de experimentos<br>- Visualización avanzada<br>- Gestión de artefactos<br>- Colaboración<br>- Integraciones<br>- Hyperparameter Sweeps</p></td>
+<td><p><a class="reference external" href="https://wandb.ai/site">enlace</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>ClearML</strong></p></td>
+<td><p>Plataforma de MLOps de código abierto que va más allá del seguimiento de experimentos. Además de registrar métricas y modelos, incluye capacidades de orquestación, automatización y gestión de infraestructura</p></td>
+<td><p>-Seguimiento de experimentos <br>-Ejecución remota<br>-Gestión de datasets<br>-Pipelines automatizadas<br>-Orquestación de recursos<br>-Model Registry</p></td>
+<td><p><a class="reference external" href="https://wandb.ai/site">enlace</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="demo">
+<h2>Demo<a class="headerlink" href="#demo" title="Link to this heading">#</a></h2>
+<p>Continuando con el enfoque de reproducibilidad, se registraron de manera sistemática y detallada las <strong>métricas</strong>, los <strong>parámetros</strong> y otras <strong>configuraciones</strong> relevantes asociadas a cada corrida de entrenamiento de los modelos PINN, con el fin de asegurar un control riguroso sobre las condiciones de entrenamiento, comparación y análisis de los distintos experimentos realizados.</p>
+<p>Para ilustrar cómo se lleva a cabo la comparación de experimentos en la interfaz de usuario, se presenta una breve demostración. En ella se muestran diferentes experimentos y ejecuciones realizadas con diversas configuraciones, así como las herramientas disponibles para compararlos a partir de las métricas obtenidas en cada corrida.</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="../_images/mlflow_demo_2.gif"><img alt="mlflow Demo" src="../_images/mlflow_demo_2.gif" style="width: 1000px;" />
+</a>
+</figure>
+</section>
+<section id="configuracion-de-experimentos">
+<h2>Configuración de experimentos<a class="headerlink" href="#configuracion-de-experimentos" title="Link to this heading">#</a></h2>
+<p>En concordancia con el uso de la herramienta, para el seguimiento de experimentos se diseñó una estrategia de configuración orientada a garantizar la trazabilidad, organización y reproducibilidad de los modelos PINN generados. Proponemos una nomenclatura estructurada para identificar cada experimento, definida como: &lt;ecuación diferencial&gt;_&lt;función de ajuste&gt;_&lt;asignación de puntos de entrenamiento&gt;_<objetivo de experimento>. Esta convención permite asociar de manera directa cada experimento con su propósito.</p>
+<p>Asimismo, cada corrida de entrenamiento dentro de un experimento fue identificada mediante el formato: <etiqueta de tratamiento de ultrasonido>_<grado de polinomio>_&lt;número de épocas&gt;. Esta estructura facilita el reconocimiento preciso de las condiciones específicas bajo las cuales se ejecutó cada entrenamiento.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">mlflow</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">mlflow.data.pandas_dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">PandasDataset</span>
+
+<span class="n">ensure_experiment_active</span><span class="p">(</span><span class="n">EXPERIMENT_NAME</span><span class="p">)</span>
+<span class="n">mlflow</span><span class="o">.</span><span class="n">set_experiment</span><span class="p">(</span><span class="n">EXPERIMENT_NAME</span><span class="p">)</span>
+
+<span class="c1"># Carga y registro de datos </span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">DATA_FILE_NAME</span><span class="p">)</span>
+<span class="n">dataset_source_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;data/processed/</span><span class="si">{</span><span class="n">DATA_FILE_NAME</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="n">mlflow_dataset</span><span class="p">:</span> <span class="n">PandasDataset</span> <span class="o">=</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> 
+                                                        <span class="n">source</span><span class="o">=</span><span class="n">dataset_source_url</span><span class="p">,</span>
+                                                        <span class="n">targets</span><span class="o">=</span><span class="s2">&quot;concentracion(g/cm3)&quot;</span><span class="p">,</span>
+                                                        <span class="n">name</span><span class="o">=</span><span class="n">DATA_FILE_NAME</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">run_name</span> <span class="o">=</span> <span class="n">delta</span><span class="o">.</span><span class="vm">__name__</span>
+<span class="k">with</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">start_run</span><span class="p">(</span><span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">):</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">log_input</span><span class="p">(</span><span class="n">mlflow_dataset</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">CONTEXT</span><span class="p">)</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s2">&quot;epochs&quot;</span><span class="p">,</span> <span class="n">EPOCHS</span><span class="p">)</span>
+
+    <span class="c1"># =================</span>
+    <span class="c1">#      &gt;Código&lt;</span>
+    <span class="c1"># =================</span>
+
+
+    <span class="n">log_run</span><span class="p">(</span><span class="n">experiment</span><span class="o">=</span><span class="n">EXPERIMENT</span><span class="p">,</span>
+            <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">collocation_method</span> <span class="o">=</span> <span class="n">COLLOCATION_METHOD</span><span class="p">,</span>
+            <span class="n">loss_history</span><span class="o">=</span><span class="n">loss_history</span><span class="p">,</span>
+            <span class="n">learned_params</span><span class="o">=</span><span class="n">learned_parameters</span><span class="p">,</span>
+            <span class="n">y_true</span><span class="o">=</span><span class="n">y_true</span><span class="p">,</span>
+            <span class="n">y_pred</span><span class="o">=</span><span class="n">y_pred</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Los experimentos fueron concebidos para evaluar el desempeño del entrenamiento de redes neuronales informadas por física (PINNs), explorando distintas combinaciones de variables relevantes, tales como: funciones de ajuste, número de épocas, cantidad de puntos de entrenamiento, métodos de selección de puntos y semillas de inicialización. La integración de nomenclatura clara con el uso sistemático de mlflow nos permite un buen manejo de las condiciones experimentales.</p>
+</section>
+<section id="registro-de-parametros-y-metricas">
+<h2>Registro de parámetros y métricas<a class="headerlink" href="#registro-de-parametros-y-metricas" title="Link to this heading">#</a></h2>
+<p>Para la gestión de experimentos, se definieron de manera explícita los valores, parámetros y métricas a registrar en cada corrida, con el objetivo de asegurar un seguimiento detallado del desempeño de los modelos PINN y facilitar su análisis comparativo. En primer lugar, se registraron variables asociadas a la configuración de cada corrida, las cuales permiten contextualizar los resultados obtenidos. Luego, se registraron también los parámetros estimados por el modelo, los cuales constituyen el resultado directo del proceso de entrenamiento:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Logging Model </span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+<span class="c1"># Log modelo</span>
+<span class="n">mlflow</span><span class="o">.</span><span class="n">pytorch</span><span class="o">.</span><span class="n">log_model</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">net</span><span class="p">,</span> 
+                        <span class="n">name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="n">n_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">learned_params</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Logging learned parameters...&quot;</span><span class="p">)</span>
+<span class="c1"># Log parametros aprendidos</span>
+<span class="n">mlflow</span><span class="o">.</span><span class="n">log_params</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">learned_params</span><span class="p">)</span>
+    
+<span class="k">if</span> <span class="n">collocation_method</span><span class="p">:</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s2">&quot;collocation_method&quot;</span><span class="p">,</span><span class="n">collocation_method</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s2">&quot;collocation_method&quot;</span><span class="p">,</span><span class="n">collocation_method</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parámetro</p></th>
+<th class="head"><p>Descripción</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Grado</p></td>
+<td><p>Corresponde al grado del polinomio cuyos coeficientes se buscan estimar.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Puntos de entrenamiento</p></td>
+<td><p>Indica si el esquema de colocación de los puntos de entrenamiento, lo cual impacta en la capacidad de generalización del modelo.</p></td>
+</tr>
+<tr class="row-even"><td><p>Semilla</p></td>
+<td><p>Valor utilizado para la inicialización de procesos estocásticos, garantizando la reproducibilidad de los resultados.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cantidad de puntos de entrenamiento</p></td>
+<td><p>Número total de puntos utilizados durante el entrenamiento.</p></td>
+</tr>
+<tr class="row-even"><td><p>Épocas</p></td>
+<td><p>Número de iteraciones de entrenamiento ejecutadas</p></td>
+</tr>
+<tr class="row-odd"><td><p>Coeficientes de polinomio</p></td>
+<td><p>Valores ajustados por el modelo que definen el polinomio de interés</p></td>
+</tr>
+<tr class="row-even"><td><p>Dataset</p></td>
+<td><p>Conjunto de datos utilizado en cada experimento</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Y para evaluar el desempeño de los modelos, se consideró un conjunto de métricas complementarias que permiten analizar tanto la precisión como la complejidad del modelo.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">deepxde</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dde</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">kefir_ajuste.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_solution</span>
+
+<span class="n">dde</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_loss_history</span><span class="p">(</span><span class="n">loss_history</span><span class="p">)</span>
+<span class="n">mlflow</span><span class="o">.</span><span class="n">log_figure</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">(),</span> <span class="s2">&quot;loss_plot.png&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span> 
+
+<span class="n">figures</span> <span class="o">=</span> <span class="n">plot_solution</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span><span class="n">experiment</span><span class="o">=</span><span class="n">experiment</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">fig</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">figures</span><span class="p">:</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_figure</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+    
+
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">kefir_ajuste.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_regression_metrics</span>
+
+<span class="n">n_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">learned_params</span><span class="p">)</span>
+<span class="n">metrics</span> <span class="o">=</span> <span class="n">compute_regression_metrics</span><span class="p">(</span>
+        <span class="n">y_true</span><span class="o">=</span><span class="n">y_true</span><span class="p">,</span>
+        <span class="n">y_pred</span><span class="o">=</span><span class="n">y_pred</span><span class="p">,</span>
+        <span class="n">n_params</span><span class="o">=</span><span class="n">n_params</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Logging metrics...&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">metric</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Métrica</p></th>
+<th class="head"><p>Descripción</p></th>
+<th class="head"><p>Fórmula</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Root Mean Square Error (RMSE)</p></td>
+<td><p>Mide la magnitud promedio del error cuadrático, siendo sensible a errores grandes.</p></td>
+<td><p><span class="math notranslate nohighlight">\(\Bigg[\frac{1}{n} \sum_{x_i \in X}\Big(y_i - \hat{y}_i \Big)^2 \Bigg]^{-\frac{1}{2}}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Mean Absolute Error (MAE)</p></td>
+<td><p>Calcula el promedio de los errores absolutos, proporcionando una medida robusta del error medio.</p></td>
+<td><p><span class="math notranslate nohighlight">\(\frac{1}{n} \sum_{x_i \in X}\text{abs}\Big[\hat{y}_i-y_i \Big]\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Mean Absolute Percentage Error (MAPE)</p></td>
+<td><p>Expresa el error en términos relativos, facilitando su interpretación porcentual.</p></td>
+<td><p><span class="math notranslate nohighlight">\(\frac{1}{n} \sum_{x_i \in X}\text{abs}\Big[\frac{\hat{y}_i-y_i}{y_i} \Big]\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Akaike Information Criterion (AIC)</p></td>
+<td><p>Evalúa la calidad del modelo penalizando su complejidad, favoreciendo modelos parsimoniosos</p></td>
+<td><p><span class="math notranslate nohighlight">\(2k - 2ln\Big( \frac{\text{RSS}}{n}\Big)\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Bayesian Information Criterion (BIC)</p></td>
+<td><p>Similar al AIC, pero con una penalización más estricta, útil para la selección de modelos.</p></td>
+<td><p><span class="math notranslate nohighlight">\(2ln\Big(\frac{\text{RSS}}{n}\Big)-kln(n)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Coeficiente de determinación (<span class="math notranslate nohighlight">\(R^2\)</span>)</p></td>
+<td><p>Indica la proporción de la varianza de los datos explicada por el modelo</p></td>
+<td><p><span class="math notranslate nohighlight">\(1-\frac{\text{RSS}}{\sum_{x_i\in X}(y_i-\bar{y})^2}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="entrenamiento.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Construcción de la red neuronal</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="problema_inverso.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Problema inverso</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demo">Demo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion-de-experimentos">Configuración de experimentos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#registro-de-parametros-y-metricas">Registro de parámetros y métricas</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The Jupyter Book community
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

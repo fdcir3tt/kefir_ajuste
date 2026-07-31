@@ -1,0 +1,725 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Ajuste de modelo con datos de tratamientos de ultrasonido &#8212; PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/resultados';</script>
+    <link rel="icon" href="../_static/mcd_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Referencias" href="bibliografia.html" />
+    <link rel="prev" title="Descubrimiento de dinámicas ocultas con PINNs" href="descubrimiento_fisica.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="problema.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/mcd_logo.png" class="logo__image only-light" alt="PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido - Home"/>
+    <img src="../_static/mcd_logo.png" class="logo__image only-dark pst-js-only" alt="PINNs para Ajuste de Curvas de Crecimiento en Kéfir con Ultrasonido - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="problema.html">
+                    Contexto
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="fuente_de_datos.html">Fuente de datos</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="modelos.html">Modelos de crecimiento bacteriano</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pinns.html">Vistazo dentro de la caja negra</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="entrenamiento.html">Construcción de la red neuronal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mlflow.html">Reproducibilidad utilizando mlflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="problema_inverso.html">Problema inverso</a></li>
+<li class="toctree-l1"><a class="reference internal" href="descubrimiento_fisica.html">Descubrimiento de dinámicas ocultas con PINNs</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ajuste de modelo con datos de tratamientos de ultrasonido</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="bibliografia.html">Referencias</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/fdcir3tt/kefir_ajuste" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/docs/resultados.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Ajuste de modelo con datos de tratamientos de ultrasonido</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Ajuste de modelo con datos de tratamientos de ultrasonido</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ajuste-de-pinn">Ajuste de PINN</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#rendimiento-de-mejor-modelo">Rendimiento de mejor modelo</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusiones">Conclusiones</a></li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="ajuste-de-modelo-con-datos-de-tratamientos-de-ultrasonido">
+<h1>Ajuste de modelo con datos de tratamientos de ultrasonido<a class="headerlink" href="#ajuste-de-modelo-con-datos-de-tratamientos-de-ultrasonido" title="Link to this heading">#</a></h1>
+<p>En este trabajo se logró <strong>corroborar la validez de los parámetros del modelo de Gompertz</strong> para describir el crecimiento de los gránulos de kéfir de agua. Para ello, se empleó el método numérico de <strong>Runge–Kutta de cuarto orden (RK4)</strong>, el cual permitió resolver la ecuación diferencial asociada al modelo de manera precisa y estable.</p>
+<p>Los resultados obtenidos mediante RK4 mostraron una <strong>alta concordancia entre la solución numérica y los datos experimentales de crecimiento testigo</strong> de nuestra fuente de datos, lo que confirma que los parámetros estimados del modelo de Gompertz representan adecuadamente la dinámica del sistema biológico estudiado. Esta corroboración respalda el uso del modelo como una herramienta confiable para describir el comportamiento temporal del crecimiento de los gránulos.</p>
+</section>
+<section id="ajuste-de-pinn">
+<h1>Ajuste de PINN<a class="headerlink" href="#ajuste-de-pinn" title="Link to this heading">#</a></h1>
+<p>Adicionalmente, se logró <strong>ajustar una Red Neuronal Informada por la Física (Physics-Informed Neural Network, PINN)</strong> a los mismos datos experimentales de crecimiento, utilizando igualmente el <strong>modelo logístico como restricción física</strong>.</p>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-2 sd-row-cols-xs-2 sd-row-cols-sm-2 sd-row-cols-md-2 sd-row-cols-lg-2 docutils">
+<div class="sd-col sd-d-flex-column docutils">
+<figure class="align-default">
+<a class="reference internal image-reference" href="../_images/solution_plot.png"><img alt="../_images/solution_plot.png" src="../_images/solution_plot.png" style="width: 100%;" />
+</a>
+</figure>
+</div>
+<div class="sd-col sd-d-flex-column docutils">
+<figure class="align-default">
+<a class="reference internal image-reference" href="../_images/adj_loss_plot.png"><img alt="../_images/adj_loss_plot.png" src="../_images/adj_loss_plot.png" style="width: 80%;" />
+</a>
+</figure>
+</div>
+</div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parámetro</p></th>
+<th class="head"><p>Estimación</p></th>
+<th class="head"><p>Real</p></th>
+<th class="head"><p>Error absoluto</p></th>
+<th class="head"><p>Error relativo %</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>r (1/hr)</p></td>
+<td><p>0.0491</p></td>
+<td><p>0.046</p></td>
+<td><p>0.0031</p></td>
+<td><p>6.74</p></td>
+</tr>
+<tr class="row-odd"><td><p>m (g/L)</p></td>
+<td><p>46.70</p></td>
+<td><p>47.81</p></td>
+<td><p>1.11</p></td>
+<td><p>2.32</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>El PINN incorporó la ecuación diferencial del modelo dentro de su función de pérdida, permitiendo que la red aprendiera el comportamiento del sistema respetando las leyes que gobiernan su dinámica.</p>
+<p>El ajuste mediante PINNs mostró desempeño consistente con el método numérico clásico, reproduciendo de forma adecuada la evolución del crecimiento de los gránulos de kéfir de agua. Estos resultados no ayudarán para la siguiente etapa del proyecto que consiste en resolver un problema inverso con los datos que tenemos a la mano.</p>
+</section>
+<section id="rendimiento-de-mejor-modelo">
+<h1>Rendimiento de mejor modelo<a class="headerlink" href="#rendimiento-de-mejor-modelo" title="Link to this heading">#</a></h1>
+<p>El mejor resultado del proceso de descubrimiento de física vino siendo producto del entrenamiento de PINN con la función de corrección de <strong>intensidad por periodos</strong>. Se puede visualizar el desempeño del modelo en la siguientes figuras:</p>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-3 sd-row-cols-xs-3 sd-row-cols-sm-3 sd-row-cols-md-3 sd-row-cols-lg-3 docutils">
+<div class="sd-col sd-d-flex-column docutils">
+<figure class="align-default">
+<a class="reference internal image-reference" href="../_images/best_disc_loss.png"><img alt="../_images/best_disc_loss.png" src="../_images/best_disc_loss.png" style="width: 72%;" />
+</a>
+</figure>
+</div>
+<div class="sd-col sd-d-flex-column docutils">
+<figure class="align-default">
+<a class="reference internal image-reference" href="../_images/best_disc_results.png"><img alt="../_images/best_disc_results.png" src="../_images/best_disc_results.png" style="width: 72%;" />
+</a>
+</figure>
+</div>
+</div>
+</div>
+<p>En cuanto la función de corrección que se aprendió, se puede visualizar el efecto estimado que aplica a cada tratamiento de ultrasonido :</p>
+<figure class="align-default">
+<a class="reference internal image-reference" href="../_images/deltas.png"><img alt="../_images/deltas.png" src="../_images/deltas.png" style="width: 72%;" />
+</a>
+</figure>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Coeficiente</p></th>
+<th class="head"><p>Valor</p></th>
+<th class="head"><p>Unidades</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Independiente(c1)</p></td>
+<td><p>2.0700e-02</p></td>
+<td><p>(g/cm3)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Intensidad(c2)</p></td>
+<td><p>6.0500e-05</p></td>
+<td><p>(g/cm3)/(W/cm2)</p></td>
+</tr>
+<tr class="row-even"><td><p>Periodo de exposición(c3)</p></td>
+<td><p>-6.0200e-04</p></td>
+<td><p>(g/cm3)/(s)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Interacción(c4)</p></td>
+<td><p>7.5400e-06</p></td>
+<td><p>(g/cm3)/(W/cm2)(s)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>En términos de ajuste, el coeficiente de determinación (<span class="math notranslate nohighlight">\(R^2 = 0.8961\)</span>) indica que el modelo explica una proporción considerable de la varianza observada en la concentración de biomasa, lo que sugiere una representación adecuada del fenómeno de fermentación bajo las condiciones experimentales consideradas. El error cuadrático medio (RMSE = 2.9640) y el error absoluto medio (MAE = 2.4397) muestran una desviación moderada respecto a los valores observados, mientras que el error porcentual absoluto medio (MAPE = 8.0278%) confirma que dicha desviación se mantiene dentro de un margen razonable en relación con la escala del problema <span id="id1">[]</span> (ver p. 40).</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Treatment</p></th>
+<th class="head text-right"><p>RMSE</p></th>
+<th class="head text-right"><p>MAE</p></th>
+<th class="head text-right"><p>MAPE</p></th>
+<th class="head text-right"><p>R²</p></th>
+<th class="head text-right"><p>AIC</p></th>
+<th class="head text-right"><p>BIC</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Testigo (T1) Kéfir sin ultrasonicar</p></td>
+<td class="text-right"><p>4.214467</p></td>
+<td class="text-right"><p>3.666482</p></td>
+<td class="text-right"><p>9.483010</p></td>
+<td class="text-right"><p>0.789970</p></td>
+<td class="text-right"><p>10753.155692</p></td>
+<td class="text-right"><p>14544.764519</p></td>
+</tr>
+<tr class="row-odd"><td><p>15 seg. 20 W/cm² (T2)</p></td>
+<td class="text-right"><p>2.005311</p></td>
+<td class="text-right"><p>1.716217</p></td>
+<td class="text-right"><p>5.159485</p></td>
+<td class="text-right"><p>0.952449</p></td>
+<td class="text-right"><p>10730.873978</p></td>
+<td class="text-right"><p>14522.482805</p></td>
+</tr>
+<tr class="row-even"><td><p>1 min. 20 W/cm² (T3)</p></td>
+<td class="text-right"><p>4.450155</p></td>
+<td class="text-right"><p>3.878183</p></td>
+<td class="text-right"><p>9.750573</p></td>
+<td class="text-right"><p>0.765822</p></td>
+<td class="text-right"><p>10754.788166</p></td>
+<td class="text-right"><p>14546.396993</p></td>
+</tr>
+<tr class="row-odd"><td><p>15 seg. 34 W/cm² (T4)</p></td>
+<td class="text-right"><p>4.517139</p></td>
+<td class="text-right"><p>3.859970</p></td>
+<td class="text-right"><p>9.680506</p></td>
+<td class="text-right"><p>0.758720</p></td>
+<td class="text-right"><p>10755.236363</p></td>
+<td class="text-right"><p>14546.845190</p></td>
+</tr>
+<tr class="row-even"><td><p>1 min. 34 W/cm² (T5)</p></td>
+<td class="text-right"><p>2.964044</p></td>
+<td class="text-right"><p>2.439785</p></td>
+<td class="text-right"><p>8.027888</p></td>
+<td class="text-right"><p>0.896112</p></td>
+<td class="text-right"><p>10742.596637</p></td>
+<td class="text-right"><p>14534.205464</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Podemos comparar el rendimiento de un perceptron entrenado sin información física y el mejor PINN encontrado con el tratamiento T5, junto con las curvas predicción de cada tratamiento en las gráficas :</p>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-2 sd-row-cols-md-3 sd-row-cols-lg-3 docutils">
+<figure class="align-default" id="fig-pinn-pred-1">
+<img alt="../_images/pinn_pred_1.png" src="../_images/pinn_pred_1.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">Sin tratamiento</span><a class="headerlink" href="#fig-pinn-pred-1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-pinn-pred-2">
+<img alt="../_images/pinn_pred_2.png" src="../_images/pinn_pred_2.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">Tratamiento 1</span><a class="headerlink" href="#fig-pinn-pred-2" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-pinn-pred-3">
+<img alt="../_images/pinn_pred_3.png" src="../_images/pinn_pred_3.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">Tratamiento 2</span><a class="headerlink" href="#fig-pinn-pred-3" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-pinn-pred-4">
+<img alt="../_images/pinn_pred_4.png" src="../_images/pinn_pred_4.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 4 </span><span class="caption-text">Tratamiento 3</span><a class="headerlink" href="#fig-pinn-pred-4" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="fig-pinn-pred-5">
+<img alt="../_images/pinn_pred_5.png" src="../_images/pinn_pred_5.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 5 </span><span class="caption-text">Tratamiento 4</span><a class="headerlink" href="#fig-pinn-pred-5" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Modelo</p></th>
+<th class="head text-right"><p>RMSE</p></th>
+<th class="head text-right"><p>MAE</p></th>
+<th class="head text-right"><p>MAPE</p></th>
+<th class="head text-right"><p>(R^2)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>NN</p></td>
+<td class="text-right"><p>5.6739</p></td>
+<td class="text-right"><p>4.8617</p></td>
+<td class="text-right"><p>12.2258%</p></td>
+<td class="text-right"><p>0.6193</p></td>
+</tr>
+<tr class="row-odd"><td><p>PINN</p></td>
+<td class="text-right"><p>2.9640</p></td>
+<td class="text-right"><p>2.4397</p></td>
+<td class="text-right"><p>8.0278%</p></td>
+<td class="text-right"><p>0.8961</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Podemos ver que el PINN estima mejor el comportamiento del fenomeno estudiado, reflejado tanto en las métricas propuestas como en la visualización de las curvas de predicción.</p>
+<p>Finalmente, observamos los residuos del PINN para cada tratamiento desplegados :</p>
+<figure class="align-default">
+<a class="reference internal image-reference" href="../_images/pinn_residuals.png"><img alt="../_images/pinn_residuals.png" src="../_images/pinn_residuals.png" style="width: 72%;" />
+</a>
+</figure>
+</section>
+<section id="conclusiones">
+<h1>Conclusiones<a class="headerlink" href="#conclusiones" title="Link to this heading">#</a></h1>
+<p>Desde una perspectiva de interpretabilidad física, la superioridad del ajuste basado en intensidad por periodos resulta consistente con la naturaleza del proceso experimental. Este resultado es coherente con el diseño experimental, en el cual el sistema fue perturbado en intervalos de tiempo fijos, aplicando una intensidad y un periodo de exposición constantes en cada tratamiento. Al incorporar explícitamente esta interacción entre intensidad y periodo, el modelo refleja de manera más fiel el mecanismo mediante el cual la ultrasonicación afecta el crecimiento de los gránulos de kéfir, lo que explica su mejor desempeño frente a formulaciones alternativas.</p>
+<p>Estos resultados no solo validan cuantitativamente el modelo propuesto, sino que también refuerzan la hipótesis de que la relación funcional entre intensidad y periodo de exposición constituye un factor determinante en la dinámica de fermentación observada, ofreciendo así una base sólida para la interpretación física del fenómeno estudiado.</p>
+<p>Sin embargo, el presente estudio tiene algunas limitaciones. En primer lugar, el modelo fue ajustado y validado sobre un rango acotado de combinaciones de intensidad y periodo de exposición, por lo que su capacidad de extrapolación a condiciones experimentales fuera de este rango no ha sido evaluada. Asimismo, el tamaño de la muestra utilizada para el entrenamiento del modelo, si bien suficiente para obtener un ajuste estadísticamente aceptable, limita la robustez de las estimaciones de los coeficientes, particularmente en lo relativo a su significancia individual. Finalmente, aunque las métricas de error se encuentran dentro de umbrales razonables, no se descarta la posibilidad de cierto grado de sobreajuste dado el número de parámetros del modelo en relación con la cantidad de observaciones disponibles.</p>
+<p>El modelo basado en la corrección de intensidad por periodos demostró ser la configuración con mejor desempeño para representar la dinámica de crecimiento de los gránulos de kéfir de agua bajo tratamiento de ultrasonido, con un ajuste estadísticamente sólido (<span class="math notranslate nohighlight">\(R^2 = 0.8961\)</span>, MAPE = 8.03%) y una interpretación física coherente con el diseño experimental. Estos resultados confirman que la interacción entre intensidad y periodo de exposición es un factor determinante en la dinámica de fermentación observada.</p>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="descubrimiento_fisica.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Descubrimiento de dinámicas ocultas con PINNs</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="bibliografia.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Referencias</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Ajuste de modelo con datos de tratamientos de ultrasonido</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ajuste-de-pinn">Ajuste de PINN</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#rendimiento-de-mejor-modelo">Rendimiento de mejor modelo</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusiones">Conclusiones</a></li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The Jupyter Book community
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

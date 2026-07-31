@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -64,8 +64,8 @@
     <link rel="icon" href="../_static/mcd_logo.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Modelos de crecimiento microbiano" href="modelos.html" />
-    <link rel="prev" title="Problema" href="problema.html" />
+    <link rel="next" title="Modelos de crecimiento bacteriano" href="modelos.html" />
+    <link rel="prev" title="Contexto" href="problema.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -165,23 +165,26 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="problema.html">
-                    Problema
+                    Contexto
                 </a>
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Fuente de datos</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modelos.html">Modelos de crecimiento microbiano</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="modelos.html">Modelos de crecimiento bacteriano</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pinns.html">Vistazo dentro de la caja negra</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="entrenamiento.html">Construcción de la red neuronal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mlflow.html">Reproducibilidad utilizando mlflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="problema_inverso.html">Problema inverso</a></li>
-<li class="toctree-l1"><a class="reference internal" href="entrenamiento.html">Definición del modelo físico y dominio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="descubrimiento_fisica.html">Descubrimiento de dinámicas ocultas con PINNs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resultados.html">Ajuste de modelo con datos de tratamientos de ultrasonido</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="problema_directo.html">Corroboración del Modelo de Gompertz para el Crecimiento de Gránulos de Kéfir de Agua</a></li>
-<li class="toctree-l1"><a class="reference internal" href="metricas.html">Métricas de evaluación para la comparación de modelos PINNs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliografia.html">Referencias</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
 </ul>
 
     </div>
@@ -319,7 +322,9 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -335,6 +340,21 @@
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Fuente de datos</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#tratamiento-de-datos">Tratamiento de Datos</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extraccion">Extracción</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformacion">Transformación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#carga">Carga</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
         </div>
     </div>
 </div>
@@ -347,13 +367,133 @@
   <section class="tex2jax_ignore mathjax_ignore" id="fuente-de-datos">
 <h1>Fuente de datos<a class="headerlink" href="#fuente-de-datos" title="Link to this heading">#</a></h1>
 <p>El conjunto de datos proviene del trabajo de investigación  <em>Efecto del ultrasonido de intensidad alta y la fermentación sobre metabolitos específicos y propiedades funcionales del kéfir de agua</em> <span id="id1">[<a class="reference internal" href="bibliografia.html#id26" title="Proenza Delgado Y and J. C. Rodríguez Figueroa. Efecto del ultrasonido de intensidad alta y la fermentación sobre metabolitos específicos y propiedades funcionales del kéfir de agua. 2025.">Y and Figueroa, 2025</a>]</span>, en el cual se detalla el proceso experimental realizado con gránulos de kéfir de agua:</p>
-<p>A una cantidad inicial de gránulos se le aplica un tratamiento de ultrasonido de intensidad y periodo de exposición definidos. Posteriormente, los gránulos se mantienen bajo condiciones controladas de temperatura y presión durante un periodo de 15 horas. Este proceso se repite hasta completarse en total un lapso de 175 horas en cuales se obtienen 15 puntos de medición. El dataset está compuesto por cinco series de tiempo, cada una conformada por 15 puntos equiespaciados. Cada serie representa el crecimiento de los gránulos asociado a un pretratamiento específico. En la siguiente figura se muestra una visualización de estas series, junto con una interpolación lineal entre los puntos medidos.</p>
+<p>A una cantidad inicial de gránulos se le aplica un tratamiento de ultrasonido de intensidad y periodo de exposición definidos. Posteriormente, los gránulos se mantienen bajo condiciones controladas de temperatura y presión durante un periodo de 15 horas. Este proceso se repite hasta completarse en total un lapso de 175 horas en cuales se obtienen 15 puntos de medición.</p>
+<p>El dataset está compuesto por cinco series de tiempo, cada una conformada por 15 puntos equiespaciados. Cada serie representa el crecimiento de los gránulos asociado a un pretratamiento específico. En la siguiente figura se muestra una visualización de estas series, junto con una interpolación lineal entre los puntos medidos.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Tratamiento</p></th>
+<th class="head text-right"><p>Rango de tiempo (horas)</p></th>
+<th class="head text-right"><p>Intensidad (W/cm²)</p></th>
+<th class="head text-right"><p>Periodo de exposición (segundos)</p></th>
+<th class="head text-right"><p>Número de observaciones</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Testigo (T1) Kéfir sin ultrasonicar</p></td>
+<td class="text-right"><p>0–168</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>15</p></td>
+</tr>
+<tr class="row-odd"><td><p>15 seg. 20 W/cm² (T2)</p></td>
+<td class="text-right"><p>0–168</p></td>
+<td class="text-right"><p>20</p></td>
+<td class="text-right"><p>15</p></td>
+<td class="text-right"><p>15</p></td>
+</tr>
+<tr class="row-even"><td><p>1 min. 20 W/cm² (T3)</p></td>
+<td class="text-right"><p>0–168</p></td>
+<td class="text-right"><p>20</p></td>
+<td class="text-right"><p>60</p></td>
+<td class="text-right"><p>15</p></td>
+</tr>
+<tr class="row-odd"><td><p>15 seg. 34 W/cm² (T4)</p></td>
+<td class="text-right"><p>0–168</p></td>
+<td class="text-right"><p>34</p></td>
+<td class="text-right"><p>15</p></td>
+<td class="text-right"><p>15</p></td>
+</tr>
+<tr class="row-even"><td><p>1 min. 34 W/cm² (T5)</p></td>
+<td class="text-right"><p>0–168</p></td>
+<td class="text-right"><p>34</p></td>
+<td class="text-right"><p>60</p></td>
+<td class="text-right"><p>15</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>Los efectos que tiene el ultrasonido en el crecimiento de gránulos de kéfir es notorio al visualizar la serie de tiempo testigo ( sin tratamiento ) junto con las series con tratamiento . La serie de tiempo basal se nota que sigue el comportamiento esperado descrito en la literatura acerca de ello, es decir, sigue un modelo logístico simple.  A cambio, las series con mayor intensidad de ultrasonido parecen oscilar en vez de estabilizarse dentro del periodo de saturación . Esto implica una dinámica desconocida introducida por el tratamiento.</p>
-<p>Para lograr encontrar esta dinámica oculta, primero tenemos que partir de la ya conocida. Por ello, describiremos brevemente la formulación básica detrás de los modelos poblacionales que se utilizan para describir el crecimiento microbiano.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Tratamiento</p></th>
+<th class="head text-right"><p>Biomasa mínima (g)</p></th>
+<th class="head text-right"><p>Biomasa inicial (g)</p></th>
+<th class="head text-right"><p>Biomasa final (g)</p></th>
+<th class="head text-right"><p>Biomasa máxima (g)</p></th>
+<th class="head text-right"><p>Biomasa promedio (g)</p></th>
+<th class="head text-right"><p>Desviación estándar (g)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Testigo (T1) Kéfir sin ultrasonicar</p></td>
+<td class="text-right"><p>14.32614</p></td>
+<td class="text-right"><p>14.32614</p></td>
+<td class="text-right"><p>50.48937</p></td>
+<td class="text-right"><p>50.70620</p></td>
+<td class="text-right"><p>39.68351</p></td>
+<td class="text-right"><p>11.22519</p></td>
+</tr>
+<tr class="row-odd"><td><p>15 seg. 20 W/cm² (T2)</p></td>
+<td class="text-right"><p>14.76670</p></td>
+<td class="text-right"><p>14.76670</p></td>
+<td class="text-right"><p>45.27640</p></td>
+<td class="text-right"><p>45.29563</p></td>
+<td class="text-right"><p>37.65503</p></td>
+<td class="text-right"><p>9.42911</p></td>
+</tr>
+<tr class="row-even"><td><p>1 min. 20 W/cm² (T3)</p></td>
+<td class="text-right"><p>14.30110</p></td>
+<td class="text-right"><p>14.30110</p></td>
+<td class="text-right"><p>46.30397</p></td>
+<td class="text-right"><p>46.30397</p></td>
+<td class="text-right"><p>34.77106</p></td>
+<td class="text-right"><p>9.48952</p></td>
+</tr>
+<tr class="row-odd"><td><p>15 seg. 34 W/cm² (T4)</p></td>
+<td class="text-right"><p>14.13803</p></td>
+<td class="text-right"><p>14.13803</p></td>
+<td class="text-right"><p>36.96790</p></td>
+<td class="text-right"><p>39.47073</p></td>
+<td class="text-right"><p>32.24491</p></td>
+<td class="text-right"><p>7.50897</p></td>
+</tr>
+<tr class="row-even"><td><p>1 min. 34 W/cm² (T5)</p></td>
+<td class="text-right"><p>14.51163</p></td>
+<td class="text-right"><p>14.51163</p></td>
+<td class="text-right"><p>43.88087</p></td>
+<td class="text-right"><p>44.88180</p></td>
+<td class="text-right"><p>36.09303</p></td>
+<td class="text-right"><p>9.52978</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <figure class="align-default">
 <a class="reference internal image-reference" href="../_images/raw_data_plot.png"><img alt="../_images/raw_data_plot.png" src="../_images/raw_data_plot.png" style="width: 72%;" />
 </a>
 </figure>
+<p>Para lograr encontrar esta dinámica oculta, primero tenemos que partir de la ya conocida. Por ello, describiremos brevemente la formulación básica detrás de los modelos poblacionales que se utilizan para describir el crecimiento microbiano.</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="tratamiento-de-datos">
+<h1>Tratamiento de Datos<a class="headerlink" href="#tratamiento-de-datos" title="Link to this heading">#</a></h1>
+<p>El procesamiento de los datos experimentales se realizó mediante un flujo automatizado de tipo ETL (Extract, Transform, Load), implementado en Python utilizando la librería pandas, con el objetivo de convertir la matriz de datos original en un formato analítico limpio y estructurado.</p>
+<section id="extraccion">
+<h2>Extracción<a class="headerlink" href="#extraccion" title="Link to this heading">#</a></h2>
+<p>Los datos crudos fueron obtenidos a partir un archivo excel, correspondiente al registro de concentración de biomasa durante el proceso de fermentación de kéfir de agua bajo los distintos tratamientos de ultrasonido. Dado que el archivo original contenía encabezados y metadatos no relevantes para el análisis, se omitieron dichas filas, conservando únicamente la tabla de datos experimentales.</p>
+</section>
+<section id="transformacion">
+<h2>Transformación<a class="headerlink" href="#transformacion" title="Link to this heading">#</a></h2>
+<p>Una vez extraídos, los datos —originalmente en formato ancho, con una columna por cada tratamiento— fueron reestructurados a formato largo (long format) mediante la función <code class="docutils literal notranslate"><span class="pre">melt()</span></code>, generando las variables ‘tratamiento’ y ‘concentración (g/cm³)’. Previamente se eliminaron columnas sin contenido informativo (Unnamed), producto del formato original del archivo. Con el fin de vincular cada tratamiento con sus condiciones experimentales, se definió un diccionario de correspondencia que mapea la descripción textual de cada tratamiento (por ejemplo, “15 seg. 20 W/cm² (T2)”) a un identificador estandarizado (tratamiento_1 a tratamiento_5). A partir de este identificador, un segundo diccionario permitió incorporar dos variables experimentales clave:</p>
+<ul class="simple">
+<li><p>intensidad(W/cm²)</p></li>
+<li><p>periodo de exposición(s)</p></li>
+</ul>
+<p>De esta manera, cada observación quedó asociada no solo al tratamiento nominal, sino también a sus parámetros físicos de aplicación, lo que facilita el análisis del efecto de la intensidad y el tiempo de exposición sobre la concentración de biomasa a lo largo del tiempo de fermentación.</p>
+</section>
+<section id="carga">
+<h2>Carga<a class="headerlink" href="#carga" title="Link to this heading">#</a></h2>
+<p>Finalmente, el conjunto de datos transformado fue exportado en formato .csv, un archivo consolidado (control_dataset.csv) que reúne la totalidad de las observaciones, permitiendo tanto el análisis individual por tratamiento como el análisis comparativo global.</p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -392,7 +532,7 @@
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Problema</p>
+        <p class="prev-next-title">Contexto</p>
       </div>
     </a>
     <a class="right-next"
@@ -400,7 +540,7 @@
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Modelos de crecimiento microbiano</p>
+        <p class="prev-next-title">Modelos de crecimiento bacteriano</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -410,6 +550,30 @@
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Fuente de datos</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#tratamiento-de-datos">Tratamiento de Datos</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extraccion">Extracción</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformacion">Transformación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#carga">Carga</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
               
             
           </div>
