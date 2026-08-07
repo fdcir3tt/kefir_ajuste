@@ -11,3 +11,6 @@ ui:
 
 confidence: 
 	poetry run python scripts/mcmc.py
+
+b_pinn: 
+	poetry run python scripts/bayesian_pinn.py
