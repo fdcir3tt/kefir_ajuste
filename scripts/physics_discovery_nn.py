@@ -71,7 +71,7 @@ _INITIALIZERS = {
 
 
 EXPERIMENT_NAME = "Neural Network Training"
-DATA_FILE_NAME = "control_dataset.csv"
+DATA_FILE_NAME = "fixed_controlset.csv"
 EPOCHS = 10000
 LEARNING_RATE = 0.01
 SEED = None
@@ -323,7 +323,7 @@ def plot_physics_discovery_solution(model: torch.nn.Module,
 
     ax.set_title("Predicciones Perceptrón — Todos los tratamientos")
     ax.set_xlabel("Tiempo de Fermentación (h)")
-    ax.set_ylabel("Concentración (g/cm³)")
+    ax.set_ylabel("Biomasa(g/L)")
     ax.legend(fontsize=8, ncols=2, loc="best")
     ax.grid(True, linestyle=":", alpha=0.6)
     fig.tight_layout()
@@ -446,7 +446,7 @@ dataset = dataset.drop(columns=["tratamiento","Unnamed: 0"])
 dataset_source_url = f"data/processed/{DATA_FILE_NAME}"
 mlflow_dataset: PandasDataset = mlflow.data.from_pandas(dataset, 
                                                         source=dataset_source_url,
-                                                        targets="concentracion(g/cm3)",
+                                                        targets="biomasa(g/L)",
                                                         name=DATA_FILE_NAME)
 
 
@@ -469,7 +469,7 @@ with mlflow.start_run(run_name=run_name):
     t0,y0 = load_initial_conditions(dataset)
     t0,tf = load_time_domain(dataset)
     
-    X_train, y_train, X_test,y_test = split_train_data(dataset,"concentracion(g/cm3)")
+    X_train, y_train, X_test,y_test = split_train_data(dataset,"biomasa(g/L)")
     
     X_train_t = torch.tensor(X_train.values if hasattr(X_train, "values") else X_train, dtype=torch.float32)
     y_train_t = torch.tensor(y_train.values if hasattr(y_train, "values") else y_train, dtype=torch.float32).reshape(-1, 1)

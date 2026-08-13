@@ -23,7 +23,7 @@ mlflow.set_tracking_uri("file:./mlruns")
 
 
 EXPERIMENT_NAME = "Physics Discovery"
-DATA_FILE_NAME = "control_dataset.csv"
+DATA_FILE_NAME = "fixed_controlset.csv"
 EPOCHS = 10000
 LEARNING_RATE = 0.01
 PHYSICAL_COLLOCATION_POINTS=200
@@ -34,10 +34,10 @@ N_RUNS = 100 # Solo si SEED = None
 INITIAL_SATURATION = 47.81
 INITIAL_RATE = 0.046 
 delta =  intensity_function
-model_equation = richards
+model_equation = gompertz
 r =  INITIAL_RATE
 m =  INITIAL_SATURATION
-nu = 2
+nu = 3
 model_parameters ={"r":r,"m":m,"nu":nu}
 grade = 6
 kwargs = {"grade":grade}
@@ -333,7 +333,7 @@ dataset = dataset.drop(columns=["tratamiento","Unnamed: 0"])
 dataset_source_url = f"data/processed/{DATA_FILE_NAME}"
 mlflow_dataset: PandasDataset = mlflow.data.from_pandas(dataset, 
                                                         source=dataset_source_url,
-                                                        targets="concentracion(g/cm3)",
+                                                        targets="biomasa(g/L)",
                                                         name=DATA_FILE_NAME)
 
 
@@ -363,7 +363,7 @@ for i in range(n_runs):
             t0,y0 = load_initial_conditions(dataset)
             t0,tf = load_time_domain(dataset)
             
-            X_train, y_train, X_test,y_test = split_train_data(dataset,"concentracion(g/cm3)")
+            X_train, y_train, X_test,y_test = split_train_data(dataset,"biomasa(g/L)")
             
     # ============================================================
     #                 CONFIGURACION ENTRENAMIENTO
