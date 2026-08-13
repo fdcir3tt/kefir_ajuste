@@ -199,7 +199,7 @@ def plot_fill(model: dde.Model, data_dict: dict):
 
     ax.set_title("Predicciones PINN — Todos los tratamientos")
     ax.set_xlabel("Tiempo de Fermentación (h)")
-    ax.set_ylabel("Concentración (g/cm³)")
+    ax.set_ylabel("Biomasa (g/L)")
     ax.legend(fontsize=8, ncols=2, loc="best")
     ax.grid(True, linestyle=":", alpha=0.6)
     fig.tight_layout()
@@ -211,7 +211,9 @@ dataset = load_data(DATA_FILE_NAME)
 dataset = dataset.drop(columns=["tratamiento","Unnamed: 0"])
 dataset_source_url = f"data/processed/{DATA_FILE_NAME}"
 
-t0,y0 = load_initial_conditions(dataset)
+t0 = dataset["tiempo(h)"].iloc[0]
+y0 = dataset["concentracion(g/cm3)"].iloc[0]
+
 t0,tf = load_time_domain(dataset)
     
 X_train, y_train, X_test,y_test = split_train_data(dataset,"concentracion(g/cm3)")
